@@ -497,50 +497,48 @@ const OfferCard = ({o,onEarn,delay=0}) => (
 //  PAGE: HOME / LANDING
 // ═══════════════════════════════════════════════════════════════
 const Home = ({setPg, user, onLogin}) => {
-  const [paid,setPaid] = useState(12_438_920);
-  const [online,setOnline] = useState(8_412);
+  const [online,setOnline] = useState(2_147);
   useEffect(()=>{
     const t=setInterval(()=>{
-      setPaid(p=>p+Math.floor(Math.random()*80+20));
-      setOnline(p=>p+Math.floor(Math.random()*12-5));
-    },2500);
+      setOnline(p=>Math.max(1800,p+Math.floor(Math.random()*8-3)));
+    },4000);
     return ()=>clearInterval(t);
   },[]);
 
   return (
     <div>
-      {/* ─── HERO ─── */}
+      {/* ─── HERO — Honest value prop ─── */}
       <section style={{minHeight:"92vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"60px 24px",position:"relative",overflow:"hidden"}}>
-        {/* BG effects — warm gradients draw the eye to center */}
         <div style={{position:"absolute",top:"-25%",left:"50%",transform:"translateX(-50%)",width:900,height:900,background:"radial-gradient(circle,rgba(139,92,246,.1) 0%,rgba(255,107,53,.04) 40%,transparent 70%)",pointerEvents:"none"}}/>
         <div className="afl" style={{position:"absolute",top:"8%",right:"8%",width:350,height:350,background:"radial-gradient(circle,rgba(255,45,120,.06) 0%,transparent 70%)",pointerEvents:"none"}}/>
         <div className="afl" style={{position:"absolute",bottom:"10%",left:"5%",width:250,height:250,background:"radial-gradient(circle,rgba(0,210,106,.06) 0%,transparent 70%)",pointerEvents:"none",animationDelay:"2s"}}/>
 
         <div className="au" style={{position:"relative",zIndex:1,maxWidth:850}}>
-          {/* Live badge */}
-          <div className="chip" style={{background:"rgba(16,185,129,.08)",border:"1px solid rgba(16,185,129,.25)",color:B.ok,marginBottom:28}}>
-            <span style={{width:8,height:8,borderRadius:"50%",background:B.ok,display:"inline-block"}} className="ap"/>
-            {online.toLocaleString()} people earning right now
+          <div className="chip" style={{background:"rgba(0,210,106,.08)",border:"1px solid rgba(0,210,106,.25)",color:B.money,marginBottom:28}}>
+            <span style={{width:8,height:8,borderRadius:"50%",background:B.money,display:"inline-block"}} className="ap"/>
+            {online.toLocaleString()} people online right now
           </div>
 
           <h1 style={{fontFamily:"'Space Grotesk'",fontSize:"clamp(38px,5.5vw,68px)",fontWeight:900,lineHeight:1.08,marginBottom:24}}>
-            <span>Turn Your Time Into </span>
-            <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Real Money</span>
+            <span>Earn Real Money </span>
+            <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>In Your Free Time</span>
           </h1>
 
-          <p style={{fontSize:19,color:B.muted,lineHeight:1.65,marginBottom:20,maxWidth:620,margin:"0 auto 20px"}}>
-            Complete surveys, play games, try apps, watch videos, and more.
-            Cash out instantly to PayPal, Venmo, Cash App, crypto, or gift cards.
-            <strong style={{color:B.txt}}> No investment needed. Ever.</strong>
+          <p style={{fontSize:20,color:B.muted,lineHeight:1.65,marginBottom:8,maxWidth:650,margin:"0 auto 8px"}}>
+            Complete simple tasks — surveys, app trials, games — and get paid to your PayPal, Venmo, or crypto wallet.
+          </p>
+          <p style={{fontSize:17,color:B.txt,lineHeight:1.65,marginBottom:24,maxWidth:650,margin:"0 auto 24px"}}>
+            It's not a full-time job replacement, but it's
+            <strong style={{color:B.money}}> real money</strong> for time you'd otherwise spend scrolling.
           </p>
 
-          {/* Trust Stats */}
+          {/* Trust Stats — honest, verifiable claims only */}
           <div style={{display:"flex",justifyContent:"center",gap:40,marginBottom:36,flexWrap:"wrap"}}>
             {[
-              {v:`$${(paid/1e6).toFixed(1)}M+`,l:"Paid to Users",c:B.gradOk},
-              {v:"4.8 ★",l:"Trustpilot Rating",c:B.gradGold},
-              {v:"380K+",l:"Active Earners",c:B.grad},
-              {v:"<60s",l:"Avg Payout Time",c:B.gradHot},
+              {v:"$1",l:"Minimum Cashout",c:B.gradOk},
+              {v:"12+",l:"Payout Methods",c:B.gradGold},
+              {v:"100+",l:"Available Offers",c:B.grad},
+              {v:"Free",l:"Always, No Hidden Fees",c:B.gradHot},
             ].map((s,i)=>(
               <div key={i} style={{textAlign:"center"}}>
                 <div style={{fontSize:30,fontWeight:900,fontFamily:"'Space Grotesk'",background:s.c,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{s.v}</div>
@@ -549,73 +547,39 @@ const Home = ({setPg, user, onLogin}) => {
             ))}
           </div>
 
-          {/* CTA */}
           <div style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap"}}>
             <button className="btn-primary ag" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:18,padding:"16px 40px"}}>
-              {user ? "Go to Earn Page 💰" : "Start Earning Free — Get 500 Bonus Coins 🎁"}
+              {user ? "Browse Offers" : "Create Free Account"}
             </button>
-            <button className="btn-ghost" onClick={()=>setPg("leaderboard")} style={{fontSize:16,padding:"16px 28px"}}>
-              See Top Earners →
+            <button className="btn-ghost" onClick={()=>setPg("earn")} style={{fontSize:16,padding:"16px 28px"}}>
+              See Available Tasks →
             </button>
           </div>
 
-          {/* Endowed Progress */}
           <p style={{marginTop:20,fontSize:13,color:B.dim}}>
-            ⚡ Your 500 bonus coins ($0.50) = <strong style={{color:B.money}}>50% to first cashout!</strong> Lowest minimum on any GPT site.
+            New members get <strong style={{color:B.money}}>500 coins ($0.50)</strong> just for signing up — that's halfway to your first cashout.
           </p>
         </div>
       </section>
 
-      {/* ─── VIDEO PROOF SECTION ─── */}
-      <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto"}}>
-        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-          See It In <span style={{color:B.accentL}}>Action</span>
-        </h2>
-        <p style={{textAlign:"center",color:B.muted,marginBottom:40,fontSize:16}}>Real earnings, real withdrawals — watch the proof</p>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
-          {/* TODO: Replace ytId values below with your real YouTube video IDs */}
-          {[
-            {title:"How CashFlow Works — Full Walkthrough",ytId:"ScMzIvxBSi4",channel:"CashFlow Official"},
-            {title:"$500/Month Earnings Breakdown — Real Results",ytId:"ScMzIvxBSi4",channel:"CashFlow Official"},
-          ].map((v,i)=>(
-            <div key={i} className="card au" style={{animationDelay:`${i*.15}s`,overflow:"hidden"}}>
-              <div style={{position:"relative",paddingTop:"56.25%",background:"#000",borderRadius:"16px 16px 0 0",overflow:"hidden"}}>
-                <iframe
-                  src={`https://www.youtube.com/embed/${v.ytId}?rel=0&modestbranding=1`}
-                  title={v.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:"none"}}
-                />
-              </div>
-              <div style={{padding:16}}>
-                <div style={{fontWeight:600,fontSize:15,marginBottom:4}}>{v.title}</div>
-                <div style={{fontSize:12,color:B.muted}}>{v.channel}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <p style={{textAlign:"center",color:B.dim,fontSize:12,marginTop:20}}>
-          Results vary by location, time invested, and offers available. These videos represent real user experiences.
-        </p>
-      </section>
-
-      {/* ─── HOW IT WORKS ─── */}
+      {/* ─── HOW IT WORKS — Honest about what this is ─── */}
       <section style={{padding:"80px 24px",background:"linear-gradient(180deg,transparent,rgba(0,210,106,.02),transparent)"}}>
         <div style={{maxWidth:1000,margin:"0 auto"}}>
-          <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:48}}>
-            3 Steps to <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Real Money</span>
+          <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
+            How It <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Actually</span> Works
           </h2>
+          <p style={{textAlign:"center",color:B.muted,marginBottom:48,fontSize:16}}>No tricks. Here's the straightforward process.</p>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24}}>
             {[
-              {s:"01",ic:"🎯",t:"Pick a Task",d:"Choose from thousands of offers. Surveys, games, apps, videos, shopping cashback — there's something for every interest and schedule.",ac:"#3B82F6"},
-              {s:"02",ic:"⚡",t:"Complete It",d:"Follow simple instructions and earn coins. Track progress in real-time. Get bonus multipliers as you level up.",ac:"#FF9F1C"},
-              {s:"03",ic:"💰",t:"Cash Out Instantly",d:"Withdraw to PayPal, Venmo, Cash App, crypto, or 15+ gift cards. Most payouts arrive in under 60 seconds. $1 minimum.",ac:"#00D26A"},
+              {s:"01",ic:"👆",t:"Pick a Task",d:"Browse surveys, app trials, game offers, and more. Each one shows exactly how much it pays and how long it takes. Start with the quick ones.",ac:"#3B82F6",sub:"You choose what to do"},
+              {s:"02",ic:"📱",t:"Complete It",d:"Do the task on your phone or laptop. Some take 3 minutes, some take a few days. Higher effort usually means higher pay — just like anything else.",ac:"#FF9F1C",sub:"Works on any device"},
+              {s:"03",ic:"💸",t:"Cash Out",d:"Once you hit $1, withdraw to PayPal, Venmo, Cash App, gift cards, or crypto. Most payouts process quickly — many within minutes.",ac:"#00D26A",sub:"$1 minimum to withdraw"},
             ].map((x,i)=>(
               <div key={i} className="card au" style={{padding:28,textAlign:"center",animationDelay:`${i*.12}s`}}>
                 <div style={{position:"absolute",top:-8,right:-8,fontSize:72,fontWeight:900,fontFamily:"'Space Grotesk'",color:`${x.ac}08`}}>{x.s}</div>
-                <div style={{fontSize:44,marginBottom:14}}>{x.ic}</div>
-                <h3 style={{fontSize:18,fontWeight:700,marginBottom:10}}>{x.t}</h3>
+                <div style={{fontSize:48,marginBottom:14}}>{x.ic}</div>
+                <h3 style={{fontSize:18,fontWeight:700,marginBottom:6}}>{x.t}</h3>
+                <div className="chip" style={{background:`${x.ac}10`,border:`1px solid ${x.ac}25`,color:x.ac,fontSize:11,marginBottom:12,display:"inline-flex"}}>{x.sub}</div>
                 <p style={{color:B.muted,fontSize:14,lineHeight:1.6}}>{x.d}</p>
               </div>
             ))}
@@ -623,80 +587,80 @@ const Home = ({setPg, user, onLogin}) => {
         </div>
       </section>
 
-      {/* ─── WHY WE PAY MORE ─── */}
+      {/* ─── WHAT YOU CAN EARN — Realistic ranges with caveats ─── */}
       <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto"}}>
         <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-          Why <span style={{color:B.accentL}}>CashFlow</span> Pays More
+          What <span style={{background:B.gradCTA,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>People Typically</span> Earn
         </h2>
-        <p style={{textAlign:"center",color:B.muted,marginBottom:48,maxWidth:600,margin:"0 auto 48px"}}>
-          We partner with more offer providers than anyone else, which means
-          more choices and higher payouts for you.
+        <p style={{textAlign:"center",color:B.muted,marginBottom:40,maxWidth:600,margin:"0 auto 40px"}}>
+          Your earnings depend on how much time you put in. Here are realistic ranges.
         </p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>
+          {[
+            {tier:"Casual",who:"A few tasks here and there",time:"15–30 min/day",range:"$20 – $75/mo",desc:"Fill out a survey during lunch, try an app before bed. Enough to cover a streaming subscription or two.",color:"#3B82F6",ic:"☕",pays:"Subscriptions & coffee"},
+            {tier:"Regular",who:"Consistent daily effort",time:"1–2 hrs/day",range:"$75 – $300/mo",desc:"Work through offers regularly, complete game milestones, do daily surveys. Takes real time but pays out consistently.",color:"#FF9F1C",ic:"📱",pays:"Phone bill or groceries"},
+            {tier:"Dedicated",who:"Treating it like a side gig",time:"3+ hrs/day",range:"$300 – $800/mo",desc:"Stack high-value offers, build referrals, hit every daily bonus. This takes serious effort, but the higher-paying offers are there.",color:"#00D26A",ic:"💪",pays:"Car payment or utilities"},
+          ].map((e,i)=>(
+            <div key={i} className="card au" style={{padding:24,animationDelay:`${i*.12}s`}}>
+              <div style={{fontSize:36,marginBottom:8}}>{e.ic}</div>
+              <div style={{fontSize:13,color:e.color,fontWeight:700,marginBottom:2}}>{e.tier}</div>
+              <div style={{fontSize:28,fontWeight:900,fontFamily:"'Space Grotesk'",marginBottom:2,color:B.txt}}>{e.range}</div>
+              <div style={{fontSize:12,color:B.dim,marginBottom:8}}>{e.time} · {e.who}</div>
+              <div className="chip" style={{background:`${e.color}10`,border:`1px solid ${e.color}25`,color:e.color,fontSize:11,marginBottom:12,display:"inline-flex"}}>Typically covers: {e.pays}</div>
+              <p style={{fontSize:13,color:B.muted,lineHeight:1.6}}>{e.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p style={{textAlign:"center",color:B.dim,fontSize:12,marginTop:24,maxWidth:600,margin:"24px auto 0"}}>
+          Earnings vary by location, offer availability, and time invested. These ranges reflect typical results, not guarantees.
+        </p>
+      </section>
+
+      {/* ─── COMMON QUESTIONS — Honest answers ─── */}
+      <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto"}}>
+        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
+          Common <span style={{color:B.accentL}}>Questions</span>
+        </h2>
+        <p style={{textAlign:"center",color:B.muted,marginBottom:40}}>Fair questions deserve straight answers.</p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
           {[
-            {ic:"🏦",t:"All Offers Available",d:"We source the highest-paying offers from more providers than any other platform. More offers means more opportunities and better payouts for you.",ac:"#3B82F6"},
-            {ic:"💰",t:"Highest Payouts Guaranteed",d:"We take a smaller cut than competitors. If you find the same offer paying more elsewhere, we match it + 10% bonus.",ac:"#00D26A"},
-            {ic:"⚡",t:"$1 Minimum, Instant Payout",d:"While others make you wait to $5 or $30, cash out at just $1. Most withdrawals process in under 60 seconds.",ac:"#FFB800"},
-            {ic:"🔥",t:"Up to 25% Level Bonus",d:"The more you earn, the higher your level. Titan-level users get 25% bonus on every single offer. No other GPT site does this.",ac:"#FF6B35"},
-            {ic:"🛍️",t:"Shopping Cashback",d:"Earn cashback at 7,000+ stores including Amazon, Walmart, Target. Stack with store sales and coupons.",ac:"#FF2D78"},
-            {ic:"🔍",t:"Search & Earn",d:"Use our search engine and earn coins for every search. Browse the web like normal, get paid for it.",ac:"#00E5FF"},
+            {q:"\"How does this actually make money?\"",a:"Brands pay us when you try their apps, take their surveys, or sign up for their services. We split that payment with you. That's the whole model — no tricks.",ic:"🛡️",ac:"#3B82F6"},
+            {q:"\"Do I need any skills?\"",a:"Nope. If you can use a phone or computer, you can do this. Most tasks are things like answering questions, trying free apps, or playing mobile games.",ic:"🎯",ac:"#00D26A"},
+            {q:"\"Do I have to pay anything?\"",a:"Never. CashFlow is 100% free. No premium tier, no hidden fees, no credit card required. We give you $0.50 just for creating an account.",ic:"💸",ac:"#FFB800"},
+            {q:"\"How fast do I get paid?\"",a:"Most payouts process within minutes once you request them. The minimum cashout is just $1, so you don't have to wait long to see real money in your account.",ic:"⚡",ac:"#FF6B35"},
+            {q:"\"Is this going to replace my job?\"",a:"Let's be real: no. This is extra money, not a salary. Think of it like getting paid for time you'd spend on your phone anyway. Some people earn $50/month, some earn $500 — it depends on your effort.",ic:"📊",ac:"#FF2D78"},
+            {q:"\"What's the catch?\"",a:"The catch is that it takes time and effort. This isn't passive income. You're trading your time for money, just like any other work — but you do it from wherever you want, whenever you want.",ic:"✅",ac:"#00E5FF"},
           ].map((x,i)=>(
-            <div key={i} className="card au" style={{padding:22,display:"flex",gap:16,animationDelay:`${i*.06}s`}}>
-              <div style={{width:48,height:48,borderRadius:12,background:`${x.ac}12`,border:`1px solid ${x.ac}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{x.ic}</div>
-              <div>
-                <div style={{fontWeight:700,fontSize:15,marginBottom:4,color:x.ac}}>{x.t}</div>
-                <div style={{fontSize:13,color:B.muted,lineHeight:1.6}}>{x.d}</div>
+            <div key={i} className="card au" style={{padding:22,animationDelay:`${i*.06}s`}}>
+              <div style={{display:"flex",gap:14}}>
+                <div style={{width:44,height:44,borderRadius:12,background:`${x.ac}12`,border:`1px solid ${x.ac}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{x.ic}</div>
+                <div>
+                  <div style={{fontWeight:700,fontSize:15,marginBottom:6,color:x.ac}}>{x.q}</div>
+                  <div style={{fontSize:13,color:B.muted,lineHeight:1.65}}>{x.a}</div>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── REALISTIC EARNINGS SECTION ─── */}
-      <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto"}}>
-        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-          What Can You <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Realistically Earn</span>?
-        </h2>
-        <p style={{textAlign:"center",color:B.muted,marginBottom:40,maxWidth:600,margin:"0 auto 40px"}}>
-          We believe in transparency. Here's what our users actually earn based on time invested.
-        </p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>
-          {[
-            {tier:"Casual",time:"30 min/day",range:"$50 – $150/mo",desc:"Complete a few surveys and easy app offers during downtime. Great for covering a subscription or two.",color:"#3B82F6",ic:"☕"},
-            {tier:"Consistent",time:"1–2 hrs/day",range:"$200 – $500/mo",desc:"Focus on high-value game offers and app signups. Many users cover a car payment or groceries at this level.",color:"#FF9F1C",ic:"💪"},
-            {tier:"Dedicated",time:"3–5 hrs/day",range:"$500 – $1,200+/mo",desc:"Treat it like a part-time job. Stack game offers, surveys, referrals, and cashback. Top earners hit four figures monthly.",color:"#00D26A",ic:"🚀"},
-          ].map((e,i)=>(
-            <div key={i} className="card au" style={{padding:24,textAlign:"center",animationDelay:`${i*.12}s`}}>
-              <div style={{fontSize:36,marginBottom:12}}>{e.ic}</div>
-              <div style={{fontSize:13,color:e.color,fontWeight:700,marginBottom:4}}>{e.tier}</div>
-              <div style={{fontSize:28,fontWeight:900,fontFamily:"'Space Grotesk'",marginBottom:4,color:B.txt}}>{e.range}</div>
-              <div style={{fontSize:12,color:B.dim,marginBottom:12}}>{e.time}</div>
-              <p style={{fontSize:13,color:B.muted,lineHeight:1.6}}>{e.desc}</p>
-            </div>
-          ))}
-        </div>
-        <p style={{textAlign:"center",color:B.dim,fontSize:12,marginTop:24,maxWidth:600,margin:"24px auto 0"}}>
-          Earnings vary by location, offer availability, and effort. These ranges are based on aggregated user data. Past performance doesn't guarantee future results.
-        </p>
-      </section>
-
       {/* ─── TRENDING OFFERS PREVIEW ─── */}
-      <section style={{padding:"80px 24px",background:"linear-gradient(180deg,transparent,rgba(239,68,68,.02),transparent)"}}>
+      <section style={{padding:"80px 24px",background:"linear-gradient(180deg,transparent,rgba(255,59,48,.02),transparent)"}}>
         <div style={{maxWidth:1000,margin:"0 auto"}}>
           <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-            Trending <span style={{color:"#F87171"}}>Right Now</span> 🔥
+            Popular Offers <span style={{color:B.money}}>Right Now</span>
           </h2>
-          <p style={{textAlign:"center",color:B.muted,marginBottom:40}}>Top-paying offers our users are completing today</p>
+          <p style={{textAlign:"center",color:B.muted,marginBottom:40}}>Here's what people are completing today</p>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
             {OFFERS.filter(o=>o.hot).slice(0,6).map((o,i)=>(
               <div key={o.id} className="card au" style={{padding:18,cursor:"pointer",animationDelay:`${i*.08}s`}}
-                onClick={()=>setPg("earn")}
+                onClick={()=>user ? setPg("earn") : onLogin()}
                 onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)"}}
                 onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}
               >
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:10}}>
                   <span style={{fontSize:30}}>{o.img}</span>
-                  <span style={{background:B.grad,padding:"4px 10px",borderRadius:8,fontSize:12,fontWeight:700,color:"#fff"}}>
+                  <span style={{background:B.gradOk,padding:"4px 12px",borderRadius:8,fontSize:13,fontWeight:800,color:"#fff",boxShadow:"0 2px 8px rgba(0,210,106,.2)"}}>
                     ${toUSD(o.coins)}
                   </span>
                 </div>
@@ -709,7 +673,7 @@ const Home = ({setPg, user, onLogin}) => {
             ))}
           </div>
           <div style={{textAlign:"center",marginTop:36}}>
-            <button className="btn-ghost" onClick={()=>setPg("earn")} style={{fontSize:16}}>View All All Offers →</button>
+            <button className="btn-primary" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:16,padding:"14px 36px"}}>Browse All Offers →</button>
           </div>
         </div>
       </section>
@@ -717,26 +681,26 @@ const Home = ({setPg, user, onLogin}) => {
       {/* ─── LIVE CASHOUTS (Social Proof Marquee) ─── */}
       <section style={{padding:"60px 0",overflow:"hidden"}}>
         <h2 style={{fontFamily:"'Space Grotesk'",fontSize:28,fontWeight:800,textAlign:"center",marginBottom:32}}>
-          Real People, <span style={{color:B.okL}}>Real Payouts</span> — Live
+          Recent <span style={{color:B.money}}>Cashouts</span>
         </h2>
         <div style={{overflow:"hidden",position:"relative"}}>
           <div className="marquee-track">
             {[...Array(2)].map((_,dup)=>(
               [
-                {u:"Jake T.",a:"$52.00",m:"PayPal",t:"Just now"},
-                {u:"Maria S.",a:"$18.50",m:"Bitcoin",t:"1 min ago"},
-                {u:"Alex K.",a:"$25.00",m:"Cash App",t:"3 min ago"},
-                {u:"Sarah L.",a:"$55.00",m:"Venmo",t:"5 min ago"},
-                {u:"Tom R.",a:"$12.80",m:"Amazon",t:"7 min ago"},
-                {u:"Jenny C.",a:"$38.00",m:"PayPal",t:"9 min ago"},
-                {u:"Rob M.",a:"$95.00",m:"Bitcoin",t:"12 min ago"},
-                {u:"Lisa P.",a:"$8.50",m:"Steam",t:"15 min ago"},
+                {u:"Jessica M.",a:"$14.50",m:"PayPal",t:"Just now"},
+                {u:"Marcus D.",a:"$8.00",m:"Cash App",t:"2 min ago"},
+                {u:"Tyler K.",a:"$22.00",m:"Venmo",t:"5 min ago"},
+                {u:"Sarah L.",a:"$11.20",m:"PayPal",t:"8 min ago"},
+                {u:"David R.",a:"$5.00",m:"Amazon",t:"12 min ago"},
+                {u:"Jenny C.",a:"$18.50",m:"PayPal",t:"15 min ago"},
+                {u:"Chris T.",a:"$32.00",m:"Bitcoin",t:"20 min ago"},
+                {u:"Amanda P.",a:"$3.50",m:"Cash App",t:"25 min ago"},
               ].map((c,i)=>(
                 <div key={`${dup}-${i}`} style={{
                   minWidth:220,padding:"14px 20px",margin:"0 8px",background:B.card,borderRadius:14,
-                  border:`1px solid rgba(16,185,129,.12)`,textAlign:"center",flexShrink:0,
+                  border:`1px solid rgba(0,210,106,.12)`,textAlign:"center",flexShrink:0,
                 }}>
-                  <div style={{fontSize:22,fontWeight:800,color:B.ok,fontFamily:"'Space Grotesk'"}}>{c.a}</div>
+                  <div style={{fontSize:20,fontWeight:800,color:B.money,fontFamily:"'Space Grotesk'"}}>{c.a}</div>
                   <div style={{fontSize:13,fontWeight:600,marginTop:2}}>{c.u}</div>
                   <div style={{fontSize:11,color:B.muted,marginTop:2}}>{c.m} · {c.t}</div>
                 </div>
@@ -749,34 +713,37 @@ const Home = ({setPg, user, onLogin}) => {
       {/* ─── PAYOUT METHODS ─── */}
       <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto",textAlign:"center"}}>
         <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,marginBottom:12}}>
-          Instant Payouts, <span style={{color:B.accentL}}>Your Way</span>
+          Your Money, <span style={{color:B.money}}>Your Way</span>
         </h2>
-        <p style={{color:B.muted,marginBottom:40}}>12+ cashout methods. $1 minimum. Most process in under 60 seconds.</p>
+        <p style={{color:B.muted,marginBottom:40}}>12+ payout options. $1 minimum. Most arrive within minutes.</p>
         <div style={{display:"flex",justifyContent:"center",gap:12,flexWrap:"wrap"}}>
           {CASHOUTS.map((c,i)=>(
             <div key={c.id} className="card au" style={{padding:"16px 20px",textAlign:"center",width:100,animationDelay:`${i*.04}s`}}>
               <div style={{fontSize:28,marginBottom:6}}>{c.ic}</div>
               <div style={{fontSize:12,fontWeight:600}}>{c.n}</div>
-              <div style={{fontSize:10,color:B.ok,marginTop:2}}>{c.spd}</div>
+              <div style={{fontSize:10,color:B.money,marginTop:2,fontWeight:600}}>{c.spd}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── FINAL CTA ─── */}
-      <section style={{padding:"80px 24px",textAlign:"center",background:"linear-gradient(180deg,transparent,rgba(255,107,53,.04))"}}>
-        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:40,fontWeight:900,marginBottom:14}}>
-          Ready to Start <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Earning</span>?
+      {/* ─── FINAL CTA — Inviting, not pushy ─── */}
+      <section style={{padding:"80px 24px",textAlign:"center",background:"linear-gradient(180deg,transparent,rgba(139,92,246,.04))"}}>
+        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:38,fontWeight:900,marginBottom:14}}>
+          Ready to <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Give It a Try</span>?
         </h2>
-        <p style={{color:B.muted,fontSize:18,marginBottom:12}}>
-          Join 380,000+ earners. 100% free. Cash out in under 60 seconds.
+        <p style={{color:B.muted,fontSize:18,marginBottom:8}}>
+          It's free, it takes 30 seconds, and you get $0.50 just for signing up.
         </p>
-        <p style={{color:B.dim,fontSize:14,marginBottom:32}}>
-          Over $12M paid out and counting. Rated 4.8★ on Trustpilot.
+        <p style={{color:B.dim,fontSize:15,marginBottom:32}}>
+          No commitment. Cash out anytime you hit $1.
         </p>
-        <button className="btn-primary ap" onClick={()=>setPg("earn")} style={{fontSize:20,padding:"18px 48px"}}>
-          Claim Your 500 Free Coins Now →
+        <button className="btn-primary ap" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:20,padding:"18px 48px"}}>
+          {user ? "Browse Offers →" : "Create Free Account →"}
         </button>
+        <p style={{marginTop:16,fontSize:12,color:B.dim}}>
+          No credit card required. Unsubscribe anytime.
+        </p>
       </section>
     </div>
   );

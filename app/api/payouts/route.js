@@ -28,8 +28,8 @@ export async function POST(request) {
   }
 
   const MINIMUMS = {
-    paypal: 1000, venmo: 1000, cashapp: 1000, btc: 2000, eth: 2000, usdt: 2000,
-    amazon: 1000, visa: 5000, steam: 1000, apple: 1000, google: 1000, walmart: 1000,
+    paypal: 5000, venmo: 5000, cashapp: 5000, btc: 5000, eth: 5000, usdt: 5000,
+    amazon: 5000, visa: 10000, steam: 5000, apple: 5000, google: 5000, walmart: 5000,
   };
 
   if (!MINIMUMS[method]) return NextResponse.json({ error: 'Invalid method' }, { status: 400 });
@@ -37,6 +37,19 @@ export async function POST(request) {
   if (user.coins < coins) return NextResponse.json({ error: 'Insufficient balance' }, { status: 400 });
 
   const db = createServiceClient();
+
+  // Require minimum offerwall earnings before ANY cashout
+  const { data: offerEarnings } = await db
+    .from('transactions')
+    .select('coins')
+    .eq('user_id', user.id)
+    .eq('type', 'offer_credit');
+  const totalOfferEarnings = (offerEarnings || []).reduce((sum, t) => sum + t.coins, 0);
+  if (totalOfferEarnings < 5000) {
+    return NextResponse.json({
+      error: 'You need to earn at least 5,000 coins from offers before you can cash out. Keep completing offers!'
+    }, { status: 400 });
+  }
   const usd_amount = (coins / 1000).toFixed(2);
 
   // Debit coins

@@ -104,7 +104,7 @@ const OFFERS = [
   { id:15, t:"Robinhood — Sign Up & Deposit",      cat:"crypto",   coins:48000, time:"10 min",  diff:"Medium", img:"📈", wall:"TyrAds",            pop:89, rate:80, hot:true },
   { id:16, t:"Swagbucks Search — 10 Searches",     cat:"search",   coins:500,   time:"5 min",   diff:"Easy",   img:"🔍", wall:"Direct",            pop:70, rate:99, hot:false },
   { id:17, t:"Amazon Cashback — Any Purchase",     cat:"shopping", coins:0,     time:"Varies",  diff:"Easy",   img:"🛒", wall:"Direct",            pop:96, rate:100,hot:false, cashback:"Up to 8%" },
-  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:10000, time:"1 min",   diff:"Easy",   img:"🤝", wall:"PocketLined",          pop:94, rate:100,hot:true },
+  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:500, time:"1 min",   diff:"Easy",   img:"🤝", wall:"PocketLined",          pop:94, rate:100,hot:true },
   { id:19, t:"Daily Trivia — 5 Questions",         cat:"tasks",    coins:600,   time:"2 min",   diff:"Easy",   img:"🧠", wall:"Direct",            pop:83, rate:96, hot:false },
   { id:20, t:"Norton VPN — Free Trial + Use 3 Days",cat:"apps",    coins:35000, time:"3 days",  diff:"Easy",   img:"🔒", wall:"Lootably",          pop:80, rate:74, hot:false },
 ];
@@ -125,18 +125,18 @@ const LEADERS = [
 
 // ─── CASHOUT OPTIONS ───
 const CASHOUTS = [
-  { id:"paypal",  n:"PayPal",        ic:"💳", min:1000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"venmo",   n:"Venmo",         ic:"📲", min:1000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"cashapp", n:"Cash App",      ic:"💵", min:1000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"btc",     n:"Bitcoin",       ic:"₿",  min:2000,  fee:"0%", spd:"~5 min",    pop:true },
-  { id:"eth",     n:"Ethereum",      ic:"⟠",  min:2000,  fee:"0%", spd:"~3 min",    pop:false },
-  { id:"usdt",    n:"USDT",          ic:"💲", min:2000,  fee:"0%", spd:"~3 min",    pop:false },
-  { id:"amazon",  n:"Amazon",        ic:"📦", min:1000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"visa",    n:"Visa Prepaid",  ic:"💳", min:5000,  fee:"1%", spd:"1-2 days",  pop:false },
-  { id:"steam",   n:"Steam",         ic:"🎮", min:1000,  fee:"0%", spd:"Instant",   pop:false },
-  { id:"apple",   n:"Apple",         ic:"🍎", min:1000,  fee:"0%", spd:"Instant",   pop:false },
-  { id:"google",  n:"Google Play",   ic:"▶️",  min:1000,  fee:"0%", spd:"Instant",   pop:false },
-  { id:"walmart", n:"Walmart",       ic:"🏬", min:1000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"paypal",  n:"PayPal",        ic:"💳", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"venmo",   n:"Venmo",         ic:"📲", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"cashapp", n:"Cash App",      ic:"💵", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"btc",     n:"Bitcoin",       ic:"₿",  min:5000,  fee:"0%", spd:"~5 min",    pop:true },
+  { id:"eth",     n:"Ethereum",      ic:"⟠",  min:5000,  fee:"0%", spd:"~3 min",    pop:false },
+  { id:"usdt",    n:"USDT",          ic:"💲", min:5000,  fee:"0%", spd:"~3 min",    pop:false },
+  { id:"amazon",  n:"Amazon",        ic:"📦", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"visa",    n:"Visa Prepaid",  ic:"💳", min:10000, fee:"1%", spd:"1-2 days",  pop:false },
+  { id:"steam",   n:"Steam",         ic:"🎮", min:5000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"apple",   n:"Apple",         ic:"🍎", min:5000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"google",  n:"Google Play",   ic:"▶️",  min:5000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"walmart", n:"Walmart",       ic:"🏬", min:5000,  fee:"0%", spd:"Instant",   pop:false },
 ];
 
 // ─── LIVE FEED (Realistic amounts based on actual GPT payouts) ───
@@ -563,7 +563,7 @@ const Home = ({setPg, user, onLogin}) => {
           </div>
 
           <p style={{marginTop:20,fontSize:13,color:B.dim}}>
-            New members get <strong style={{color:B.money}}>500 coins ($0.50)</strong> just for signing up — that's halfway to your first cashout.
+            New members get <strong style={{color:B.money}}>250 coins ($0.25)</strong> just for signing up — a head start on your earnings.
           </p>
         </div>
       </section>
@@ -1072,6 +1072,7 @@ const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
             ))}
 
             <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>🎰 Daily Spin</h3>
+            <p style={{fontSize:11,color:B.dim,marginBottom:12}}>Complete offers for 1,000+ coins to unlock your daily spin</p>
 
             {/* Spin wheel */}
             <div style={{
@@ -1131,7 +1132,7 @@ const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
           <div className="card au" style={{padding:22,marginBottom:20,animationDelay:".12s"}}>
             <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>⚡ Quick Earn</h3>
             {[
-              {ic:"🤝",l:"Refer a Friend",c:"+$10.00",t:"1 min",hot:true},
+              {ic:"🤝",l:"Refer a Friend",c:"+$0.50 + 5% forever",t:"1 min",hot:true},
               {ic:"📱",l:"Try New App",c:"+$3.00",t:"10 min",hot:false},
               {ic:"📋",l:"Quick Survey",c:"+$1.50",t:"5 min",hot:false},
               {ic:"📺",l:"Watch Videos",c:"+$0.80",t:"6 min",hot:false},
@@ -1162,7 +1163,7 @@ const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
 
           {/* Referral Nudge — full card lives on Profile */}
           <div className="card au" style={{padding:16,background:"linear-gradient(135deg,rgba(236,72,153,.04),rgba(124,58,237,.04))",border:"1px solid rgba(236,72,153,.1)",animationDelay:".16s",textAlign:"center"}}>
-            <p style={{fontSize:12,color:B.muted,margin:0}}>💡 Earn <strong style={{color:"#EC4899"}}>$10 per friend</strong> you refer — grab your link on your <strong onClick={()=>setPg("profile")} style={{color:B.accentL,cursor:"pointer",textDecoration:"underline",textDecorationStyle:"dotted"}}>Profile page</strong></p>
+            <p style={{fontSize:12,color:B.muted,margin:0}}>💡 Earn <strong style={{color:"#EC4899"}}>$0.50 + 5% of their earnings</strong> per friend you refer — grab your link on your <strong onClick={()=>setPg("profile")} style={{color:B.accentL,cursor:"pointer",textDecoration:"underline",textDecorationStyle:"dotted"}}>Profile page</strong></p>
           </div>
         </div>
       </div>
@@ -1493,7 +1494,7 @@ const Profile = ({coins,streak,today,week,user}) => {
             {t:"7-day streak bonus",c:"+1,200",time:"Yesterday",ic:"🔥",col:B.ok},
             {t:"Daily spin reward",c:"+2,000",time:"Yesterday",ic:"🎰",col:B.ok},
             {t:"Watched 5 videos",c:"+900",time:"2 days ago",ic:"📺",col:B.ok},
-            {t:"Referred Alex K.",c:"+10,000",time:"3 days ago",ic:"👥",col:B.ok},
+            {t:"Referred Alex K.",c:"+500",time:"3 days ago",ic:"👥",col:B.ok},
           ].map((a,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 0",borderBottom:i<6?`1px solid rgba(255,255,255,.03)`:"none"}}>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
@@ -1513,7 +1514,7 @@ const Profile = ({coins,streak,today,week,user}) => {
           {/* Referral Program */}
           <div className="card au" style={{padding:22,marginBottom:16,background:"linear-gradient(135deg,rgba(236,72,153,.04),rgba(124,58,237,.04))",border:"1px solid rgba(236,72,153,.12)",animationDelay:".12s"}}>
             <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>👥 Your Referral Link</h3>
-            <p style={{fontSize:12,color:B.muted,marginBottom:12}}>Earn <strong style={{color:"#EC4899"}}>$10 per referral</strong> + 5% of everything they earn. Forever.</p>
+            <p style={{fontSize:12,color:B.muted,marginBottom:12}}>Earn <strong style={{color:"#EC4899"}}>$0.50 per referral</strong> + 5% of their offerwall earnings. Forever.</p>
             <div style={{background:"rgba(0,0,0,.25)",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
               <code style={{fontSize:12,color:B.accentL}}>pocketlined.com/ref/andrew</code>
               <button style={{background:B.grad,border:"none",padding:"6px 14px",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>Copy</button>

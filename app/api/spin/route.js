@@ -22,9 +22,22 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Already spun today' }, { status: 429 });
   }
 
+  // Require minimum offerwall earnings before spinning
+  const { data: offerTransactions } = await db
+    .from('transactions')
+    .select('coins')
+    .eq('user_id', user.id)
+    .eq('type', 'offer_credit')
+    .gte('created_at', today + 'T00:00:00')
+    .lte('created_at', today + 'T23:59:59');
+  const totalOfferCoins = (offerTransactions || []).reduce((sum, t) => sum + t.coins, 0);
+  if (totalOfferCoins < 1000) {
+    return NextResponse.json({ error: 'You need to earn at least 1,000 coins from offers today before you can spin' }, { status: 400 });
+  }
+
   // Variable ratio reinforcement — unpredictable rewards
   const roll = Math.random();
-  const coins = roll < 0.02 ? 50000 : roll < 0.08 ? 10000 : roll < 0.20 ? 5000 : roll < 0.40 ? 2000 : roll < 0.65 ? 1000 : 500;
+  const coins = roll < 0.01 ? 5000 : roll < 0.05 ? 1000 : roll < 0.15 ? 500 : roll < 0.35 ? 250 : roll < 0.60 ? 100 : 50;
 
   // Record spin
   await db.from('daily_spins').insert({ user_id: user.id, coins_won: coins, spin_date: today });

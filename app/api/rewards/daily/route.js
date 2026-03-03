@@ -72,8 +72,8 @@ export async function POST(request) {
     }
 
     const roll = Math.random();
-    const mult = roll < 0.1 ? 10 : roll < 0.25 ? 5 : roll < 0.45 ? 3 : roll < 0.7 ? 2 : 1;
-    const coins = 200 * mult;
+    const mult = roll < 0.05 ? 5 : roll < 0.15 ? 3 : roll < 0.35 ? 2 : roll < 0.65 ? 1.5 : 1;
+    const coins = Math.round(150 * mult);
 
     await creditCoins(db, user.id, coins, 'streak_bonus', `Streak bonus: ${coins.toLocaleString()} coins (streak cycle ${cycle})`);
 

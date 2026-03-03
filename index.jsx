@@ -943,15 +943,9 @@ const Dash = ({coins,streak,today,week,setPg}) => {
             ))}
           </div>
 
-          {/* Referral Card */}
-          <div className="card au" style={{padding:22,background:"linear-gradient(135deg,rgba(236,72,153,.06),rgba(124,58,237,.06))",border:"1px solid rgba(236,72,153,.15)",animationDelay:".16s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>👥 Referral Program</h3>
-            <p style={{fontSize:12,color:B.muted,marginBottom:12}}>Earn <strong style={{color:"#EC4899"}}>$10 per referral</strong> + 5% of their lifetime earnings. Forever.</p>
-            <div style={{background:"rgba(0,0,0,.2)",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-              <code style={{fontSize:12,color:B.accentL}}>cashflow.com/ref/andrew</code>
-              <button style={{background:B.grad,border:"none",padding:"6px 14px",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>Copy</button>
-            </div>
-            <div style={{fontSize:11,color:B.muted}}>Your referrals: <strong style={{color:B.txt}}>12 users</strong> · Earned: <strong style={{color:B.ok}}>$186.40</strong></div>
+          {/* Referral Nudge — full card lives on Profile */}
+          <div className="card au" style={{padding:16,background:"linear-gradient(135deg,rgba(236,72,153,.04),rgba(124,58,237,.04))",border:"1px solid rgba(236,72,153,.1)",animationDelay:".16s",textAlign:"center"}}>
+            <p style={{fontSize:12,color:B.muted,margin:0}}>💡 Earn <strong style={{color:"#EC4899"}}>$10 per friend</strong> you refer — grab your link on your <strong onClick={()=>setPg("profile")} style={{color:B.accentL,cursor:"pointer",textDecoration:"underline",textDecorationStyle:"dotted"}}>Profile page</strong></p>
           </div>
         </div>
       </div>

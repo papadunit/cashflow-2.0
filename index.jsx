@@ -1170,12 +1170,105 @@ const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  PAGE: EARN
+//  PAGE: EARN — Real Offerwall Integration
 // ═══════════════════════════════════════════════════════════════
-const Earn = ({onEarn}) => {
+// Each offerwall loads via iframe with the user's ID passed as a param.
+// Offerwalls fire server-to-server postbacks to /api/postback when
+// users complete offers. Coins are credited automatically.
+//
+// SETUP: For each wall, create an account and plug your API key / secret
+// into Vercel env vars. Set the postback URL in each wall's dashboard to:
+//   https://YOUR-DOMAIN.com/api/postback?wall=WALL_NAME&user_id={user_id}&amount={points}&txn_id={transaction_id}&offer_id={offer_id}&offer_name={offer_name}&revenue={payout}&secret=YOUR_SECRET
+//
+// Walls that are not configured yet show a placeholder card instead of iframe.
+
+// Offerwall config — reads NEXT_PUBLIC_* env vars at build time.
+// When you plug in a real key, the wall auto-activates (no code changes needed).
+const _e = (k) => typeof process!=="undefined" && process.env ? process.env[k] : undefined;
+
+const OFFERWALLS = [
+  {
+    id: "adgate",  name: "AdGate Media", icon: "🛡️", color: "#3B82F6",
+    desc: "Premium offers, surveys & app installs",
+    key: _e("NEXT_PUBLIC_ADGATE_WALL_CODE"),
+    iframeUrl: (uid, k) => `https://wall.adgatemedia.com/${k}/${uid}`,
+  },
+  {
+    id: "adgem",  name: "AdGem", icon: "💎", color: "#8B5CF6",
+    desc: "High-converting games & app offers",
+    key: _e("NEXT_PUBLIC_ADGEM_APP_ID"),
+    iframeUrl: (uid, k) => `https://api.adgem.com/v1/wall?appid=${k}&playerid=${uid}`,
+  },
+  {
+    id: "offertoro", name: "OfferToro", icon: "🐂", color: "#FF6B35",
+    desc: "Global offers with high payouts",
+    key: _e("NEXT_PUBLIC_OFFERTORO_PUB_ID"),
+    key2: _e("NEXT_PUBLIC_OFFERTORO_APP_ID"),
+    iframeUrl: (uid, k, k2) => `https://www.offertoro.com/ifr/show/${k}/${k2||"1"}/${uid}/0`,
+  },
+  {
+    id: "lootably", name: "Lootably", icon: "🎁", color: "#00D26A",
+    desc: "Rewarded surveys & video offers",
+    key: _e("NEXT_PUBLIC_LOOTABLY_PLACEMENT"),
+    iframeUrl: (uid, k) => `https://wall.lootably.com/?placementID=${k}&sid=${uid}`,
+  },
+  {
+    id: "ayet", name: "Ayet Studios", icon: "🎮", color: "#A855F7",
+    desc: "Top mobile game offers",
+    key: _e("NEXT_PUBLIC_AYET_APP_KEY"),
+    iframeUrl: (uid, k) => `https://www.ayetstudios.com/offers/web_offerwall/${k}?external_identifier=${uid}`,
+  },
+  {
+    id: "cpxresearch", name: "CPX Research", icon: "📊", color: "#FF9F1C",
+    desc: "Paid surveys from top researchers",
+    key: _e("NEXT_PUBLIC_CPX_APP_ID"),
+    iframeUrl: (uid, k) => `https://offers.cpx-research.com/index.php?app_id=${k}&ext_user_id=${uid}`,
+  },
+  {
+    id: "bitlabs", name: "BitLabs", icon: "🧪", color: "#00E5FF",
+    desc: "Surveys & offers with instant credit",
+    key: _e("NEXT_PUBLIC_BITLABS_TOKEN"),
+    iframeUrl: (uid, k) => `https://web.bitlabs.ai/?uid=${uid}&token=${k}`,
+  },
+  {
+    id: "theoremreach", name: "TheoremReach", icon: "📋", color: "#FF2D78",
+    desc: "Quick surveys, paid instantly",
+    key: _e("NEXT_PUBLIC_THEOREMREACH_KEY"),
+    iframeUrl: (uid, k) => `https://theoremreach.com/respondent_entry/direct?api_key=${k}&user_id=${uid}`,
+  },
+  {
+    id: "revenueuniverse", name: "Revenue Universe", icon: "🌐", color: "#FFB800",
+    desc: "Diverse offers from top advertisers",
+    key: _e("NEXT_PUBLIC_RU_APP_HASH"),
+    iframeUrl: (uid, k) => `https://wall.revenueuniverse.com/wall/${k}?uid=${uid}`,
+  },
+  {
+    id: "pollfish", name: "Pollfish", icon: "📝", color: "#4ADE80",
+    desc: "Market research surveys",
+    key: _e("NEXT_PUBLIC_POLLFISH_KEY"),
+    iframeUrl: (uid, k) => `https://wss.pollfish.com/v2/device/register/true?api_key=${k}&request_uuid=${uid}`,
+  },
+  {
+    id: "torox", name: "Torox", icon: "⚡", color: "#FF3B30",
+    desc: "Performance-based CPI offers",
+    key: _e("NEXT_PUBLIC_TOROX_PUB_ID"),
+    iframeUrl: (uid, k) => `https://torfrnt.com/offerwall?pubid=${k}&sid=${uid}`,
+  },
+  {
+    id: "tyrads", name: "TyrAds", icon: "🏹", color: "#6366F1",
+    desc: "Premium mobile CPI campaigns",
+    key: _e("NEXT_PUBLIC_TYRADS_KEY"),
+    iframeUrl: (uid, k) => `https://www.tyrads.com/api/v1/offerwall?apiKey=${k}&userId=${uid}`,
+  },
+];
+
+const Earn = ({onEarn, user}) => {
+  const [activeWall, setActiveWall] = useState(null);
+  const [tab, setTab] = useState("walls"); // "walls" | "featured"
   const [cat,setCat] = useState("featured");
   const [sort,setSort] = useState("pop");
   const [search,setSearch] = useState("");
+  const uid = user?.id || "demo";
 
   const filtered = useMemo(()=>{
     return OFFERS
@@ -1184,54 +1277,157 @@ const Earn = ({onEarn}) => {
       .sort((a,b)=>sort==="pop"?b.pop-a.pop:sort==="pay"?b.coins-a.coins:b.rate-a.rate);
   },[cat,sort,search]);
 
+  // Wall is configured if its env var key is set to something real (not placeholder)
+  const isConfigured = (wall) => {
+    const k = wall.key;
+    return k && k.length > 3 && !k.startsWith("your-");
+  };
+
   return (
     <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
       <div className="au" style={{marginBottom:24}}>
         <h1 style={{fontFamily:"'Space Grotesk'",fontSize:26,fontWeight:800}}>Earn Coins 💰</h1>
-        <p style={{color:B.muted,fontSize:14}}>Browse thousands of ways to earn — new offers added daily</p>
+        <p style={{color:B.muted,fontSize:14}}>Complete offers, surveys, and app installs to earn real coins</p>
       </div>
 
-      {/* AI Recommendation */}
-      <div className="card au" style={{padding:"16px 22px",marginBottom:22,display:"flex",alignItems:"center",justifyContent:"space-between",background:"linear-gradient(135deg,rgba(124,58,237,.08),rgba(96,165,250,.08))",border:"1px solid rgba(124,58,237,.15)"}}>
+      {/* Tab Toggle: Offerwalls vs Featured Offers */}
+      <div style={{display:"flex",gap:4,marginBottom:22,background:B.card,borderRadius:12,padding:4,border:`1px solid ${B.border}`}}>
+        <button onClick={()=>{setTab("walls");setActiveWall(null);}} style={{
+          flex:1,padding:"10px 16px",borderRadius:10,fontSize:13,fontWeight:600,cursor:"pointer",border:"none",transition:"all .2s",
+          background:tab==="walls"?B.grad:"transparent",color:tab==="walls"?"#fff":B.muted,
+        }}>🏢 Offerwalls</button>
+        <button onClick={()=>setTab("featured")} style={{
+          flex:1,padding:"10px 16px",borderRadius:10,fontSize:13,fontWeight:600,cursor:"pointer",border:"none",transition:"all .2s",
+          background:tab==="featured"?B.grad:"transparent",color:tab==="featured"?"#fff":B.muted,
+        }}>🔥 Featured Offers</button>
+      </div>
+
+      {/* ─── OFFERWALLS TAB ─── */}
+      {tab==="walls" && !activeWall && (
+        <>
+          {/* How it works banner */}
+          <div className="card au" style={{padding:"16px 22px",marginBottom:22,background:"linear-gradient(135deg,rgba(0,210,106,.06),rgba(139,92,246,.06))",border:"1px solid rgba(0,210,106,.12)"}}>
+            <div style={{fontSize:13,fontWeight:700,marginBottom:4}}>💡 How Offerwalls Work</div>
+            <div style={{fontSize:12,color:B.muted,lineHeight:1.5}}>
+              Pick a wall below → browse their offers → complete tasks → coins are <strong style={{color:B.ok}}>automatically credited</strong> to your account. Each wall has different offers, so check them all for the best payouts!
+            </div>
+          </div>
+
+          {/* Offerwall Grid */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:14}}>
+            {OFFERWALLS.map((w, i) => {
+              const configured = isConfigured(w);
+              return (
+                <div key={w.id} className="card au" style={{
+                  padding:20,cursor:configured?"pointer":"default",animationDelay:`${i*.04}s`,
+                  opacity:configured?1:.55,position:"relative",overflow:"hidden",
+                  border:`1px solid ${configured?w.color+"25":B.border}`,
+                  background:configured?`linear-gradient(135deg,${w.color}08,transparent)`:B.card,
+                }}
+                onClick={()=>configured && setActiveWall(w)}
+                onMouseEnter={e=>{if(configured){e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.borderColor=w.color+"50";}}}
+                onMouseLeave={e=>{if(configured){e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=w.color+"25";}}}
+                >
+                  <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
+                    <div style={{width:44,height:44,borderRadius:12,background:`${w.color}12`,border:`1px solid ${w.color}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>{w.icon}</div>
+                    <div>
+                      <div style={{fontSize:14,fontWeight:700}}>{w.name}</div>
+                      <div style={{fontSize:11,color:B.muted}}>{w.desc}</div>
+                    </div>
+                  </div>
+                  {configured ? (
+                    <button style={{
+                      width:"100%",padding:"10px",borderRadius:10,border:"none",cursor:"pointer",
+                      background:`linear-gradient(135deg,${w.color},${w.color}cc)`,
+                      color:"#fff",fontSize:13,fontWeight:700,boxShadow:`0 4px 16px ${w.color}30`,
+                    }}>Browse Offers →</button>
+                  ) : (
+                    <div style={{
+                      width:"100%",padding:"10px",borderRadius:10,textAlign:"center",
+                      background:"rgba(255,255,255,.03)",border:`1px solid ${B.border}`,
+                      color:B.muted,fontSize:12,fontWeight:600,
+                    }}>⏳ Coming Soon</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ─── ACTIVE OFFERWALL IFRAME ─── */}
+      {tab==="walls" && activeWall && (
         <div>
-          <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>🤖 Smart Pick for You</div>
-          <div style={{fontSize:12,color:B.muted}}>Based on your profile: <strong style={{color:B.txt}}>Cash App signup ($25.00)</strong> — 5 min, 94% success rate</div>
+          <button onClick={()=>setActiveWall(null)} style={{
+            display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:B.accentL,
+            fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:16,padding:0,
+          }}>← Back to all offerwalls</button>
+
+          <div className="card" style={{overflow:"hidden",border:`1px solid ${activeWall.color}30`}}>
+            <div style={{padding:"14px 20px",display:"flex",alignItems:"center",gap:12,borderBottom:`1px solid ${B.border}`,background:`linear-gradient(135deg,${activeWall.color}08,transparent)`}}>
+              <span style={{fontSize:22}}>{activeWall.icon}</span>
+              <div>
+                <div style={{fontSize:15,fontWeight:700}}>{activeWall.name}</div>
+                <div style={{fontSize:11,color:B.muted}}>Coins are credited automatically when you complete offers</div>
+              </div>
+            </div>
+            <iframe
+              src={activeWall.iframeUrl(uid, activeWall.key, activeWall.key2)}
+              style={{width:"100%",height:"70vh",border:"none",background:B.bg}}
+              title={`${activeWall.name} Offerwall`}
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
+              allow="clipboard-write"
+            />
+          </div>
         </div>
-        <button className="btn-primary" style={{padding:"10px 20px",fontSize:13,whiteSpace:"nowrap"}}>Start Now →</button>
-      </div>
+      )}
 
-      {/* Search + Sort */}
-      <div style={{display:"flex",gap:10,marginBottom:20,flexWrap:"wrap"}}>
-        <div style={{flex:1,minWidth:200,position:"relative"}}>
-          <input placeholder="Search thousands of offers..." value={search} onChange={e=>setSearch(e.target.value)}
-            style={{width:"100%",padding:"11px 16px 11px 38px",background:B.card,border:`1px solid ${B.border}`,borderRadius:12,color:B.txt,fontSize:14}}/>
-          <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:15}}>🔍</span>
-        </div>
-        <select value={sort} onChange={e=>setSort(e.target.value)}
-          style={{padding:"11px 16px",background:B.card,border:`1px solid ${B.border}`,borderRadius:12,color:B.txt,fontSize:14,cursor:"pointer"}}>
-          <option value="pop">🔥 Most Popular</option>
-          <option value="pay">💰 Highest Paying</option>
-          <option value="easy">✅ Easiest First</option>
-        </select>
-      </div>
+      {/* ─── FEATURED OFFERS TAB (original browse experience) ─── */}
+      {tab==="featured" && (
+        <>
+          {/* AI Recommendation */}
+          <div className="card au" style={{padding:"16px 22px",marginBottom:22,display:"flex",alignItems:"center",justifyContent:"space-between",background:"linear-gradient(135deg,rgba(124,58,237,.08),rgba(96,165,250,.08))",border:"1px solid rgba(124,58,237,.15)"}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>🤖 Smart Pick for You</div>
+              <div style={{fontSize:12,color:B.muted}}>Based on your profile: <strong style={{color:B.txt}}>Cash App signup ($25.00)</strong> — 5 min, 94% success rate</div>
+            </div>
+            <button className="btn-primary" style={{padding:"10px 20px",fontSize:13,whiteSpace:"nowrap"}}>Start Now →</button>
+          </div>
 
-      {/* Categories */}
-      <div style={{display:"flex",gap:6,marginBottom:22,overflowX:"auto",paddingBottom:6}}>
-        {CATS.map(c=>(
-          <button key={c.id} onClick={()=>setCat(c.id)} style={{
-            padding:"9px 16px",borderRadius:10,whiteSpace:"nowrap",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .15s",
-            background:cat===c.id?`${c.c}12`:"rgba(255,255,255,.02)",
-            border:cat===c.id?`1px solid ${c.c}40`:"1px solid rgba(255,255,255,.04)",
-            color:cat===c.id?c.c:B.muted,
-          }}>{c.n}</button>
-        ))}
-      </div>
+          {/* Search + Sort */}
+          <div style={{display:"flex",gap:10,marginBottom:20,flexWrap:"wrap"}}>
+            <div style={{flex:1,minWidth:200,position:"relative"}}>
+              <input placeholder="Search thousands of offers..." value={search} onChange={e=>setSearch(e.target.value)}
+                style={{width:"100%",padding:"11px 16px 11px 38px",background:B.card,border:`1px solid ${B.border}`,borderRadius:12,color:B.txt,fontSize:14}}/>
+              <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:15}}>🔍</span>
+            </div>
+            <select value={sort} onChange={e=>setSort(e.target.value)}
+              style={{padding:"11px 16px",background:B.card,border:`1px solid ${B.border}`,borderRadius:12,color:B.txt,fontSize:14,cursor:"pointer"}}>
+              <option value="pop">🔥 Most Popular</option>
+              <option value="pay">💰 Highest Paying</option>
+              <option value="easy">✅ Easiest First</option>
+            </select>
+          </div>
 
-      {/* Offers Grid */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
-        {filtered.map((o,i)=><OfferCard key={o.id} o={o} onEarn={onEarn} delay={i*.04}/>)}
-      </div>
-      {filtered.length===0&&<div style={{textAlign:"center",padding:60,color:B.muted}}>No offers match your search. Try a different category.</div>}
+          {/* Categories */}
+          <div style={{display:"flex",gap:6,marginBottom:22,overflowX:"auto",paddingBottom:6}}>
+            {CATS.map(c=>(
+              <button key={c.id} onClick={()=>setCat(c.id)} style={{
+                padding:"9px 16px",borderRadius:10,whiteSpace:"nowrap",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .15s",
+                background:cat===c.id?`${c.c}12`:"rgba(255,255,255,.02)",
+                border:cat===c.id?`1px solid ${c.c}40`:"1px solid rgba(255,255,255,.04)",
+                color:cat===c.id?c.c:B.muted,
+              }}>{c.n}</button>
+            ))}
+          </div>
+
+          {/* Offers Grid */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
+            {filtered.map((o,i)=><OfferCard key={o.id} o={o} onEarn={onEarn} delay={i*.04}/>)}
+          </div>
+          {filtered.length===0&&<div style={{textAlign:"center",padding:60,color:B.muted}}>No offers match your search. Try a different category.</div>}
+        </>
+      )}
     </div>
   );
 };
@@ -2329,7 +2525,7 @@ export default function App() {
       <main style={{minHeight:"80vh"}}>
         {pg==="home"&&<Home setPg={navTo} user={user} onLogin={()=>setShowAuth(true)}/>}
         {pg==="dash"&&user&&<Dash coins={coins} streak={streak} today={today} week={week} setPg={navTo} onEarn={earn} user={user}/>}
-        {pg==="earn"&&<Earn onEarn={earn}/>}
+        {pg==="earn"&&<Earn onEarn={earn} user={user}/>}
         {pg==="profile"&&user&&<Profile coins={coins} streak={streak} today={today} week={week} user={user}/>}
         {pg==="rewards"&&user&&<Rewards coins={coins} onCashout={handleCashout} user={user}/>}
         {pg==="leaderboard"&&<Leaderboard coins={coins}/>}

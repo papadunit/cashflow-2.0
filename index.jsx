@@ -407,7 +407,7 @@ const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
   return (
     <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",background:B.glass,backdropFilter:"blur(24px)",borderBottom:`1px solid ${B.border}`,position:"sticky",top:0,zIndex:100}}>
       <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setPg("home")}>
-        <div style={{width:36,height:36,borderRadius:10,background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:900,color:"#fff"}}>C</div>
+        <div style={{width:36,height:36,borderRadius:10,background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>💰</div>
         <span style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:800,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PocketLined</span>
       </div>
       <div style={{display:"flex",gap:2}}>

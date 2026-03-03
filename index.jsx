@@ -321,7 +321,7 @@ const AuthModal = ({ onAuth, onClose }) => {
           {mode==="login"?"Welcome Back":"Create Account"}
         </h2>
         <p style={{color:B.muted,fontSize:13,marginBottom:20}}>
-          {mode==="login"?"Log in to access your earnings":"Sign up and get 500 bonus coins ($0.50) free"}
+          {mode==="login"?"Log in to access your earnings":"Sign up and get 250 bonus coins ($0.25) free"}
         </p>
 
         {err && <div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:10,padding:"10px 14px",marginBottom:14,color:"#F87171",fontSize:13}}>{err}</div>}
@@ -541,7 +541,7 @@ const Home = ({setPg, user, onLogin}) => {
           {/* Trust Stats — honest, verifiable claims only */}
           <div style={{display:"flex",justifyContent:"center",gap:40,marginBottom:36,flexWrap:"wrap"}}>
             {[
-              {v:"$1",l:"Minimum Cashout",c:B.gradOk},
+              {v:"$5",l:"Minimum Cashout",c:B.gradOk},
               {v:"12+",l:"Payout Methods",c:B.gradGold},
               {v:"100+",l:"Available Offers",c:B.grad},
               {v:"Free",l:"Always, No Hidden Fees",c:B.gradHot},
@@ -579,7 +579,7 @@ const Home = ({setPg, user, onLogin}) => {
             {[
               {s:"01",ic:"👆",t:"Pick a Task",d:"Browse surveys, app trials, game offers, and more. Each one shows exactly how much it pays and how long it takes. Start with the quick ones.",ac:"#3B82F6",sub:"You choose what to do"},
               {s:"02",ic:"📱",t:"Complete It",d:"Do the task on your phone or laptop. Some take 3 minutes, some take a few days. Higher effort usually means higher pay — just like anything else.",ac:"#FF9F1C",sub:"Works on any device"},
-              {s:"03",ic:"💸",t:"Cash Out",d:"Once you hit $1, withdraw to PayPal, Venmo, Cash App, gift cards, or crypto. Most payouts process quickly — many within minutes.",ac:"#00D26A",sub:"$1 minimum to withdraw"},
+              {s:"03",ic:"💸",t:"Cash Out",d:"Once you hit $5, withdraw to PayPal, Venmo, Cash App, gift cards, or crypto. Most payouts process quickly — many within minutes.",ac:"#00D26A",sub:"$5 minimum to withdraw"},
             ].map((x,i)=>(
               <div key={i} className="card au" style={{padding:28,textAlign:"center",animationDelay:`${i*.12}s`}}>
                 <div style={{position:"absolute",top:-8,right:-8,fontSize:72,fontWeight:900,fontFamily:"'Space Grotesk'",color:`${x.ac}08`}}>{x.s}</div>
@@ -632,8 +632,8 @@ const Home = ({setPg, user, onLogin}) => {
           {[
             {q:"\"How does this actually make money?\"",a:"Brands pay us when you try their apps, take their surveys, or sign up for their services. We split that payment with you. That's the whole model — no tricks.",ic:"🛡️",ac:"#3B82F6"},
             {q:"\"Do I need any skills?\"",a:"Nope. If you can use a phone or computer, you can do this. Most tasks are things like answering questions, trying free apps, or playing mobile games.",ic:"🎯",ac:"#00D26A"},
-            {q:"\"Do I have to pay anything?\"",a:"Never. PocketLined is 100% free. No premium tier, no hidden fees, no credit card required. We give you $0.50 just for creating an account.",ic:"💸",ac:"#FFB800"},
-            {q:"\"How fast do I get paid?\"",a:"Most payouts process within minutes once you request them. The minimum cashout is just $1, so you don't have to wait long to see real money in your account.",ic:"⚡",ac:"#FF6B35"},
+            {q:"\"Do I have to pay anything?\"",a:"Never. PocketLined is 100% free. No premium tier, no hidden fees, no credit card required. We give you $0.25 just for creating an account.",ic:"💸",ac:"#FFB800"},
+            {q:"\"How fast do I get paid?\"",a:"Most payouts process within minutes once you request them. The minimum cashout is $5, so you don't have to wait long to see real money in your account.",ic:"⚡",ac:"#FF6B35"},
             {q:"\"Is this going to replace my job?\"",a:"Let's be real: no. This is extra money, not a salary. Think of it like getting paid for time you'd spend on your phone anyway. Some people earn $50/month, some earn $500 — it depends on your effort.",ic:"📊",ac:"#FF2D78"},
             {q:"\"What's the catch?\"",a:"The catch is that it takes time and effort. This isn't passive income. You're trading your time for money, just like any other work — but you do it from wherever you want, whenever you want.",ic:"✅",ac:"#00E5FF"},
           ].map((x,i)=>(
@@ -700,7 +700,7 @@ const Home = ({setPg, user, onLogin}) => {
                 {u:"David R.",a:"$5.00",m:"Amazon",t:"12 min ago"},
                 {u:"Jenny C.",a:"$18.50",m:"PayPal",t:"15 min ago"},
                 {u:"Chris T.",a:"$32.00",m:"Bitcoin",t:"20 min ago"},
-                {u:"Amanda P.",a:"$3.50",m:"Cash App",t:"25 min ago"},
+                {u:"Amanda P.",a:"$5.00",m:"Cash App",t:"25 min ago"},
               ].map((c,i)=>(
                 <div key={`${dup}-${i}`} style={{
                   minWidth:220,padding:"14px 20px",margin:"0 8px",background:B.card,borderRadius:14,
@@ -721,7 +721,7 @@ const Home = ({setPg, user, onLogin}) => {
         <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,marginBottom:12}}>
           Your Money, <span style={{color:B.money}}>Your Way</span>
         </h2>
-        <p style={{color:B.muted,marginBottom:40}}>12+ payout options. $1 minimum. Most arrive within minutes.</p>
+        <p style={{color:B.muted,marginBottom:40}}>12+ payout options. $5 minimum. Most arrive within minutes.</p>
         <div style={{display:"flex",justifyContent:"center",gap:12,flexWrap:"wrap"}}>
           {CASHOUTS.map((c,i)=>(
             <div key={c.id} className="card au" style={{padding:"16px 20px",textAlign:"center",width:100,animationDelay:`${i*.04}s`}}>
@@ -739,10 +739,10 @@ const Home = ({setPg, user, onLogin}) => {
           Ready to <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Give It a Try</span>?
         </h2>
         <p style={{color:B.muted,fontSize:18,marginBottom:8}}>
-          It's free, it takes 30 seconds, and you get $0.50 just for signing up.
+          It's free, it takes 30 seconds, and you get $0.25 just for signing up.
         </p>
         <p style={{color:B.dim,fontSize:15,marginBottom:32}}>
-          No commitment. Cash out anytime you hit $1.
+          No commitment. Cash out anytime you hit $5.
         </p>
         <button className="btn-primary ap" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:20,padding:"18px 48px"}}>
           {user ? "Browse Offers →" : "Create Free Account →"}
@@ -1443,6 +1443,7 @@ const Profile = ({coins,streak,today,week,user}) => {
   const nxt = LEVELS[lv.idx+1];
   const totalEarned = user ? (user.lifetime_earned || coins) : (coins + 42300);
   const totalWithdrawn = totalEarned - coins;
+  const withdrawCount = user ? (user.withdrawCount || 0) : 0;
   const referrals = user ? (user.referralCount || 0) : 12;
   const referralEarnings = user ? (user.referralEarnings || 0) : 18640;
   const displayName = user ? (user.username || 'User') : 'Andrew';
@@ -1479,7 +1480,7 @@ const Profile = ({coins,streak,today,week,user}) => {
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:24}}>
         <Stat label="Current Balance" value={<>${toUSD(coins)}</>} sub={`${fmt(coins)} coins`} grad={B.grad} delay={0}/>
         <Stat label="Lifetime Earned" value={<>${toUSD(totalEarned)}</>} sub={`${fmt(totalEarned)} coins`} grad={B.gradOk} delay={.05}/>
-        <Stat label="Total Withdrawn" value={<>${toUSD(totalWithdrawn)}</>} sub="14 withdrawals" grad={B.gradGold} delay={.1}/>
+        <Stat label="Total Withdrawn" value={<>${toUSD(totalWithdrawn)}</>} sub={`${withdrawCount || 0} withdrawals`} grad={B.gradGold} delay={.1}/>
         <Stat label="Referral Earnings" value={<>${toUSD(referralEarnings)}</>} sub={`${referrals} referrals`} grad={B.gradHot} delay={.15}/>
       </div>
 
@@ -1671,8 +1672,8 @@ const Rewards = ({coins, onCashout, user}) => {
       <div className="card au" style={{padding:"16px 22px",marginBottom:24,display:"flex",alignItems:"center",gap:14,background:"rgba(16,185,129,.04)",border:"1px solid rgba(16,185,129,.12)"}}>
         <span style={{fontSize:28}}>⚡</span>
         <div>
-          <div style={{fontWeight:700,fontSize:14,color:B.ok}}>Fast Payouts — $1 Minimum</div>
-          <div style={{fontSize:12,color:B.muted}}>PayPal, Venmo, Cash App, crypto, and gift cards. $1 minimum cashout — the lowest of any GPT platform.</div>
+          <div style={{fontWeight:700,fontSize:14,color:B.ok}}>Fast Payouts — $5 Minimum</div>
+          <div style={{fontSize:12,color:B.muted}}>PayPal, Venmo, Cash App, crypto, and gift cards. $5 minimum cashout — competitive with top GPT platforms.</div>
         </div>
       </div>
 

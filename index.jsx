@@ -194,6 +194,13 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 @keyframes ripple{0%{transform:scale(0);opacity:.6}100%{transform:scale(4);opacity:0}}
 @keyframes spinWheel{0%{transform:rotate(0)}100%{transform:rotate(1800deg)}}
 @keyframes bounceIn{0%{transform:scale(0)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes confetti{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(-120px) rotate(720deg)}}
+@keyframes shakeX{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes rainbowBorder{0%{border-color:#FF6B35}25%{border-color:#FF2D78}50%{border-color:#A855F7}75%{border-color:#00D26A}100%{border-color:#FFB800}}
+@keyframes coinRain{0%{opacity:1;transform:translateY(0) scale(1)}50%{opacity:.8}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+@keyframes tickTock{0%,100%{transform:scale(1)}50%{transform:scale(1.08);color:#FF3B30}}
+.ashake{animation:shakeX .5s ease-in-out}
+.arainbow{animation:rainbowBorder 2s linear infinite}
 
 .au{animation:fadeUp .5s ease-out both}
 .af{animation:fadeIn .3s ease-out both}
@@ -752,41 +759,180 @@ const Home = ({setPg, user, onLogin}) => {
 // ═══════════════════════════════════════════════════════════════
 //  PAGE: DASHBOARD
 // ═══════════════════════════════════════════════════════════════
-const Dash = ({coins,streak,today,week,setPg}) => {
+const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
   const lv = getLevel(coins);
   const prog = pct(coins);
   const nxt = LEVELS[lv.idx+1];
+  const displayName = user ? (user.username || 'Earner') : 'Earner';
+
+  // ─── DAILY SPIN — localStorage-gated, once per day ───
+  const spinKey = 'cf_spin_' + new Date().toISOString().slice(0,10);
+  const [spinUsed, setSpinUsed] = useState(()=> localStorage.getItem(spinKey)==='1');
   const [spinResult,setSpinResult] = useState(null);
   const [spinning,setSpinning] = useState(false);
-  const [bonusClaimed,setBonusClaimed] = useState(false);
-  const [bonusAmt,setBonusAmt] = useState(0);
+  const [spinPhase,setSpinPhase] = useState('idle'); // idle → spinning → nearMiss → result → celebrated
+  const [nearMissAmt,setNearMissAmt] = useState(0);
+  const [confettiParts,setConfettiParts] = useState([]);
 
+  // ─── STREAK BONUS — localStorage-gated, once per streak cycle ───
+  const streakKey = 'cf_streak_claimed_' + Math.floor(streak/7);
+  const [bonusClaimed,setBonusClaimed] = useState(()=> localStorage.getItem(streakKey)==='1');
+  const [bonusAmt,setBonusAmt] = useState(0);
+  const [bonusPhase,setBonusPhase] = useState('idle'); // idle → opening → revealed
+
+  // ─── DAILY BONUS CHEST — timed reward, resets daily ───
+  const chestKey = 'cf_chest_' + new Date().toISOString().slice(0,10);
+  const [chestOpened,setChestOpened] = useState(()=> localStorage.getItem(chestKey)==='1');
+  const [chestReward,setChestReward] = useState(0);
+  const [chestPhase,setChestPhase] = useState('idle');
+  const [chestCountdown,setChestCountdown] = useState('');
+
+  // Countdown timer to next chest (midnight reset — creates urgency like Candy Crush lives)
+  useEffect(()=>{
+    if(chestOpened){
+      const tick=()=>{
+        const now=new Date(), tmrw=new Date(now);
+        tmrw.setHours(24,0,0,0);
+        const diff=tmrw-now;
+        const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+        setChestCountdown(`${h}h ${m}m ${s}s`);
+      };
+      tick();
+      const t=setInterval(tick,1000);
+      return ()=>clearInterval(t);
+    }
+  },[chestOpened]);
+
+  // Confetti burst helper
+  const burstConfetti = () => {
+    const colors = [B.gold,B.money,B.hot,B.accent,B.fomo,'#FFE066','#60A5FA'];
+    const parts = Array.from({length:24},(_,i)=>({
+      id:i, color:colors[i%colors.length],
+      left:35+Math.random()*30, delay:Math.random()*.3,
+      size:6+Math.random()*8, dur:0.8+Math.random()*0.6,
+    }));
+    setConfettiParts(parts);
+    setTimeout(()=>setConfettiParts([]),2000);
+  };
+
+  // ─── SPIN LOGIC — Candy Crush style near-miss + celebration ───
   const spin = () => {
-    if(spinning) return;
+    if(spinning || spinUsed) return;
     setSpinning(true);
+    setSpinPhase('spinning');
     setSpinResult(null);
+
+    // Phase 1: Spin animation (3s)
+    // Phase 2: Near-miss tease — show a bigger prize briefly (0.8s)
+    // Phase 3: Land on actual result + confetti
+    const roll = Math.random();
+    const amt = roll<.02?50000:roll<.08?10000:roll<.20?5000:roll<.40?2000:roll<.65?1000:500;
+    // Near-miss: show the tier above what they actually got (creates "almost had it!" feeling)
+    const nearMiss = amt<1000?2000:amt<2000?5000:amt<5000?10000:amt<10000?50000:50000;
+    setNearMissAmt(nearMiss);
+
     setTimeout(()=>{
-      // Variable ratio reinforcement: unpredictable rewards
-      const roll = Math.random();
-      const amt = roll<.02?50000:roll<.08?10000:roll<.20?5000:roll<.40?2000:roll<.65?1000:500;
-      setSpinResult(amt);
-      setSpinning(false);
+      // Show near-miss briefly
+      setSpinPhase('nearMiss');
+      setTimeout(()=>{
+        // Reveal actual result
+        setSpinResult(amt);
+        setSpinPhase('result');
+        setSpinning(false);
+        localStorage.setItem(spinKey,'1');
+        setSpinUsed(true);
+        burstConfetti();
+        // Award coins
+        if(onEarn) onEarn(amt);
+        // Auto-transition to celebrated
+        setTimeout(()=>setSpinPhase('celebrated'),3000);
+      },800);
     },3000);
   };
 
+  // ─── STREAK CLAIM — dramatic reveal like opening a chest ───
   const claimStreak = () => {
-    const roll = Math.random();
-    const mult = roll<.1?10:roll<.25?5:roll<.45?3:roll<.7?2:1;
-    setBonusAmt(200*mult);
-    setBonusClaimed(true);
+    if(bonusClaimed) return;
+    setBonusPhase('opening');
+    setTimeout(()=>{
+      const roll = Math.random();
+      const mult = roll<.1?10:roll<.25?5:roll<.45?3:roll<.7?2:1;
+      const amt = 200*mult;
+      setBonusAmt(amt);
+      setBonusPhase('revealed');
+      setBonusClaimed(true);
+      localStorage.setItem(streakKey,'1');
+      burstConfetti();
+      if(onEarn) onEarn(amt);
+    },1200);
+  };
+
+  // ─── DAILY CHEST — login reward that escalates with streak ───
+  const openChest = () => {
+    if(chestOpened) return;
+    setChestPhase('opening');
+    setTimeout(()=>{
+      // Streak multiplier: longer streaks = better daily chest (commitment escalation)
+      const base = 100 + Math.min(streak,30)*10; // 100-400 base
+      const roll = Math.random();
+      const mult = roll<.05?5:roll<.15?3:roll<.35?2:1;
+      const amt = base*mult;
+      setChestReward(amt);
+      setChestPhase('revealed');
+      setChestOpened(true);
+      localStorage.setItem(chestKey,'1');
+      burstConfetti();
+      if(onEarn) onEarn(amt);
+    },1000);
   };
 
   return (
     <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
       <div className="au" style={{marginBottom:28}}>
-        <h1 style={{fontFamily:"'Space Grotesk'",fontSize:26,fontWeight:800}}>Welcome back, Andrew 👋</h1>
+        <h1 style={{fontFamily:"'Space Grotesk'",fontSize:26,fontWeight:800}}>Welcome back, {displayName} 👋</h1>
         <p style={{color:B.muted,fontSize:14}}>Your personalized earning dashboard</p>
       </div>
+
+      {/* ─── DAILY CHEST — First thing users see, creates daily login habit ─── */}
+      {!chestOpened && (
+        <div className="card au" style={{padding:20,marginBottom:20,textAlign:"center",border:`2px solid rgba(255,184,0,.3)`,background:"linear-gradient(135deg,rgba(255,184,0,.06),rgba(255,107,53,.04))",cursor:"pointer",position:"relative",overflow:"hidden"}}
+          onClick={openChest}
+          onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.01)";e.currentTarget.style.borderColor="rgba(255,184,0,.5)"}}
+          onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.borderColor="rgba(255,184,0,.3)"}}
+        >
+          {chestPhase==='opening' ? (
+            <div className="ashake">
+              <div style={{fontSize:52,marginBottom:6}}>🎁</div>
+              <div style={{fontSize:14,fontWeight:700,color:B.gold}}>Opening...</div>
+            </div>
+          ) : (
+            <>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14}}>
+                <span style={{fontSize:42}} className="ap">🎁</span>
+                <div style={{textAlign:"left"}}>
+                  <div style={{fontSize:16,fontWeight:800,color:B.gold}}>Daily Login Reward</div>
+                  <div style={{fontSize:12,color:B.muted}}>Tap to claim your free coins!{streak>1?` (${streak}-day streak bonus active)`:""}</div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+      {chestPhase==='revealed' && (
+        <div className="card abounce" style={{padding:20,marginBottom:20,textAlign:"center",border:"2px solid rgba(0,210,106,.3)",background:"rgba(0,210,106,.04)",position:"relative",overflow:"hidden"}}>
+          {confettiParts.map(p=>(
+            <div key={p.id} style={{position:"absolute",left:`${p.left}%`,top:"50%",width:p.size,height:p.size,borderRadius:p.size>9?"50%":"2px",background:p.color,animation:`confetti ${p.dur}s ease-out ${p.delay}s both`,pointerEvents:"none"}}/>
+          ))}
+          <div style={{fontSize:36,marginBottom:4}}>🎉</div>
+          <div style={{fontSize:22,fontWeight:900,fontFamily:"'Space Grotesk'",color:B.money}}>{fmt(chestReward)} coins claimed!</div>
+          <div style={{fontSize:12,color:B.muted,marginTop:4}}>Next chest in <span style={{color:B.gold,fontWeight:700}}>{chestCountdown}</span></div>
+        </div>
+      )}
+      {chestOpened && chestPhase!=='revealed' && (
+        <div className="card au" style={{padding:14,marginBottom:20,textAlign:"center",border:"1px solid rgba(255,184,0,.1)",opacity:.6}}>
+          <div style={{fontSize:13,color:B.muted}}>🎁 Daily reward claimed — next chest in <span style={{color:B.gold,fontWeight:700,animation:"tickTock 2s ease-in-out infinite"}}>{chestCountdown}</span></div>
+        </div>
+      )}
 
       {/* Stats Row */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:24}}>
@@ -829,56 +975,80 @@ const Dash = ({coins,streak,today,week,setPg}) => {
             </div>
           </div>
 
-          {/* 7-Day Streak */}
+          {/* 7-Day Streak — Candy Crush-style escalating daily rewards */}
           <div className="card au" style={{padding:22,marginBottom:20,animationDelay:".1s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>🔥 7-Day Streak Challenge</h3>
-            <div style={{display:"flex",gap:8}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+              <h3 style={{fontSize:15,fontWeight:700}}>🔥 7-Day Streak Challenge</h3>
+              {streak>=7&&!bonusClaimed&&<span className="ap" style={{fontSize:11,color:B.gold,fontWeight:700}}>BONUS READY!</span>}
+            </div>
+            <div style={{display:"flex",gap:6}}>
               {[1,2,3,4,5,6,7].map(d=>{
-                const done = d <= (streak%7||(streak>0?7:0));
-                const isToday = d === (streak%7||7);
+                const streakDay = streak%7||(streak>0?7:0);
+                const done = d <= streakDay;
+                const isToday = d === streakDay;
+                const isNext = d === streakDay+1;
+                // Escalating rewards — each day is worth more (commitment escalation like Candy Crush daily rewards)
+                const dayReward = d===7?'JACKPOT':`+${[50,100,150,200,300,400,0][d-1]}`;
                 return (
                   <div key={d} style={{
-                    flex:1,textAlign:"center",padding:"10px 4px",borderRadius:10,
-                    background:done?"rgba(0,210,106,.08)":"rgba(255,255,255,.02)",
-                    border:isToday?"2px solid rgba(255,107,53,.5)":`1px solid rgba(255,255,255,.04)`,
+                    flex:1,textAlign:"center",padding:"10px 2px",borderRadius:10,transition:"all .2s",
+                    background:done?"rgba(0,210,106,.08)":isNext?"rgba(255,184,0,.04)":"rgba(255,255,255,.02)",
+                    border:isToday?`2px solid ${B.money}`:isNext?`2px dashed rgba(255,184,0,.3)`:`1px solid rgba(255,255,255,.04)`,
+                    transform:isToday?"scale(1.05)":"scale(1)",
                   }}>
-                    <div style={{fontSize:10,color:B.muted,marginBottom:4}}>Day {d}</div>
-                    <div style={{fontSize:18}}>{done?"✅":d===7?"🎁":"⬜"}</div>
-                    <div style={{fontSize:10,color:done?B.ok:B.dim,fontWeight:600,marginTop:2}}>{d===7?"BONUS!":`+${d*100}`}</div>
+                    <div style={{fontSize:9,color:B.muted,marginBottom:3}}>Day {d}</div>
+                    <div style={{fontSize:d===7?22:18,transition:"all .2s"}}>{done?"✅":d===7?"🎁":isNext?"⭐":"⬜"}</div>
+                    <div style={{fontSize:9,color:done?B.ok:d===7?B.gold:B.dim,fontWeight:700,marginTop:2}}>{dayReward}</div>
                   </div>
                 );
               })}
             </div>
-            {streak%7===0 && streak>0 && !bonusClaimed && (
+            {/* Streak bonus claim — dramatic reveal */}
+            {streak%7===0 && streak>0 && !bonusClaimed && bonusPhase==='idle' && (
               <button className="btn-primary ap" onClick={claimStreak} style={{width:"100%",marginTop:14,padding:13}}>
                 🎁 Claim 7-Day Streak Bonus — Up to 2,000 Coins!
               </button>
             )}
-            {bonusClaimed&&(
-              <div className="abounce" style={{marginTop:14,padding:13,background:"rgba(0,210,106,.08)",border:"1px solid rgba(0,210,106,.2)",borderRadius:12,textAlign:"center",fontWeight:700,color:B.money}}>
-                🎉 You won {fmt(bonusAmt)} bonus coins!{bonusAmt>500?" JACKPOT! 🍀":""}
+            {bonusPhase==='opening' && (
+              <div className="ashake" style={{marginTop:14,padding:16,background:"rgba(255,184,0,.06)",border:"2px solid rgba(255,184,0,.3)",borderRadius:12,textAlign:"center"}}>
+                <div style={{fontSize:32}}>🎁</div>
+                <div style={{fontSize:13,color:B.gold,fontWeight:700}}>Opening bonus...</div>
+              </div>
+            )}
+            {bonusPhase==='revealed' && (
+              <div className="abounce" style={{marginTop:14,padding:16,background:"rgba(0,210,106,.06)",border:"2px solid rgba(0,210,106,.25)",borderRadius:12,textAlign:"center",position:"relative",overflow:"hidden"}}>
+                {confettiParts.map(p=>(
+                  <div key={p.id} style={{position:"absolute",left:`${p.left}%`,top:"50%",width:p.size,height:p.size,borderRadius:"50%",background:p.color,animation:`confetti ${p.dur}s ease-out ${p.delay}s both`,pointerEvents:"none"}}/>
+                ))}
+                <div style={{fontSize:28,fontWeight:900,fontFamily:"'Space Grotesk'",color:B.money}}>{fmt(bonusAmt)} coins!</div>
+                <div style={{fontSize:12,color:B.muted,marginTop:2}}>{bonusAmt>=1000?"🔥 JACKPOT!":"Nice!"} Keep your streak alive for bigger rewards.</div>
+              </div>
+            )}
+            {bonusClaimed && bonusPhase==='idle' && (
+              <div style={{marginTop:10,padding:8,textAlign:"center",fontSize:11,color:B.muted}}>
+                ✅ Streak bonus claimed this cycle — keep logging in daily!
               </div>
             )}
           </div>
 
-          {/* Earnings Chart Placeholder */}
+          {/* Earnings Chart */}
           <div className="card au" style={{padding:22,animationDelay:".15s"}}>
             <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>📈 Earnings This Week</h3>
             <div style={{display:"flex",alignItems:"flex-end",gap:8,height:120}}>
               {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((day,i)=>{
                 const heights = [45,62,38,78,55,90,72];
-                const isToday = i===2;
+                const isToday = i===new Date().getDay()-1;
                 return (
                   <div key={day} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
                     <div style={{
                       width:"100%",height:heights[i],borderRadius:6,
-                      background:isToday?B.grad:"rgba(124,58,237,.15)",
+                      background:isToday?B.gradOk:i<=new Date().getDay()-1?"rgba(0,210,106,.15)":"rgba(124,58,237,.08)",
                       transition:"all .3s",cursor:"pointer",
                     }}
                     onMouseEnter={e=>e.currentTarget.style.opacity=".8"}
                     onMouseLeave={e=>e.currentTarget.style.opacity="1"}
                     />
-                    <span style={{fontSize:10,color:isToday?B.accentL:B.muted,fontWeight:isToday?700:400}}>{day}</span>
+                    <span style={{fontSize:10,color:isToday?B.ok:B.muted,fontWeight:isToday?700:400}}>{day}</span>
                   </div>
                 );
               })}
@@ -888,57 +1058,103 @@ const Dash = ({coins,streak,today,week,setPg}) => {
 
         {/* RIGHT */}
         <div>
-          {/* Daily Spin — Variable Ratio Reinforcement */}
-          <div className="card au" style={{padding:22,marginBottom:20,textAlign:"center",border:"1px solid rgba(245,158,11,.15)",animationDelay:".08s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>🎰 Daily Spin-to-Win</h3>
-            <p style={{fontSize:11,color:B.muted,marginBottom:14}}>Earn 1,000+ coins today to unlock your free spin</p>
+          {/* ─── DAILY SPIN — Near-miss psychology + confetti celebration ─── */}
+          <div className="card au" style={{
+            padding:22,marginBottom:20,textAlign:"center",position:"relative",overflow:"hidden",
+            border:!spinUsed?"2px solid rgba(255,184,0,.3)":"1px solid rgba(245,158,11,.1)",
+            background:!spinUsed?"linear-gradient(135deg,rgba(255,184,0,.06),rgba(255,45,120,.03))":"transparent",
+            animationDelay:".08s",
+          }}>
+            {/* Confetti layer */}
+            {confettiParts.map(p=>(
+              <div key={p.id} style={{position:"absolute",left:`${p.left}%`,top:"50%",width:p.size,height:p.size,borderRadius:p.size>9?"50%":"2px",background:p.color,animation:`confetti ${p.dur}s ease-out ${p.delay}s both`,pointerEvents:"none",zIndex:10}}/>
+            ))}
+
+            <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>🎰 Daily Spin</h3>
+
+            {/* Spin wheel */}
             <div style={{
-              width:130,height:130,borderRadius:"50%",margin:"0 auto 16px",
-              background:`conic-gradient(${B.accent} 0deg,${B.gold} 45deg,${B.ok} 90deg,${B.hot} 135deg,#60A5FA 180deg,${B.accentL} 225deg,#EC4899 270deg,${B.accent} 360deg)`,
+              width:140,height:140,borderRadius:"50%",margin:"12px auto 16px",
+              background:`conic-gradient(
+                ${B.gold} 0deg, ${B.gold} 30deg,
+                ${B.ok} 30deg, ${B.ok} 75deg,
+                #60A5FA 75deg, #60A5FA 120deg,
+                ${B.accent} 120deg, ${B.accent} 165deg,
+                ${B.hot} 165deg, ${B.hot} 210deg,
+                #EC4899 210deg, #EC4899 255deg,
+                ${B.ok} 255deg, ${B.ok} 300deg,
+                ${B.gold} 300deg, ${B.gold} 360deg
+              )`,
               display:"flex",alignItems:"center",justifyContent:"center",
               animation:spinning?"spinWheel 3s cubic-bezier(.2,.8,.3,1) forwards":"none",
               transition:"all .3s",
+              boxShadow:!spinUsed?"0 0 30px rgba(255,184,0,.15)":"none",
             }}>
-              <div style={{width:90,height:90,borderRadius:"50%",background:B.card,display:"flex",alignItems:"center",justifyContent:"center",fontSize:spinResult?"18px":"26px",fontWeight:800}}>
-                {spinResult?<span className="abounce" style={{color:B.gold}}>{fmt(spinResult)}🪙</span>:"🎯"}
+              <div style={{width:94,height:94,borderRadius:"50%",background:B.card,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",fontWeight:800,border:"3px solid rgba(255,255,255,.08)"}}>
+                {spinPhase==='nearMiss' ? (
+                  <div style={{color:B.gold,fontSize:14,animation:"shakeX .3s ease-in-out"}}>
+                    <div style={{fontSize:10,color:B.muted}}>So close!</div>
+                    {fmt(nearMissAmt)}🪙
+                  </div>
+                ) : spinResult ? (
+                  <span className="abounce" style={{color:B.gold,fontSize:16}}>{fmt(spinResult)}🪙</span>
+                ) : (
+                  <span style={{fontSize:28}}>{spinning?"⏳":"🎯"}</span>
+                )}
               </div>
             </div>
-            {!spinResult&&<button className="btn-primary" onClick={spin} style={{width:"100%",padding:12,fontSize:14}} disabled={spinning}>
-              {spinning?"Spinning...":"Spin Now — Win Up to 50,000!"}
-            </button>}
-            {spinResult&&<div style={{padding:10,background:"rgba(245,158,11,.08)",borderRadius:10,fontSize:13,fontWeight:600,color:B.gold}}>
-              You won {fmt(spinResult)} coins! Come back tomorrow for another spin.
-            </div>}
+
+            {/* Spin states */}
+            {!spinUsed && !spinning && spinPhase==='idle' && (
+              <button className="btn-primary ap" onClick={spin} style={{width:"100%",padding:12,fontSize:14}}>
+                Spin to Win!
+              </button>
+            )}
+            {spinning && spinPhase==='spinning' && (
+              <div style={{padding:10,fontSize:13,color:B.gold,fontWeight:600}}>Spinning...</div>
+            )}
+            {spinPhase==='result' && (
+              <div className="abounce" style={{padding:12,background:"rgba(0,210,106,.06)",borderRadius:10,border:"1px solid rgba(0,210,106,.15)"}}>
+                <div style={{fontSize:18,fontWeight:900,color:B.money,fontFamily:"'Space Grotesk'"}}>{fmt(spinResult)} coins won!</div>
+                <div style={{fontSize:11,color:B.muted,marginTop:2}}>Added to your balance</div>
+              </div>
+            )}
+            {(spinPhase==='celebrated' || (spinUsed && spinPhase==='idle')) && (
+              <div style={{padding:10,fontSize:12,color:B.muted}}>
+                Come back tomorrow for another spin!
+              </div>
+            )}
           </div>
 
-          {/* Quick Earn */}
+          {/* Quick Earn — sorted by reward amount to emphasize value */}
           <div className="card au" style={{padding:22,marginBottom:20,animationDelay:".12s"}}>
             <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>⚡ Quick Earn</h3>
             {[
-              {ic:"📋",l:"Quick Survey",c:"+$1.50",t:"5 min"},
-              {ic:"📺",l:"Watch Videos",c:"+$0.80",t:"6 min"},
-              {ic:"📱",l:"Try New App",c:"+$3.00",t:"10 min"},
-              {ic:"🧠",l:"Daily Trivia",c:"+$0.60",t:"2 min"},
-              {ic:"🤝",l:"Refer Friend",c:"+$10.00",t:"1 min"},
-              {ic:"🔍",l:"Search & Earn",c:"+$0.05",t:"Per search"},
+              {ic:"🤝",l:"Refer a Friend",c:"+$10.00",t:"1 min",hot:true},
+              {ic:"📱",l:"Try New App",c:"+$3.00",t:"10 min",hot:false},
+              {ic:"📋",l:"Quick Survey",c:"+$1.50",t:"5 min",hot:false},
+              {ic:"📺",l:"Watch Videos",c:"+$0.80",t:"6 min",hot:false},
+              {ic:"🧠",l:"Daily Trivia",c:"+$0.60",t:"2 min",hot:false},
+              {ic:"🔍",l:"Search & Earn",c:"+$0.05",t:"Per search",hot:false},
             ].map((a,i)=>(
               <div key={i} style={{
                 display:"flex",alignItems:"center",justifyContent:"space-between",
                 padding:"10px 12px",borderRadius:10,marginBottom:6,cursor:"pointer",
-                background:"rgba(255,255,255,.02)",transition:"all .15s",
+                background:a.hot?"rgba(255,107,53,.04)":"rgba(255,255,255,.02)",transition:"all .15s",
+                border:a.hot?"1px solid rgba(255,107,53,.12)":"1px solid transparent",
               }}
                 onClick={()=>setPg("earn")}
-                onMouseEnter={e=>e.currentTarget.style.background="rgba(124,58,237,.08)"}
-                onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.02)"}
+                onMouseEnter={e=>{e.currentTarget.style.background=a.hot?"rgba(255,107,53,.08)":"rgba(124,58,237,.08)";e.currentTarget.style.transform="translateX(4px)"}}
+                onMouseLeave={e=>{e.currentTarget.style.background=a.hot?"rgba(255,107,53,.04)":"rgba(255,255,255,.02)";e.currentTarget.style.transform="translateX(0)"}}
               >
                 <div style={{display:"flex",alignItems:"center",gap:10}}>
                   <span style={{fontSize:18}}>{a.ic}</span>
                   <div>
-                    <div style={{fontSize:13,fontWeight:600}}>{a.l}</div>
+                    <div style={{fontSize:13,fontWeight:600}}>{a.l} {a.hot&&<span style={{fontSize:10,color:B.hot,fontWeight:800}}>HOT</span>}</div>
                     <div style={{fontSize:10,color:B.muted}}>{a.t}</div>
                   </div>
                 </div>
-                <span style={{fontSize:13,fontWeight:700,color:B.ok}}>{a.c}</span>
+                <span style={{fontSize:13,fontWeight:700,color:a.hot?B.hot:B.ok}}>{a.c}</span>
               </div>
             ))}
           </div>
@@ -1948,7 +2164,7 @@ export default function App() {
 
       <main style={{minHeight:"80vh"}}>
         {pg==="home"&&<Home setPg={navTo} user={user} onLogin={()=>setShowAuth(true)}/>}
-        {pg==="dash"&&user&&<Dash coins={coins} streak={streak} today={today} week={week} setPg={navTo}/>}
+        {pg==="dash"&&user&&<Dash coins={coins} streak={streak} today={today} week={week} setPg={navTo} onEarn={earn} user={user}/>}
         {pg==="earn"&&<Earn onEarn={earn}/>}
         {pg==="profile"&&user&&<Profile coins={coins} streak={streak} today={today} week={week} user={user}/>}
         {pg==="rewards"&&user&&<Rewards coins={coins}/>}

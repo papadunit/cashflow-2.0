@@ -25,7 +25,7 @@ Each offerwall uses different placeholder macros — see the specific instructio
 ---
 
 ## 1. AdGate Media
-- **Sign up**: https://panel.adgatemedia.com/signup
+- **Sign up**: https://adgatemedia.com (acquired by Prodege — contact them directly or use their main site)
 - **Type**: Offers, surveys, app installs
 - **Postback URL**:
   ```
@@ -36,7 +36,7 @@ Each offerwall uses different placeholder macros — see the specific instructio
   - `NEXT_PUBLIC_ADGATE_WALL_CODE` → your wall code (from embed code, e.g. `oDQfo3`)
 
 ## 2. AdGem
-- **Sign up**: https://dashboard.adgem.com/signup
+- **Sign up**: https://adgem.com → click "Sign up" top-right, then "Create Account"
 - **Type**: Games, app installs, high CPI
 - **Postback URL**:
   ```
@@ -59,7 +59,7 @@ Each offerwall uses different placeholder macros — see the specific instructio
   - `NEXT_PUBLIC_OFFERTORO_APP_ID` → your app ID
 
 ## 4. Lootably
-- **Sign up**: https://www.lootably.com/signup
+- **Sign up**: https://dashboard.lootably.com/authentication/login (click "Register" or contact Lootably)
 - **Type**: Surveys, video offers
 - **Postback URL**:
   ```
@@ -81,7 +81,7 @@ Each offerwall uses different placeholder macros — see the specific instructio
   - `NEXT_PUBLIC_AYET_APP_KEY` → your app key
 
 ## 6. CPX Research
-- **Sign up**: https://publisher.cpx-research.com/signup
+- **Sign up**: https://publisher.cpx-research.com/index.php?page=register
 - **Type**: Paid surveys
 - **Postback URL**:
   ```
@@ -92,7 +92,7 @@ Each offerwall uses different placeholder macros — see the specific instructio
   - `NEXT_PUBLIC_CPX_APP_ID` → your app ID
 
 ## 7. BitLabs
-- **Sign up**: https://dashboard.bitlabs.ai/signup
+- **Sign up**: https://dashboard.bitlabs.ai/auth/signup
 - **Type**: Surveys and offers
 - **Postback URL**:
   ```

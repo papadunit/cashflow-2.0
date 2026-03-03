@@ -13,33 +13,51 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 //  near-miss effects, reciprocity, and FOMO triggers.
 // ═══════════════════════════════════════════════════════════════
 
-// ─── BRAND TOKENS ───
+// ─── BRAND TOKENS (Psychology-Driven Palette) ───
+// Green = money/go/success · Orange-Red = urgency/action · Gold = reward/achievement
+// Purple = brand/premium · Hot Pink = scarcity/FOMO · Cyan = novelty/fresh
+// Dark bg with high-contrast accents maximizes visual dopamine response
 const B = {
-  accent: "#7C3AED", accentL: "#A78BFA", accentD: "#6D28D9",
-  ok: "#10B981", okL: "#34D399",
-  warn: "#F59E0B", warnL: "#FBBF24",
-  hot: "#EF4444", hotL: "#F87171",
-  gold: "#F59E0B",
-  bg: "#030712", card: "#0F1629", surface: "#1A2035",
-  border: "rgba(124,58,237,.18)",
-  txt: "#F1F5F9", muted: "#94A3B8", dim: "#475569",
-  grad: "linear-gradient(135deg,#7C3AED 0%,#A78BFA 40%,#60A5FA 100%)",
-  gradHot: "linear-gradient(135deg,#EF4444 0%,#F59E0B 100%)",
-  gradOk: "linear-gradient(135deg,#10B981 0%,#34D399 100%)",
-  gradGold: "linear-gradient(135deg,#F59E0B 0%,#FBBF24 50%,#FDE68A 100%)",
-  glass: "rgba(15,22,41,.85)",
+  accent: "#8B5CF6", accentL: "#A78BFA", accentD: "#7C3AED",
+  ok: "#00D26A", okL: "#4ADE80",                          // Vivid money-green: "you're earning"
+  warn: "#FF9F1C", warnL: "#FFB84D",                      // Amber-orange: urgency without alarm
+  hot: "#FF3B30", hotL: "#FF6B5B",                         // iOS-red: immediate action trigger
+  gold: "#FFB800",                                         // True gold: achievement & premium
+  fomo: "#FF2D78",                                         // Hot pink: scarcity & FOMO trigger
+  cyan: "#00E5FF",                                         // Electric cyan: novelty & "new"
+  money: "#00D26A",                                        // Alias for earnings displays
+  bg: "#050A18", card: "#0C1425", surface: "#131D33",      // Deeper navy-black: content pops more
+  border: "rgba(139,92,246,.15)",
+  txt: "#F8FAFC", muted: "#94A3B8", dim: "#64748B",
+  // CTA gradient: orange→pink creates urgency + excitement (proven highest click-through)
+  gradCTA: "linear-gradient(135deg,#FF6B35 0%,#FF2D78 100%)",
+  // Brand gradient: purple→blue signals trust + premium
+  grad: "linear-gradient(135deg,#8B5CF6 0%,#6366F1 40%,#3B82F6 100%)",
+  // Money gradient: green tones trigger "earning" dopamine
+  gradOk: "linear-gradient(135deg,#00D26A 0%,#4ADE80 50%,#86EFAC 100%)",
+  // Hot deals: red→orange = "act now before it's gone"
+  gradHot: "linear-gradient(135deg,#FF3B30 0%,#FF9F1C 100%)",
+  // Achievement: warm gold with shimmer feel
+  gradGold: "linear-gradient(135deg,#FFB800 0%,#FFCB47 40%,#FFE066 100%)",
+  // FOMO/Limited: pink→purple scarcity signal
+  gradFomo: "linear-gradient(135deg,#FF2D78 0%,#A855F7 100%)",
+  // Streak fire: red→orange→gold emotional escalation
+  gradStreak: "linear-gradient(135deg,#FF3B30 0%,#FF6B35 40%,#FFB800 100%)",
+  glass: "rgba(12,20,37,.88)",
 };
 
 // ─── LEVELS (Commitment Escalation) ───
+// Colors escalate warmth: cool gray → blue → green → amber → gold → red → purple
+// Warm colors at higher levels create aspiration pull (people want "warmer" status)
 const LEVELS = [
   { n:"Starter",    min:0,      icon:"🌱", c:"#94A3B8", bonus:0,  next:1000 },
-  { n:"Explorer",   min:1000,   icon:"🔍", c:"#60A5FA", bonus:2,  next:5000 },
-  { n:"Earner",     min:5000,   icon:"💰", c:"#34D399", bonus:5,  next:15000 },
-  { n:"Hustler",    min:15000,  icon:"🔥", c:"#F59E0B", bonus:8,  next:40000 },
-  { n:"Pro",        min:40000,  icon:"⚡", c:"#A78BFA", bonus:12, next:100000 },
-  { n:"Elite",      min:100000, icon:"💎", c:"#FBBF24", bonus:15, next:300000 },
-  { n:"Legend",     min:300000, icon:"👑", c:"#EF4444", bonus:20, next:750000 },
-  { n:"Titan",      min:750000, icon:"🏆", c:"#7C3AED", bonus:25, next:null },
+  { n:"Explorer",   min:1000,   icon:"🧭", c:"#3B82F6", bonus:2,  next:5000 },
+  { n:"Earner",     min:5000,   icon:"💸", c:"#00D26A", bonus:5,  next:15000 },
+  { n:"Hustler",    min:15000,  icon:"🔥", c:"#FF9F1C", bonus:8,  next:40000 },
+  { n:"Pro",        min:40000,  icon:"⚡", c:"#FFB800", bonus:12, next:100000 },
+  { n:"Elite",      min:100000, icon:"💎", c:"#FF6B35", bonus:15, next:300000 },
+  { n:"Legend",     min:300000, icon:"👑", c:"#FF2D78", bonus:20, next:750000 },
+  { n:"Titan",      min:750000, icon:"🏆", c:"#A855F7", bonus:25, next:null },
 ];
 
 // ─── OFFERWALL PROVIDERS (Admin-only data — never rendered to users) ───
@@ -51,17 +69,20 @@ const OFFERWALLS_ADMIN = [
 ];
 
 // ─── EARN CATEGORIES ───
+// Colors chosen for psychological association:
+// Gold = premium/featured, Blue = trust/surveys, Purple = fun/games
+// Green = money/apps, Orange = energy/videos, Red = excitement/shopping
 const CATS = [
-  { id:"featured", n:"⭐ Featured",    d:"Hand-picked highest value", c:"#F59E0B" },
-  { id:"surveys",  n:"📋 Surveys",     d:"Quick opinions, quick cash", c:"#60A5FA" },
-  { id:"games",    n:"🎮 Games",       d:"Play games, earn big",       c:"#A78BFA" },
-  { id:"apps",     n:"📱 Apps & Signups",d:"Try apps, earn instantly",  c:"#34D399" },
-  { id:"videos",   n:"🎬 Watch",       d:"Watch & earn passively",     c:"#FBBF24" },
-  { id:"shopping", n:"🛒 Cashback",    d:"Shop and earn back",         c:"#F87171" },
-  { id:"tasks",    n:"✅ Micro Tasks",  d:"Tiny tasks, instant pay",   c:"#FB923C" },
+  { id:"featured", n:"🔥 Featured",    d:"Hand-picked highest value", c:"#FFB800" },
+  { id:"surveys",  n:"📊 Surveys",     d:"Quick opinions, quick cash", c:"#3B82F6" },
+  { id:"games",    n:"🎮 Games",       d:"Play games, earn big",       c:"#A855F7" },
+  { id:"apps",     n:"📲 Apps & Signups",d:"Try apps, earn instantly",  c:"#00D26A" },
+  { id:"videos",   n:"▶️ Watch",       d:"Watch & earn passively",     c:"#FF9F1C" },
+  { id:"shopping", n:"🛍️ Cashback",    d:"Shop and earn back",         c:"#FF3B30" },
+  { id:"tasks",    n:"⚡ Micro Tasks",  d:"Tiny tasks, instant pay",   c:"#FF6B35" },
   { id:"crypto",   n:"₿ Crypto",       d:"Crypto rewards & staking",  c:"#8B5CF6" },
-  { id:"referrals",n:"👥 Referrals",   d:"Earn from your network",    c:"#EC4899" },
-  { id:"search",   n:"🔍 Search",      d:"Earn while you browse",     c:"#06B6D4" },
+  { id:"referrals",n:"🤝 Referrals",   d:"Earn from your network",    c:"#FF2D78" },
+  { id:"search",   n:"🔍 Search",      d:"Earn while you browse",     c:"#00E5FF" },
 ];
 
 // ─── SAMPLE OFFERS ───
@@ -156,15 +177,15 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:${B.bg}}
 ::-webkit-scrollbar-thumb{background:${B.accent};border-radius:3px}
-::selection{background:rgba(124,58,237,.3)}
+::selection{background:rgba(139,92,246,.3)}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideR{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(124,58,237,.25)}50%{box-shadow:0 0 40px rgba(124,58,237,.5)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(255,107,53,.3),0 0 60px rgba(255,45,120,.1)}50%{box-shadow:0 0 40px rgba(255,107,53,.5),0 0 80px rgba(255,45,120,.2)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes streak{0%,100%{text-shadow:0 0 8px #EF4444,0 0 16px #F59E0B}50%{text-shadow:0 0 16px #EF4444,0 0 32px #F59E0B,0 0 48px #EF4444}}
+@keyframes streak{0%,100%{text-shadow:0 0 8px #FF3B30,0 0 16px #FF6B35}50%{text-shadow:0 0 16px #FF3B30,0 0 32px #FFB800,0 0 48px #FF6B35}}
 @keyframes coin{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(1.8)}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes countPulse{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -184,23 +205,30 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 .abounce{animation:bounceIn .4s ease-out both}
 
 .btn-primary{
-  background:${B.grad};border:none;color:#fff;padding:14px 32px;border-radius:14px;
+  background:${B.gradCTA};border:none;color:#fff;padding:14px 32px;border-radius:14px;
   font-weight:700;font-size:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+  text-shadow:0 1px 2px rgba(0,0,0,.2);
 }
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(124,58,237,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,107,53,.4),0 0 60px rgba(255,45,120,.15)}
 .btn-primary:active{transform:translateY(0)}
 
+.btn-secondary{
+  background:${B.grad};border:none;color:#fff;padding:12px 24px;border-radius:12px;
+  font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;
+}
+.btn-secondary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(139,92,246,.35)}
+
 .btn-ghost{
-  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);color:${B.accentL};
+  background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);color:${B.accentL};
   padding:12px 24px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;
 }
-.btn-ghost:hover{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.4)}
+.btn-ghost:hover{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4)}
 
 .card{
   background:${B.card};border:1px solid ${B.border};border-radius:16px;
   transition:all .25s;position:relative;overflow:hidden;
 }
-.card:hover{border-color:rgba(124,58,237,.35);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card:hover{border-color:rgba(139,92,246,.3);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(139,92,246,.1)}
 
 .chip{
   display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;
@@ -223,7 +251,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 
 .progress-bar{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 
-input:focus,select:focus{outline:none;border-color:rgba(124,58,237,.5);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+input:focus,select:focus{outline:none;border-color:rgba(139,92,246,.5);box-shadow:0 0 0 3px rgba(139,92,246,.15)}
 `;
 
 // ─── API HELPER ───
@@ -317,8 +345,10 @@ const AuthModal = ({ onAuth, onClose }) => {
             </div>
           )}
           <button type="submit" disabled={loading} style={{
-            width:"100%",padding:"12px 0",borderRadius:12,border:"none",background:B.grad,color:"#fff",
-            fontSize:15,fontWeight:700,cursor:loading?"wait":"pointer",opacity:loading?.7:1,transition:"opacity .2s"
+            width:"100%",padding:"12px 0",borderRadius:12,border:"none",
+            background:mode==="signup"?B.gradCTA:B.grad,color:"#fff",
+            fontSize:15,fontWeight:700,cursor:loading?"wait":"pointer",opacity:loading?.7:1,transition:"opacity .2s",
+            boxShadow:mode==="signup"?"0 4px 16px rgba(255,107,53,.25)":"0 4px 16px rgba(139,92,246,.25)"
           }}>
             {loading ? "Please wait..." : mode==="login" ? "Log In" : "Sign Up — Get 500 Free Coins 🎁"}
           </button>
@@ -345,7 +375,7 @@ const LiveTicker = () => {
   const [i,setI] = useState(0);
   useEffect(()=>{ const t=setInterval(()=>setI(p=>(p+1)%FEED.length),3500); return ()=>clearInterval(t); },[]);
   return (
-    <div style={{background:"rgba(16,185,129,.06)",borderBottom:"1px solid rgba(16,185,129,.15)",padding:"7px 20px",fontSize:"13px",color:B.okL,textAlign:"center",overflow:"hidden"}}>
+    <div style={{background:"linear-gradient(90deg,rgba(0,210,106,.06),rgba(255,184,0,.04),rgba(0,210,106,.06))",borderBottom:"1px solid rgba(0,210,106,.15)",padding:"7px 20px",fontSize:"13px",color:B.okL,textAlign:"center",overflow:"hidden"}}>
       <span className="af" key={i}>🟢 LIVE — {FEED[i]}</span>
     </div>
   );
@@ -387,10 +417,10 @@ const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
       </div>
       <div style={{display:"flex",alignItems:"center",gap:14}}>
         {user ? (<>
-          {streak>0&&<div className="chip" style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.25)",color:"#F87171"}}>
+          {streak>0&&<div className="chip" style={{background:"rgba(255,107,53,.1)",border:"1px solid rgba(255,107,53,.25)",color:"#FF6B35"}}>
             <span className="astreak">🔥</span><b>{streak}</b>
           </div>}
-          <div className="chip" style={{background:"rgba(124,58,237,.1)",border:`1px solid ${B.border}`,color:B.accentL,cursor:"pointer",fontSize:14}} onClick={()=>setPg("dash")}>
+          <div className="chip" style={{background:"rgba(0,210,106,.08)",border:"1px solid rgba(0,210,106,.2)",color:B.money,cursor:"pointer",fontSize:14}} onClick={()=>setPg("dash")}>
             {lv.icon} <b>{fmt(coins)}</b> 🪙
           </div>
           <div style={{position:"relative",display:"flex",alignItems:"center",gap:8}}>
@@ -439,8 +469,8 @@ const OfferCard = ({o,onEarn,delay=0}) => (
     onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 12px 40px rgba(0,0,0,.4)"}}
     onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="none"}}
   >
-    {o.hot&&<div style={{position:"absolute",top:10,right:10,background:B.gradHot,padding:"2px 8px",borderRadius:8,fontSize:10,fontWeight:800,color:"#fff"}}>🔥 HOT</div>}
-    <div style={{width:56,height:56,borderRadius:14,background:"rgba(124,58,237,.06)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{o.img}</div>
+    {o.hot&&<div style={{position:"absolute",top:10,right:10,background:B.gradHot,padding:"3px 10px",borderRadius:8,fontSize:10,fontWeight:800,color:"#fff",boxShadow:"0 2px 8px rgba(255,59,48,.3)"}}>🔥 HOT</div>}
+    <div style={{width:56,height:56,borderRadius:14,background:o.hot?"rgba(255,107,53,.08)":"rgba(139,92,246,.06)",border:o.hot?"1px solid rgba(255,107,53,.15)":"1px solid transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{o.img}</div>
     <div style={{flex:1,minWidth:0}}>
       <div style={{fontSize:14,fontWeight:600,marginBottom:6,lineHeight:1.3,paddingRight:o.hot?50:0}}>{o.t}</div>
       <div style={{display:"flex",gap:12,fontSize:11,color:B.muted,marginBottom:8,flexWrap:"wrap"}}>
@@ -455,7 +485,7 @@ const OfferCard = ({o,onEarn,delay=0}) => (
           </div>
           <span style={{fontSize:11,color:B.muted,whiteSpace:"nowrap"}}>{o.rate}% success</span>
         </div>
-        <div style={{background:B.grad,padding:"5px 12px",borderRadius:8,fontSize:13,fontWeight:700,color:"#fff",marginLeft:12,whiteSpace:"nowrap"}}>
+        <div style={{background:o.hot?B.gradCTA:B.gradOk,padding:"6px 14px",borderRadius:8,fontSize:13,fontWeight:700,color:"#fff",marginLeft:12,whiteSpace:"nowrap",boxShadow:o.hot?"0 2px 8px rgba(255,107,53,.25)":"0 2px 8px rgba(0,210,106,.2)"}}>
           {o.cashback?o.cashback:`$${toUSD(o.coins)}`}
         </div>
       </div>
@@ -481,10 +511,10 @@ const Home = ({setPg, user, onLogin}) => {
     <div>
       {/* ─── HERO ─── */}
       <section style={{minHeight:"92vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"60px 24px",position:"relative",overflow:"hidden"}}>
-        {/* BG effects */}
-        <div style={{position:"absolute",top:"-25%",left:"50%",transform:"translateX(-50%)",width:900,height:900,background:"radial-gradient(circle,rgba(124,58,237,.12) 0%,transparent 70%)",pointerEvents:"none"}}/>
-        <div className="afl" style={{position:"absolute",top:"8%",right:"8%",width:350,height:350,background:"radial-gradient(circle,rgba(96,165,250,.06) 0%,transparent 70%)",pointerEvents:"none"}}/>
-        <div className="afl" style={{position:"absolute",bottom:"10%",left:"5%",width:250,height:250,background:"radial-gradient(circle,rgba(16,185,129,.06) 0%,transparent 70%)",pointerEvents:"none",animationDelay:"2s"}}/>
+        {/* BG effects — warm gradients draw the eye to center */}
+        <div style={{position:"absolute",top:"-25%",left:"50%",transform:"translateX(-50%)",width:900,height:900,background:"radial-gradient(circle,rgba(139,92,246,.1) 0%,rgba(255,107,53,.04) 40%,transparent 70%)",pointerEvents:"none"}}/>
+        <div className="afl" style={{position:"absolute",top:"8%",right:"8%",width:350,height:350,background:"radial-gradient(circle,rgba(255,45,120,.06) 0%,transparent 70%)",pointerEvents:"none"}}/>
+        <div className="afl" style={{position:"absolute",bottom:"10%",left:"5%",width:250,height:250,background:"radial-gradient(circle,rgba(0,210,106,.06) 0%,transparent 70%)",pointerEvents:"none",animationDelay:"2s"}}/>
 
         <div className="au" style={{position:"relative",zIndex:1,maxWidth:850}}>
           {/* Live badge */}
@@ -495,7 +525,7 @@ const Home = ({setPg, user, onLogin}) => {
 
           <h1 style={{fontFamily:"'Space Grotesk'",fontSize:"clamp(38px,5.5vw,68px)",fontWeight:900,lineHeight:1.08,marginBottom:24}}>
             <span>Turn Your Time Into </span>
-            <span style={{background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Real Money</span>
+            <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Real Money</span>
           </h1>
 
           <p style={{fontSize:19,color:B.muted,lineHeight:1.65,marginBottom:20,maxWidth:620,margin:"0 auto 20px"}}>
@@ -531,7 +561,7 @@ const Home = ({setPg, user, onLogin}) => {
 
           {/* Endowed Progress */}
           <p style={{marginTop:20,fontSize:13,color:B.dim}}>
-            ⚡ Your 500 bonus coins ($0.50) = <strong style={{color:B.ok}}>50% to first cashout!</strong> Lowest minimum on any GPT site.
+            ⚡ Your 500 bonus coins ($0.50) = <strong style={{color:B.money}}>50% to first cashout!</strong> Lowest minimum on any GPT site.
           </p>
         </div>
       </section>
@@ -571,19 +601,19 @@ const Home = ({setPg, user, onLogin}) => {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section style={{padding:"80px 24px",background:"linear-gradient(180deg,transparent,rgba(124,58,237,.03),transparent)"}}>
+      <section style={{padding:"80px 24px",background:"linear-gradient(180deg,transparent,rgba(0,210,106,.02),transparent)"}}>
         <div style={{maxWidth:1000,margin:"0 auto"}}>
           <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:48}}>
-            3 Steps to <span style={{color:B.okL}}>Real Money</span>
+            3 Steps to <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Real Money</span>
           </h2>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24}}>
             {[
-              {s:"01",ic:"🎯",t:"Pick a Task",d:"Choose from thousands of offers. Surveys, games, apps, videos, shopping cashback — there's something for every interest and schedule."},
-              {s:"02",ic:"✅",t:"Complete It",d:"Follow simple instructions and earn coins. Track progress in real-time. Get bonus multipliers as you level up."},
-              {s:"03",ic:"💸",t:"Cash Out Instantly",d:"Withdraw to PayPal, Venmo, Cash App, crypto, or 15+ gift cards. Most payouts arrive in under 60 seconds. $1 minimum."},
+              {s:"01",ic:"🎯",t:"Pick a Task",d:"Choose from thousands of offers. Surveys, games, apps, videos, shopping cashback — there's something for every interest and schedule.",ac:"#3B82F6"},
+              {s:"02",ic:"⚡",t:"Complete It",d:"Follow simple instructions and earn coins. Track progress in real-time. Get bonus multipliers as you level up.",ac:"#FF9F1C"},
+              {s:"03",ic:"💰",t:"Cash Out Instantly",d:"Withdraw to PayPal, Venmo, Cash App, crypto, or 15+ gift cards. Most payouts arrive in under 60 seconds. $1 minimum.",ac:"#00D26A"},
             ].map((x,i)=>(
               <div key={i} className="card au" style={{padding:28,textAlign:"center",animationDelay:`${i*.12}s`}}>
-                <div style={{position:"absolute",top:-8,right:-8,fontSize:72,fontWeight:900,fontFamily:"'Space Grotesk'",color:"rgba(124,58,237,.05)"}}>{x.s}</div>
+                <div style={{position:"absolute",top:-8,right:-8,fontSize:72,fontWeight:900,fontFamily:"'Space Grotesk'",color:`${x.ac}08`}}>{x.s}</div>
                 <div style={{fontSize:44,marginBottom:14}}>{x.ic}</div>
                 <h3 style={{fontSize:18,fontWeight:700,marginBottom:10}}>{x.t}</h3>
                 <p style={{color:B.muted,fontSize:14,lineHeight:1.6}}>{x.d}</p>
@@ -604,17 +634,17 @@ const Home = ({setPg, user, onLogin}) => {
         </p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
           {[
-            {ic:"🏦",t:"All Offers Available",d:"We source the highest-paying offers from more providers than any other platform. More offers means more opportunities and better payouts for you."},
-            {ic:"💰",t:"Highest Payouts Guaranteed",d:"We take a smaller cut than competitors. If you find the same offer paying more elsewhere, we match it + 10% bonus."},
-            {ic:"⚡",t:"$1 Minimum, Instant Payout",d:"While others make you wait to $5 or $30, cash out at just $1. Most withdrawals process in under 60 seconds."},
-            {ic:"🔥",t:"Up to 25% Level Bonus",d:"The more you earn, the higher your level. Titan-level users get 25% bonus on every single offer. No other GPT site does this."},
-            {ic:"🛒",t:"Shopping Cashback",d:"Earn cashback at 7,000+ stores including Amazon, Walmart, Target. Stack with store sales and coupons."},
-            {ic:"🔍",t:"Search & Earn",d:"Use our search engine and earn coins for every search. Browse the web like normal, get paid for it."},
+            {ic:"🏦",t:"All Offers Available",d:"We source the highest-paying offers from more providers than any other platform. More offers means more opportunities and better payouts for you.",ac:"#3B82F6"},
+            {ic:"💰",t:"Highest Payouts Guaranteed",d:"We take a smaller cut than competitors. If you find the same offer paying more elsewhere, we match it + 10% bonus.",ac:"#00D26A"},
+            {ic:"⚡",t:"$1 Minimum, Instant Payout",d:"While others make you wait to $5 or $30, cash out at just $1. Most withdrawals process in under 60 seconds.",ac:"#FFB800"},
+            {ic:"🔥",t:"Up to 25% Level Bonus",d:"The more you earn, the higher your level. Titan-level users get 25% bonus on every single offer. No other GPT site does this.",ac:"#FF6B35"},
+            {ic:"🛍️",t:"Shopping Cashback",d:"Earn cashback at 7,000+ stores including Amazon, Walmart, Target. Stack with store sales and coupons.",ac:"#FF2D78"},
+            {ic:"🔍",t:"Search & Earn",d:"Use our search engine and earn coins for every search. Browse the web like normal, get paid for it.",ac:"#00E5FF"},
           ].map((x,i)=>(
             <div key={i} className="card au" style={{padding:22,display:"flex",gap:16,animationDelay:`${i*.06}s`}}>
-              <div style={{fontSize:28,flexShrink:0,marginTop:2}}>{x.ic}</div>
+              <div style={{width:48,height:48,borderRadius:12,background:`${x.ac}12`,border:`1px solid ${x.ac}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{x.ic}</div>
               <div>
-                <div style={{fontWeight:700,fontSize:15,marginBottom:4}}>{x.t}</div>
+                <div style={{fontWeight:700,fontSize:15,marginBottom:4,color:x.ac}}>{x.t}</div>
                 <div style={{fontSize:13,color:B.muted,lineHeight:1.6}}>{x.d}</div>
               </div>
             </div>
@@ -625,16 +655,16 @@ const Home = ({setPg, user, onLogin}) => {
       {/* ─── REALISTIC EARNINGS SECTION ─── */}
       <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto"}}>
         <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-          What Can You <span style={{color:B.okL}}>Realistically Earn</span>?
+          What Can You <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Realistically Earn</span>?
         </h2>
         <p style={{textAlign:"center",color:B.muted,marginBottom:40,maxWidth:600,margin:"0 auto 40px"}}>
           We believe in transparency. Here's what our users actually earn based on time invested.
         </p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>
           {[
-            {tier:"Casual",time:"30 min/day",range:"$50 – $150/mo",desc:"Complete a few surveys and easy app offers during downtime. Great for covering a subscription or two.",color:B.ok,ic:"☕"},
-            {tier:"Consistent",time:"1–2 hrs/day",range:"$200 – $500/mo",desc:"Focus on high-value game offers and app signups. Many users cover a car payment or groceries at this level.",color:B.warn,ic:"💪"},
-            {tier:"Dedicated",time:"3–5 hrs/day",range:"$500 – $1,200+/mo",desc:"Treat it like a part-time job. Stack game offers, surveys, referrals, and cashback. Top earners hit four figures monthly.",color:B.accentL,ic:"🚀"},
+            {tier:"Casual",time:"30 min/day",range:"$50 – $150/mo",desc:"Complete a few surveys and easy app offers during downtime. Great for covering a subscription or two.",color:"#3B82F6",ic:"☕"},
+            {tier:"Consistent",time:"1–2 hrs/day",range:"$200 – $500/mo",desc:"Focus on high-value game offers and app signups. Many users cover a car payment or groceries at this level.",color:"#FF9F1C",ic:"💪"},
+            {tier:"Dedicated",time:"3–5 hrs/day",range:"$500 – $1,200+/mo",desc:"Treat it like a part-time job. Stack game offers, surveys, referrals, and cashback. Top earners hit four figures monthly.",color:"#00D26A",ic:"🚀"},
           ].map((e,i)=>(
             <div key={i} className="card au" style={{padding:24,textAlign:"center",animationDelay:`${i*.12}s`}}>
               <div style={{fontSize:36,marginBottom:12}}>{e.ic}</div>
@@ -734,9 +764,9 @@ const Home = ({setPg, user, onLogin}) => {
       </section>
 
       {/* ─── FINAL CTA ─── */}
-      <section style={{padding:"80px 24px",textAlign:"center",background:"linear-gradient(180deg,transparent,rgba(124,58,237,.06))"}}>
+      <section style={{padding:"80px 24px",textAlign:"center",background:"linear-gradient(180deg,transparent,rgba(255,107,53,.04))"}}>
         <h2 style={{fontFamily:"'Space Grotesk'",fontSize:40,fontWeight:900,marginBottom:14}}>
-          Ready to Start Earning?
+          Ready to Start <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Earning</span>?
         </h2>
         <p style={{color:B.muted,fontSize:18,marginBottom:12}}>
           Join 380,000+ earners. 100% free. Cash out in under 60 seconds.
@@ -795,7 +825,7 @@ const Dash = ({coins,streak,today,week,setPg}) => {
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:24}}>
         <Stat label="Total Balance" value={<>{fmt(coins)} 🪙</>} sub={`$${toUSD(coins)}`} grad={B.grad} delay={0}/>
         <Stat label="Today" value={<>+{fmt(today)}</>} sub={`$${toUSD(today)}`} grad={B.gradOk} delay={.05}/>
-        <Stat label="This Week" value={<>+{fmt(week)}</>} sub={`$${toUSD(week)}`} grad="linear-gradient(135deg,#60A5FA,#A78BFA)" delay={.1}/>
+        <Stat label="This Week" value={<>+{fmt(week)}</>} sub={`$${toUSD(week)}`} grad={B.grad} delay={.1}/>
         <Stat label="Streak" value={<>{streak} Days 🔥</>} sub={streak>=7?`Bonus unlocked!`:`${7-(streak%7)} days to bonus`} grad={B.gradHot} delay={.15}/>
       </div>
 
@@ -817,15 +847,15 @@ const Dash = ({coins,streak,today,week,setPg}) => {
                 <div style={{fontSize:12,color:B.accentL,fontWeight:600}}>+{nxt.bonus}% bonus on all offers</div>
               </div>}
             </div>
-            <div style={{background:"rgba(124,58,237,.08)",borderRadius:10,height:12,overflow:"hidden",marginBottom:6}}>
-              <div className="progress-bar" style={{width:`${prog}%`,background:B.grad}}/>
+            <div style={{background:"rgba(139,92,246,.08)",borderRadius:10,height:12,overflow:"hidden",marginBottom:6}}>
+              <div className="progress-bar" style={{width:`${prog}%`,background:B.gradGold}}/>
             </div>
             <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:B.muted}}>
               <span>{fmt(coins)} coins</span>
               {nxt&&<span>{fmt(nxt.min)} needed</span>}
             </div>
-            <div style={{marginTop:14,padding:10,background:"rgba(124,58,237,.04)",borderRadius:10,fontSize:12,color:B.muted}}>
-              🎖 Your perks: {lv.bonus}% bonus on offers
+            <div style={{marginTop:14,padding:10,background:"rgba(255,184,0,.04)",borderRadius:10,border:"1px solid rgba(255,184,0,.08)",fontSize:12,color:B.muted}}>
+              🎖 Your perks: <span style={{color:"#FFB800",fontWeight:600}}>{lv.bonus}% bonus on offers</span>
               {lv.idx>=3?" · Priority support":""}
               {lv.idx>=4?" · Exclusive high-value offers":""}
               {lv.idx>=5?" · Zero cashout fees · VIP Discord":""}
@@ -842,8 +872,8 @@ const Dash = ({coins,streak,today,week,setPg}) => {
                 return (
                   <div key={d} style={{
                     flex:1,textAlign:"center",padding:"10px 4px",borderRadius:10,
-                    background:done?"rgba(16,185,129,.08)":"rgba(255,255,255,.02)",
-                    border:isToday?"2px solid rgba(16,185,129,.4)":`1px solid rgba(255,255,255,.04)`,
+                    background:done?"rgba(0,210,106,.08)":"rgba(255,255,255,.02)",
+                    border:isToday?"2px solid rgba(255,107,53,.5)":`1px solid rgba(255,255,255,.04)`,
                   }}>
                     <div style={{fontSize:10,color:B.muted,marginBottom:4}}>Day {d}</div>
                     <div style={{fontSize:18}}>{done?"✅":d===7?"🎁":"⬜"}</div>
@@ -858,7 +888,7 @@ const Dash = ({coins,streak,today,week,setPg}) => {
               </button>
             )}
             {bonusClaimed&&(
-              <div className="abounce" style={{marginTop:14,padding:13,background:"rgba(16,185,129,.08)",borderRadius:12,textAlign:"center",fontWeight:700,color:B.ok}}>
+              <div className="abounce" style={{marginTop:14,padding:13,background:"rgba(0,210,106,.08)",border:"1px solid rgba(0,210,106,.2)",borderRadius:12,textAlign:"center",fontWeight:700,color:B.money}}>
                 🎉 You won {fmt(bonusAmt)} bonus coins!{bonusAmt>500?" JACKPOT! 🍀":""}
               </div>
             )}
@@ -1055,7 +1085,7 @@ const Profile = ({coins,streak,today,week,user}) => {
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
             <h1 style={{fontFamily:"'Space Grotesk'",fontSize:24,fontWeight:800}}>{displayName}</h1>
             <div className="chip" style={{background:`${lv.c}15`,border:`1px solid ${lv.c}30`,color:lv.c,fontSize:12}}>{lv.icon} {lv.n}</div>
-            {streak>=7&&<div className="chip" style={{background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.2)",color:"#F87171",fontSize:12}}>🔥 {streak} day streak</div>}
+            {streak>=7&&<div className="chip" style={{background:"rgba(255,107,53,.08)",border:"1px solid rgba(255,107,53,.2)",color:"#FF6B35",fontSize:12}}>🔥 {streak} day streak</div>}
           </div>
           <p style={{fontSize:13,color:B.muted}}>Member since {memberSince}</p>
           <div style={{marginTop:10}}>

@@ -1,4 +1,4 @@
-# CashFlow 2.0 — Offerwall Setup Guide
+# PocketLined — Offerwall Setup Guide
 
 ## Overview
 

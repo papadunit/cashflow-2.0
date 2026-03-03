@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════
---  CASHFLOW 2.0 — Supabase Database Schema
+--  POCKETLINED — Supabase Database Schema
 --  Run this in Supabase SQL Editor: Dashboard → SQL Editor → New Query
 -- ═══════════════════════════════════════════════════════════
 

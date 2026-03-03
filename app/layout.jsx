@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'CashFlow 2.0 — The Ultimate GPT Rewards Platform',
+  title: 'PocketLined — The Ultimate GPT Rewards Platform',
   description: 'Earn real money completing surveys, playing games, trying apps, and more. Cash out instantly to PayPal, Venmo, Cash App, crypto, or gift cards.',
 };
 

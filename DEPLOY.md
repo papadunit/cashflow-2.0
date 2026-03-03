@@ -1,4 +1,4 @@
-# CashFlow 2.0 — Deployment Guide
+# PocketLined — Deployment Guide
 
 ## Stack
 - **Frontend**: Next.js 14 (React) — deployed on Vercel
@@ -28,10 +28,10 @@
 git init
 git branch -m main
 git add -A
-git commit -m "Initial commit — CashFlow 2.0"
+git commit -m "Initial commit — PocketLined"
 
 # Create repo on GitHub, then:
-git remote add origin https://github.com/YOUR_USERNAME/cashflow-2.0.git
+git remote add origin https://github.com/YOUR_USERNAME/pocketlined.git
 git push -u origin main
 ```
 
@@ -40,7 +40,7 @@ git push -u origin main
 ## Step 3: Deploy on Vercel
 
 1. Go to [vercel.com/new](https://vercel.com/new)
-2. Click **Import Git Repository** → select `cashflow-2.0`
+2. Click **Import Git Repository** → select `pocketlined`
 3. **Framework Preset**: Next.js (auto-detected)
 4. **Environment Variables** — add these:
 
@@ -50,7 +50,7 @@ git push -u origin main
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key |
 | `JWT_SECRET` | A random 64-char string |
-| `ADMIN_EMAIL` | admin@cashflow.com |
+| `ADMIN_EMAIL` | admin@pocketlined.com |
 | `ADMIN_PASSWORD` | Your admin password |
 | `ADGATE_SECRET` | Your AdGate Media secret |
 | `ADGEM_SECRET` | Your AdGem secret |
@@ -66,7 +66,7 @@ git push -u origin main
 | `TOROX_SECRET` | Your Torox secret |
 
 5. Click **Deploy**
-6. Your site will be live at `https://cashflow-2-0.vercel.app` (or custom domain)
+6. Your site will be live at `https://pocketlined.vercel.app` (or custom domain)
 
 ---
 

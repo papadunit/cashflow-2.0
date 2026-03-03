@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 // ═══════════════════════════════════════════════════════════════
-//  CASHFLOW 2.0 — The Ultimate GPT Rewards Platform
+//  POCKETLINED — The Ultimate GPT Rewards Platform
 // ═══════════════════════════════════════════════════════════════
 //  BUSINESS MODEL: 100% funded by offerwall revenue share.
 //  You earn 20-40% of every CPA/CPI the advertiser pays.
@@ -104,7 +104,7 @@ const OFFERS = [
   { id:15, t:"Robinhood — Sign Up & Deposit",      cat:"crypto",   coins:48000, time:"10 min",  diff:"Medium", img:"📈", wall:"TyrAds",            pop:89, rate:80, hot:true },
   { id:16, t:"Swagbucks Search — 10 Searches",     cat:"search",   coins:500,   time:"5 min",   diff:"Easy",   img:"🔍", wall:"Direct",            pop:70, rate:99, hot:false },
   { id:17, t:"Amazon Cashback — Any Purchase",     cat:"shopping", coins:0,     time:"Varies",  diff:"Easy",   img:"🛒", wall:"Direct",            pop:96, rate:100,hot:false, cashback:"Up to 8%" },
-  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:10000, time:"1 min",   diff:"Easy",   img:"🤝", wall:"CashFlow",          pop:94, rate:100,hot:true },
+  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:10000, time:"1 min",   diff:"Easy",   img:"🤝", wall:"PocketLined",          pop:94, rate:100,hot:true },
   { id:19, t:"Daily Trivia — 5 Questions",         cat:"tasks",    coins:600,   time:"2 min",   diff:"Easy",   img:"🧠", wall:"Direct",            pop:83, rate:96, hot:false },
   { id:20, t:"Norton VPN — Free Trial + Use 3 Days",cat:"apps",    coins:35000, time:"3 days",  diff:"Easy",   img:"🔒", wall:"Lootably",          pop:80, rate:74, hot:false },
 ];
@@ -408,8 +408,7 @@ const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
     <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",background:B.glass,backdropFilter:"blur(24px)",borderBottom:`1px solid ${B.border}`,position:"sticky",top:0,zIndex:100}}>
       <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setPg("home")}>
         <div style={{width:36,height:36,borderRadius:10,background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:900,color:"#fff"}}>C</div>
-        <span style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:800,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>CashFlow</span>
-        <span style={{fontSize:9,background:B.gradHot,padding:"2px 8px",borderRadius:8,color:"#fff",fontWeight:800}}>2.0</span>
+        <span style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:800,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PocketLined</span>
       </div>
       <div style={{display:"flex",gap:2}}>
         {items.map(x=>(
@@ -633,7 +632,7 @@ const Home = ({setPg, user, onLogin}) => {
           {[
             {q:"\"How does this actually make money?\"",a:"Brands pay us when you try their apps, take their surveys, or sign up for their services. We split that payment with you. That's the whole model — no tricks.",ic:"🛡️",ac:"#3B82F6"},
             {q:"\"Do I need any skills?\"",a:"Nope. If you can use a phone or computer, you can do this. Most tasks are things like answering questions, trying free apps, or playing mobile games.",ic:"🎯",ac:"#00D26A"},
-            {q:"\"Do I have to pay anything?\"",a:"Never. CashFlow is 100% free. No premium tier, no hidden fees, no credit card required. We give you $0.50 just for creating an account.",ic:"💸",ac:"#FFB800"},
+            {q:"\"Do I have to pay anything?\"",a:"Never. PocketLined is 100% free. No premium tier, no hidden fees, no credit card required. We give you $0.50 just for creating an account.",ic:"💸",ac:"#FFB800"},
             {q:"\"How fast do I get paid?\"",a:"Most payouts process within minutes once you request them. The minimum cashout is just $1, so you don't have to wait long to see real money in your account.",ic:"⚡",ac:"#FF6B35"},
             {q:"\"Is this going to replace my job?\"",a:"Let's be real: no. This is extra money, not a salary. Think of it like getting paid for time you'd spend on your phone anyway. Some people earn $50/month, some earn $500 — it depends on your effort.",ic:"📊",ac:"#FF2D78"},
             {q:"\"What's the catch?\"",a:"The catch is that it takes time and effort. This isn't passive income. You're trading your time for money, just like any other work — but you do it from wherever you want, whenever you want.",ic:"✅",ac:"#00E5FF"},
@@ -1516,7 +1515,7 @@ const Profile = ({coins,streak,today,week,user}) => {
             <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>👥 Your Referral Link</h3>
             <p style={{fontSize:12,color:B.muted,marginBottom:12}}>Earn <strong style={{color:"#EC4899"}}>$10 per referral</strong> + 5% of everything they earn. Forever.</p>
             <div style={{background:"rgba(0,0,0,.25)",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-              <code style={{fontSize:12,color:B.accentL}}>cashflow.com/ref/andrew</code>
+              <code style={{fontSize:12,color:B.accentL}}>pocketlined.com/ref/andrew</code>
               <button style={{background:B.grad,border:"none",padding:"6px 14px",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>Copy</button>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
@@ -2393,10 +2392,10 @@ const Footer = () => (
       ))}
     </div>
     <div style={{marginBottom:6}}>
-      <span style={{fontFamily:"'Space Grotesk'",fontWeight:800,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>CashFlow</span> — The Smartest Way to Earn
+      <span style={{fontFamily:"'Space Grotesk'",fontWeight:800,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PocketLined</span> — The Smartest Way to Earn
     </div>
     <div style={{fontSize:10,color:B.dim}}>
-      © 2026 CashFlow. All earnings come from advertiser-funded offers. CashFlow never charges users.
+      © 2026 PocketLined. All earnings come from advertiser-funded offers. PocketLined never charges users.
     </div>
   </footer>
 );

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-//  CashFlow 2.0 — Backend Server
+//  PocketLined — Backend Server
 // ═══════════════════════════════════════════════════════════════
 //  Express + SQLite + JWT Auth + Offerwall Postbacks + Payouts
 //  Admin routes are fully separated from member routes.
@@ -626,8 +626,8 @@ app.get('/api/admin/fraud', authenticate, adminOnly, (req, res) => {
 
 // ─── SEED ADMIN USER ───
 (async () => {
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@cashflow.com';
-  const adminPass = process.env.ADMIN_PASSWORD || 'CashFlow2026!';
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@pocketlined.com';
+  const adminPass = process.env.ADMIN_PASSWORD || 'PocketLined2026!';
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(adminEmail);
   if (!existing) {
     const hash = await bcrypt.hash(adminPass, 12);
@@ -639,7 +639,7 @@ app.get('/api/admin/fraud', authenticate, adminOnly, (req, res) => {
 
 // ─── START SERVER ───
 app.listen(PORT, () => {
-  console.log(`\n  CashFlow 2.0 Backend running on port ${PORT}`);
+  console.log(`\n  PocketLined Backend running on port ${PORT}`);
   console.log(`  Member API:  http://localhost:${PORT}/api`);
   console.log(`  Admin API:   http://localhost:${PORT}/api/admin (requires admin JWT)`);
   console.log(`  Postbacks:   http://localhost:${PORT}/postback/{wallname}\n`);

@@ -1,5 +1,5 @@
 {
-  "name": "cashflow-2.0",
+  "name": "pocketlined",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,13 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^14.2.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "@supabase/supabase-js": "^2.45.0",
     "@supabase/ssr": "^0.5.0",
+    "@supabase/supabase-js": "^2.45.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

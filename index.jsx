@@ -1041,7 +1041,10 @@ const Profile = ({coins,streak,today,week,user}) => {
   const referrals = user ? (user.referralCount || 0) : 12;
   const referralEarnings = user ? (user.referralEarnings || 0) : 18640;
   const displayName = user ? (user.username || 'User') : 'Andrew';
-  const memberSince = user ? new Date(user.created_at).toLocaleDateString('en-US', {month:'long', year:'numeric'}) : 'March 2026';
+  const memberSince = user && user.created_at ? (() => {
+    try { return new Date(user.created_at).toLocaleDateString('en-US', {month:'long', year:'numeric'}); }
+    catch(e) { return 'March 2026'; }
+  })() : 'March 2026';
 
   return (
     <div style={{maxWidth:900,margin:"0 auto",padding:"28px 24px"}}>
@@ -1902,6 +1905,8 @@ export default function App() {
     setShowAuth(false);
     setPg("dash");
     toast(`Welcome${userData.username ? ', ' + userData.username : ''}! 🎉`);
+    // Fetch full profile to get all fields
+    apiFetch('/api/me').then(data => setUser(data.user || data)).catch(() => {});
   }, [toast]);
 
   const handleLogout = useCallback(() => {

@@ -35,6 +35,7 @@ export async function POST(request) {
         id: user.id, username: user.username, email: user.email,
         coins: user.coins, role: user.role, streak: newStreak,
         level_idx: user.level_idx, referral_code: user.referral_code,
+        lifetime_earned: user.lifetime_earned, created_at: user.created_at,
       },
     });
   } catch (err) {

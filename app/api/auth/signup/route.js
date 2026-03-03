@@ -67,7 +67,7 @@ export async function POST(request) {
     }
 
     const token = signToken({ id: userId, role: 'member' });
-    return NextResponse.json({ token, user: { id: userId, username, email, coins: 500, role: 'member' } });
+    return NextResponse.json({ token, user: { id: userId, username, email, coins: 500, role: 'member', lifetime_earned: 500, created_at: new Date().toISOString(), referral_code: refCode } });
   } catch (err) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }

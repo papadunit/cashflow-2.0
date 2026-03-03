@@ -1378,16 +1378,87 @@ const Profile = ({coins,streak,today,week,user}) => {
 // ═══════════════════════════════════════════════════════════════
 //  PAGE: REWARDS / CASHOUT
 // ═══════════════════════════════════════════════════════════════
-const Rewards = ({coins}) => {
+const Rewards = ({coins, onCashout, user}) => {
   const [sel,setSel] = useState(null);
   const [amt,setAmt] = useState("");
+  const [dest,setDest] = useState("");
   const [processing,setProcessing] = useState(false);
   const [done,setDone] = useState(false);
+  const [error,setError] = useState("");
+  const [myPayouts,setMyPayouts] = useState([]);
+  const [loadingPayouts,setLoadingPayouts] = useState(true);
 
-  const cashout = () => {
-    setProcessing(true);
-    setTimeout(()=>{setProcessing(false);setDone(true)},2000);
+  // Fetch user's payout history on mount
+  useEffect(()=>{
+    apiFetch('/api/payouts').then(data=>{
+      setMyPayouts(Array.isArray(data)?data:[]);
+      setLoadingPayouts(false);
+    }).catch(()=>setLoadingPayouts(false));
+  },[]);
+
+  // Destination field labels per method
+  const destLabels = {
+    paypal:"PayPal Email",venmo:"Venmo Username or Phone",cashapp:"Cash App $Cashtag",
+    btc:"Bitcoin Wallet Address",eth:"Ethereum Wallet Address",usdt:"USDT Wallet Address (TRC-20)",
+    amazon:"Email for Amazon Gift Card",visa:"Email for Visa Delivery",
+    steam:"Steam Profile URL",apple:"Apple ID Email",google:"Google Play Email",walmart:"Email for Walmart Gift Card",
   };
+  const destPlaceholders = {
+    paypal:"you@email.com",venmo:"@username or (555) 123-4567",cashapp:"$YourCashtag",
+    btc:"bc1q...",eth:"0x...",usdt:"T...",
+    amazon:"you@email.com",visa:"you@email.com",
+    steam:"https://steamcommunity.com/id/...",apple:"you@icloud.com",google:"you@gmail.com",walmart:"you@email.com",
+  };
+
+  const selectedMethod = CASHOUTS.find(c=>c.id===sel);
+  const minCoins = selectedMethod?.min || 1000;
+  const amtNum = parseFloat(amt) || 0;
+  const coinCost = Math.round(amtNum * 1000);
+  const canAfford = coinCost >= minCoins && coinCost <= coins;
+
+  const cashout = async () => {
+    if(!sel || !amtNum || !dest.trim()){
+      setError("Please fill in all fields");
+      return;
+    }
+    if(coinCost < minCoins){
+      setError(`Minimum withdrawal is $${toUSD(minCoins)}`);
+      return;
+    }
+    if(coinCost > coins){
+      setError("Insufficient balance");
+      return;
+    }
+    setError("");
+    setProcessing(true);
+    try {
+      const res = await apiFetch('/api/payouts',{
+        method:'POST',
+        body: JSON.stringify({ method:sel, coins:coinCost, destination:dest.trim() }),
+      });
+      if(res.error){
+        setError(res.error);
+        setProcessing(false);
+        return;
+      }
+      setDone(true);
+      setProcessing(false);
+      // Refresh payouts list
+      apiFetch('/api/payouts').then(data=>setMyPayouts(Array.isArray(data)?data:[])).catch(()=>{});
+      // Notify parent to refresh user data (coin balance)
+      if(onCashout) onCashout(coinCost);
+    } catch(e) {
+      setError("Something went wrong. Please try again.");
+      setProcessing(false);
+    }
+  };
+
+  const resetForm = () => {
+    setSel(null);setAmt("");setDest("");setDone(false);setError("");
+  };
+
+  const statusColors = {pending:B.warn,completed:B.ok,rejected:B.hot};
+  const statusLabels = {pending:"⏳ Pending",completed:"✅ Paid",rejected:"❌ Rejected"};
 
   return (
     <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
@@ -1402,95 +1473,171 @@ const Rewards = ({coins}) => {
       <div className="card au" style={{padding:"16px 22px",marginBottom:24,display:"flex",alignItems:"center",gap:14,background:"rgba(16,185,129,.04)",border:"1px solid rgba(16,185,129,.12)"}}>
         <span style={{fontSize:28}}>⚡</span>
         <div>
-          <div style={{fontWeight:700,fontSize:14,color:B.ok}}>Instant Payouts — $1 Minimum</div>
-          <div style={{fontSize:12,color:B.muted}}>Most cashouts process in under 60 seconds. Zero waiting. Zero holding periods. The lowest minimum of any GPT platform.</div>
+          <div style={{fontWeight:700,fontSize:14,color:B.ok}}>Fast Payouts — $1 Minimum</div>
+          <div style={{fontSize:12,color:B.muted}}>PayPal, Venmo, Cash App, crypto, and gift cards. $1 minimum cashout — the lowest of any GPT platform.</div>
         </div>
       </div>
 
       {/* Cashout Grid */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:28}}>
-        {CASHOUTS.map((c,i)=>{
-          const can=coins>=c.min;
-          const active=sel===c.id;
-          return (
-            <div key={c.id} className="card au" onClick={()=>can&&setSel(c.id)} style={{
-              padding:20,textAlign:"center",cursor:can?"pointer":"default",opacity:can?1:.45,
-              border:active?`2px solid ${B.accent}`:`1px solid ${B.border}`,
-              background:active?"rgba(124,58,237,.06)":B.card,
-              animationDelay:`${i*.04}s`,position:"relative",
-            }}>
-              {c.pop&&<div style={{position:"absolute",top:-7,right:-7,background:B.gradHot,padding:"2px 8px",borderRadius:8,fontSize:9,fontWeight:800,color:"#fff"}}>POPULAR</div>}
-              <div style={{fontSize:32,marginBottom:8}}>{c.ic}</div>
-              <div style={{fontWeight:700,fontSize:14,marginBottom:4}}>{c.n}</div>
-              <div style={{fontSize:11,color:B.muted}}>Min: ${toUSD(c.min)}</div>
-              <div style={{fontSize:11,color:B.ok,marginTop:2}}>{c.spd} · {c.fee} fee</div>
-            </div>
-          );
-        })}
-      </div>
+      {!done && (
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:28}}>
+          {CASHOUTS.map((c,i)=>{
+            const can=coins>=c.min;
+            const active=sel===c.id;
+            return (
+              <div key={c.id} className="card au" onClick={()=>{if(can){setSel(c.id);setDone(false);setError("");}}} style={{
+                padding:20,textAlign:"center",cursor:can?"pointer":"default",opacity:can?1:.45,
+                border:active?`2px solid ${B.accent}`:`1px solid ${B.border}`,
+                background:active?"rgba(124,58,237,.06)":B.card,
+                animationDelay:`${i*.04}s`,position:"relative",transition:"all .15s",
+              }}
+                onMouseEnter={e=>{if(can)e.currentTarget.style.transform="translateY(-3px)"}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}
+              >
+                {c.pop&&<div style={{position:"absolute",top:-7,right:-7,background:B.gradHot,padding:"2px 8px",borderRadius:8,fontSize:9,fontWeight:800,color:"#fff"}}>POPULAR</div>}
+                <div style={{fontSize:32,marginBottom:8}}>{c.ic}</div>
+                <div style={{fontWeight:700,fontSize:14,marginBottom:4}}>{c.n}</div>
+                <div style={{fontSize:11,color:B.muted}}>Min: ${toUSD(c.min)}</div>
+                <div style={{fontSize:11,color:B.ok,marginTop:2}}>{c.spd} · {c.fee} fee</div>
+                {!can&&<div style={{fontSize:10,color:B.hot,marginTop:4}}>Need {fmt(c.min - coins)} more coins</div>}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Cashout Form */}
       {sel&&!done&&(
-        <div className="af" style={{maxWidth:450,margin:"0 auto"}}>
+        <div className="af" style={{maxWidth:500,margin:"0 auto"}}>
           <div className="card" style={{padding:28}}>
-            <h3 style={{fontSize:17,fontWeight:700,textAlign:"center",marginBottom:18}}>
-              Withdraw to {CASHOUTS.find(c=>c.id===sel)?.n}
+            <h3 style={{fontSize:17,fontWeight:700,textAlign:"center",marginBottom:4}}>
+              Withdraw to {selectedMethod?.n} {selectedMethod?.ic}
             </h3>
+            <p style={{textAlign:"center",fontSize:12,color:B.muted,marginBottom:20}}>
+              Available: {fmt(coins)} coins (${toUSD(coins)})
+            </p>
+
+            {/* Amount Input */}
             <div style={{marginBottom:14}}>
               <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5}}>Amount (USD)</label>
-              <input type="number" placeholder={`Min $${toUSD(CASHOUTS.find(c=>c.id===sel)?.min||1000)}`}
+              <input type="number" step="0.01" min={toUSD(minCoins)} max={toUSD(coins)}
+                placeholder={`Min $${toUSD(minCoins)}`}
                 value={amt} onChange={e=>setAmt(e.target.value)}
                 style={{width:"100%",padding:13,background:"rgba(255,255,255,.03)",border:`1px solid ${B.border}`,borderRadius:10,color:B.txt,fontSize:16}}/>
+              {/* Quick amount buttons */}
+              <div style={{display:"flex",gap:6,marginTop:8}}>
+                {[1,5,10,25].filter(v=>v*1000<=coins).map(v=>(
+                  <button key={v} onClick={()=>setAmt(v.toString())} style={{
+                    flex:1,padding:"6px 0",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",
+                    background:parseFloat(amt)===v?"rgba(124,58,237,.15)":"rgba(255,255,255,.03)",
+                    border:parseFloat(amt)===v?`1px solid ${B.accent}`:`1px solid ${B.border}`,
+                    color:parseFloat(amt)===v?B.accentL:B.muted,
+                  }}>${v}</button>
+                ))}
+                <button onClick={()=>setAmt(toUSD(coins))} style={{
+                  flex:1,padding:"6px 0",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",
+                  background:"rgba(0,210,106,.06)",border:`1px solid rgba(0,210,106,.15)`,color:B.ok,
+                }}>MAX</button>
+              </div>
             </div>
-            {sel==="paypal"&&<div style={{marginBottom:14}}>
-              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5}}>PayPal Email</label>
-              <input type="email" placeholder="your@email.com"
+
+            {/* Destination Input */}
+            <div style={{marginBottom:14}}>
+              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5}}>{destLabels[sel]||"Destination"}</label>
+              <input type="text" placeholder={destPlaceholders[sel]||"Enter destination"}
+                value={dest} onChange={e=>setDest(e.target.value)}
                 style={{width:"100%",padding:13,background:"rgba(255,255,255,.03)",border:`1px solid ${B.border}`,borderRadius:10,color:B.txt,fontSize:14}}/>
-            </div>}
-            <button className="btn-primary" onClick={cashout} disabled={processing} style={{width:"100%",padding:15,fontSize:16}}>
-              {processing?"⏳ Processing...":"Withdraw Now ⚡"}
-            </button>
-          </div>
-        </div>
-      )}
+            </div>
 
-      {done&&(
-        <div className="abounce" style={{maxWidth:450,margin:"0 auto",textAlign:"center"}}>
-          <div className="card" style={{padding:36}}>
-            <div style={{fontSize:56,marginBottom:12}}>✅</div>
-            <h3 style={{fontSize:20,fontWeight:700,color:B.ok,marginBottom:8}}>Withdrawal Complete!</h3>
-            <p style={{color:B.muted,fontSize:14}}>Your payout has been sent. Check your {CASHOUTS.find(c=>c.id===sel)?.n} in moments.</p>
-          </div>
-        </div>
-      )}
-
-      {/* Recent Withdrawals */}
-      <div style={{marginTop:40}}>
-        <h3 style={{fontSize:17,fontWeight:700,marginBottom:14}}>Recent Withdrawals — Live</h3>
-        <div className="card" style={{overflow:"hidden"}}>
-          {[
-            {u:"CryptoKing_99",a:"$78.00",m:"Bitcoin",t:"Just now",av:"👑"},
-            {u:"Maria_NYC",a:"$22.50",m:"PayPal",t:"28 sec ago",av:"💎"},
-            {u:"GameBoy22",a:"$55.00",m:"Cash App",t:"1 min ago",av:"🎮"},
-            {u:"EarnDaily",a:"$15.20",m:"Venmo",t:"2 min ago",av:"⚡"},
-            {u:"Sarah_TX",a:"$95.00",m:"Bitcoin",t:"3 min ago",av:"🌟"},
-            {u:"Rob_UK",a:"$10.00",m:"Amazon",t:"5 min ago",av:"🏆"},
-            {u:"Jenny_CA",a:"$42.00",m:"PayPal",t:"7 min ago",av:"💰"},
-          ].map((w,i)=>(
-            <div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"13px 20px",borderBottom:i<6?`1px solid rgba(255,255,255,.03)`:"none"}}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:20}}>{w.av}</span>
-                <div>
-                  <div style={{fontSize:13,fontWeight:600}}>{w.u}</div>
-                  <div style={{fontSize:11,color:B.muted}}>{w.t}</div>
+            {/* Summary */}
+            {amtNum>0&&(
+              <div style={{padding:12,background:"rgba(0,0,0,.15)",borderRadius:10,marginBottom:14,fontSize:13}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                  <span style={{color:B.muted}}>You send:</span>
+                  <span style={{fontWeight:700}}>{fmt(coinCost)} coins</span>
+                </div>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                  <span style={{color:B.muted}}>Fee:</span>
+                  <span style={{fontWeight:600,color:B.ok}}>{selectedMethod?.fee||"0%"}</span>
+                </div>
+                <div style={{display:"flex",justifyContent:"space-between",borderTop:"1px solid rgba(255,255,255,.05)",paddingTop:6}}>
+                  <span style={{color:B.muted}}>You receive:</span>
+                  <span style={{fontWeight:800,color:B.money,fontSize:16}}>${amtNum.toFixed(2)}</span>
                 </div>
               </div>
-              <div style={{textAlign:"right"}}>
-                <div style={{fontSize:14,fontWeight:700,color:B.ok}}>{w.a}</div>
-                <div style={{fontSize:11,color:B.muted}}>{w.m}</div>
+            )}
+
+            {/* Error */}
+            {error&&(
+              <div style={{padding:10,background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.2)",borderRadius:10,marginBottom:14,fontSize:13,color:B.hot,textAlign:"center"}}>
+                {error}
               </div>
+            )}
+
+            <button className="btn-primary" onClick={cashout}
+              disabled={processing||!amtNum||!dest.trim()||!canAfford}
+              style={{width:"100%",padding:15,fontSize:16,opacity:(processing||!amtNum||!dest.trim()||!canAfford)?.5:1}}>
+              {processing?"⏳ Processing Withdrawal...":"Withdraw $"+(amtNum||0).toFixed(2)+" ⚡"}
+            </button>
+
+            <button onClick={resetForm} style={{
+              display:"block",margin:"12px auto 0",background:"none",border:"none",
+              color:B.muted,fontSize:12,cursor:"pointer",textDecoration:"underline",
+            }}>← Choose a different method</button>
+          </div>
+        </div>
+      )}
+
+      {/* Success State */}
+      {done&&(
+        <div className="abounce" style={{maxWidth:500,margin:"0 auto",textAlign:"center"}}>
+          <div className="card" style={{padding:36}}>
+            <div style={{fontSize:56,marginBottom:12}}>✅</div>
+            <h3 style={{fontSize:20,fontWeight:700,color:B.ok,marginBottom:8}}>Withdrawal Submitted!</h3>
+            <p style={{color:B.muted,fontSize:14,marginBottom:4}}>
+              <strong style={{color:B.txt}}>${amtNum.toFixed(2)}</strong> → {selectedMethod?.n}
+            </p>
+            <p style={{color:B.dim,fontSize:12,marginBottom:20}}>
+              Your withdrawal is being processed. Most payouts arrive within minutes.
+            </p>
+            <div style={{display:"flex",gap:10,justifyContent:"center"}}>
+              <button className="btn-primary" onClick={resetForm} style={{padding:"12px 28px",fontSize:14}}>
+                Withdraw More
+              </button>
             </div>
-          ))}
+          </div>
+        </div>
+      )}
+
+      {/* My Withdrawal History */}
+      <div style={{marginTop:40}}>
+        <h3 style={{fontSize:17,fontWeight:700,marginBottom:14}}>Your Withdrawal History</h3>
+        <div className="card" style={{overflow:"hidden"}}>
+          {loadingPayouts ? (
+            <div style={{padding:40,textAlign:"center",color:B.muted}}>Loading...</div>
+          ) : myPayouts.length===0 ? (
+            <div style={{padding:40,textAlign:"center",color:B.muted}}>
+              <div style={{fontSize:32,marginBottom:8}}>📭</div>
+              No withdrawals yet. Make your first cashout above!
+            </div>
+          ) : (
+            myPayouts.map((p,i)=>(
+              <div key={p.id||i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"13px 20px",borderBottom:i<myPayouts.length-1?`1px solid rgba(255,255,255,.03)`:"none"}}>
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{fontSize:20}}>{CASHOUTS.find(c=>c.id===p.method)?.ic||"💸"}</span>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:600}}>{CASHOUTS.find(c=>c.id===p.method)?.n||p.method}</div>
+                    <div style={{fontSize:11,color:B.muted}}>{p.destination}</div>
+                    <div style={{fontSize:10,color:B.dim}}>{p.created_at ? new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : ''}</div>
+                  </div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:14,fontWeight:700,color:B.ok}}>${p.usd_amount||toUSD(p.coins)}</div>
+                  <div style={{fontSize:11,color:statusColors[p.status]||B.muted,fontWeight:600}}>{statusLabels[p.status]||p.status}</div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -1877,14 +2024,14 @@ const AdminDash = ({token}) => {
               <tbody>
                 {payouts.map(p=>(
                   <tr key={p.id} style={{borderBottom:`1px solid ${B.border}`}}>
-                    <td style={{padding:"10px 14px",color:B.dim}}>#{p.id}</td>
-                    <td style={{padding:"10px 14px",fontWeight:600}}>{p.username}</td>
+                    <td style={{padding:"10px 14px",color:B.dim}}>#{(p.id||'').toString().slice(0,8)}</td>
+                    <td style={{padding:"10px 14px",fontWeight:600}}>{p.user?.username||p.username||'—'}<br/><span style={{fontSize:10,color:B.dim}}>{p.user?.email||p.email||''}</span></td>
                     <td style={{padding:"10px 14px"}}>
                       <span style={{background:"rgba(124,58,237,.08)",padding:"3px 10px",borderRadius:8,fontSize:12,fontWeight:600,textTransform:"uppercase"}}>{p.method}</span>
                     </td>
-                    <td style={{padding:"10px 14px",color:"#FBBF24",fontWeight:700}}>${p.usd.toFixed(2)}</td>
-                    <td style={{padding:"10px 14px",color:B.muted,fontSize:12,maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.destination}</td>
-                    <td style={{padding:"10px 14px",color:B.dim,fontSize:12}}>{p.created}</td>
+                    <td style={{padding:"10px 14px",color:"#FBBF24",fontWeight:700}}>${p.usd_amount||p.usd||(p.coins/1000).toFixed(2)}</td>
+                    <td style={{padding:"10px 14px",color:B.muted,fontSize:12,maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.destination||'—'}</td>
+                    <td style={{padding:"10px 14px",color:B.dim,fontSize:12}}>{p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):p.created||'—'}</td>
                     <td style={{padding:"10px 14px"}}>
                       <span style={{
                         background:p.status==="pending"?"rgba(245,158,11,.12)":p.status==="completed"?"rgba(16,185,129,.12)":"rgba(239,68,68,.12)",
@@ -1894,11 +2041,21 @@ const AdminDash = ({token}) => {
                     </td>
                     <td style={{padding:"10px 14px",display:"flex",gap:6}}>
                       {p.status==="pending"&&<>
-                        <button onClick={()=>setPayouts(prev=>prev.map(x=>x.id===p.id?{...x,status:"completed"}:x))} style={{
+                        <button onClick={async()=>{
+                          try{
+                            await apiFetch('/api/admin/payouts',{method:'PATCH',body:JSON.stringify({payoutId:p.id,action:'approve'})});
+                            setPayouts(prev=>prev.map(x=>x.id===p.id?{...x,status:"completed"}:x));
+                          }catch(e){alert('Failed to approve');}
+                        }} style={{
                           background:"rgba(16,185,129,.1)",border:"1px solid rgba(16,185,129,.3)",color:"#34D399",
                           padding:"5px 12px",borderRadius:8,fontSize:11,fontWeight:700,cursor:"pointer"
                         }}>Approve</button>
-                        <button onClick={()=>setPayouts(prev=>prev.map(x=>x.id===p.id?{...x,status:"rejected"}:x))} style={{
+                        <button onClick={async()=>{
+                          try{
+                            await apiFetch('/api/admin/payouts',{method:'PATCH',body:JSON.stringify({payoutId:p.id,action:'reject',note:'Rejected by admin'})});
+                            setPayouts(prev=>prev.map(x=>x.id===p.id?{...x,status:"rejected"}:x));
+                          }catch(e){alert('Failed to reject');}
+                        }} style={{
                           background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",color:"#F87171",
                           padding:"5px 12px",borderRadius:8,fontSize:11,fontWeight:700,cursor:"pointer"
                         }}>Reject</button>
@@ -2106,6 +2263,13 @@ export default function App() {
     refreshUser();
   },[toast, refreshUser]);
 
+  const handleCashout = useCallback(coinCost=>{
+    // Optimistic debit, then refresh from server
+    setUser(prev => prev ? {...prev, coins: Math.max(0,(prev.coins||0) - coinCost)} : prev);
+    toast(`Withdrawal submitted! -${fmt(coinCost)} coins`,"ok");
+    refreshUser();
+  },[toast, refreshUser]);
+
   const handleAuth = useCallback((userData, tkn) => {
     setUser(userData);
     setToken(tkn);
@@ -2167,7 +2331,7 @@ export default function App() {
         {pg==="dash"&&user&&<Dash coins={coins} streak={streak} today={today} week={week} setPg={navTo} onEarn={earn} user={user}/>}
         {pg==="earn"&&<Earn onEarn={earn}/>}
         {pg==="profile"&&user&&<Profile coins={coins} streak={streak} today={today} week={week} user={user}/>}
-        {pg==="rewards"&&user&&<Rewards coins={coins}/>}
+        {pg==="rewards"&&user&&<Rewards coins={coins} onCashout={handleCashout} user={user}/>}
         {pg==="leaderboard"&&<Leaderboard coins={coins}/>}
         {pg==="admin"&&role==="admin"&&user&&<AdminDash token={token}/>}
       </main>

@@ -816,74 +816,76 @@ const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
   };
 
   // ─── SPIN LOGIC — Candy Crush style near-miss + celebration ───
+  // Calls POST /api/spin server-side so coins actually persist
   const spin = () => {
     if(spinning || spinUsed) return;
     setSpinning(true);
     setSpinPhase('spinning');
     setSpinResult(null);
 
-    // Phase 1: Spin animation (3s)
-    // Phase 2: Near-miss tease — show a bigger prize briefly (0.8s)
-    // Phase 3: Land on actual result + confetti
-    const roll = Math.random();
-    const amt = roll<.02?50000:roll<.08?10000:roll<.20?5000:roll<.40?2000:roll<.65?1000:500;
-    // Near-miss: show the tier above what they actually got (creates "almost had it!" feeling)
-    const nearMiss = amt<1000?2000:amt<2000?5000:amt<5000?10000:amt<10000?50000:50000;
-    setNearMissAmt(nearMiss);
+    // Fire the server request immediately (runs in parallel with animation)
+    const spinPromise = apiFetch('/api/spin', { method: 'POST' }).then(r=>r.json()).catch(()=>null);
+
+    // Near-miss preview (we don't know the real result yet, use a teaser)
+    const teaserNearMiss = [50000,10000,5000,2000][Math.floor(Math.random()*4)];
+    setNearMissAmt(teaserNearMiss);
 
     setTimeout(()=>{
-      // Show near-miss briefly
       setSpinPhase('nearMiss');
-      setTimeout(()=>{
-        // Reveal actual result
+      setTimeout(async ()=>{
+        // Wait for server result
+        const data = await spinPromise;
+        const amt = data?.coins || 500; // fallback
         setSpinResult(amt);
         setSpinPhase('result');
         setSpinning(false);
         localStorage.setItem(spinKey,'1');
         setSpinUsed(true);
         burstConfetti();
-        // Award coins
         if(onEarn) onEarn(amt);
-        // Auto-transition to celebrated
         setTimeout(()=>setSpinPhase('celebrated'),3000);
       },800);
     },3000);
   };
 
-  // ─── STREAK CLAIM — dramatic reveal like opening a chest ───
+  // ─── STREAK CLAIM — server-persisted, dramatic reveal ───
   const claimStreak = () => {
     if(bonusClaimed) return;
     setBonusPhase('opening');
-    setTimeout(()=>{
-      const roll = Math.random();
-      const mult = roll<.1?10:roll<.25?5:roll<.45?3:roll<.7?2:1;
-      const amt = 200*mult;
-      setBonusAmt(amt);
-      setBonusPhase('revealed');
-      setBonusClaimed(true);
-      localStorage.setItem(streakKey,'1');
-      burstConfetti();
-      if(onEarn) onEarn(amt);
-    },1200);
+    apiFetch('/api/rewards/daily?type=streak', { method: 'POST' })
+      .then(r=>r.json())
+      .then(data=>{
+        const amt = data?.coins || 200;
+        setBonusAmt(amt);
+        setBonusPhase('revealed');
+        setBonusClaimed(true);
+        localStorage.setItem(streakKey,'1');
+        burstConfetti();
+        if(onEarn) onEarn(amt);
+      })
+      .catch(()=>{
+        setBonusPhase('idle');
+      });
   };
 
-  // ─── DAILY CHEST — login reward that escalates with streak ───
+  // ─── DAILY CHEST — server-persisted, login reward that escalates with streak ───
   const openChest = () => {
     if(chestOpened) return;
     setChestPhase('opening');
-    setTimeout(()=>{
-      // Streak multiplier: longer streaks = better daily chest (commitment escalation)
-      const base = 100 + Math.min(streak,30)*10; // 100-400 base
-      const roll = Math.random();
-      const mult = roll<.05?5:roll<.15?3:roll<.35?2:1;
-      const amt = base*mult;
-      setChestReward(amt);
-      setChestPhase('revealed');
-      setChestOpened(true);
-      localStorage.setItem(chestKey,'1');
-      burstConfetti();
-      if(onEarn) onEarn(amt);
-    },1000);
+    apiFetch('/api/rewards/daily?type=chest', { method: 'POST' })
+      .then(r=>r.json())
+      .then(data=>{
+        const amt = data?.coins || 100;
+        setChestReward(amt);
+        setChestPhase('revealed');
+        setChestOpened(true);
+        localStorage.setItem(chestKey,'1');
+        burstConfetti();
+        if(onEarn) onEarn(amt);
+      })
+      .catch(()=>{
+        setChestPhase('idle');
+      });
   };
 
   return (

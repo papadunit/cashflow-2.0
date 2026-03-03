@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { authenticate, creditCoins } from '@/lib/auth';
 import { createServiceClient } from '@/lib/supabase';

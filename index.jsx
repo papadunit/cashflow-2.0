@@ -226,6 +226,116 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 input:focus,select:focus{outline:none;border-color:rgba(124,58,237,.5);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
 `;
 
+// ─── API HELPER ───
+const API = typeof window !== 'undefined' ? window.location.origin : '';
+
+const apiFetch = async (path, opts = {}) => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('cf_token') : null;
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`${API}${path}`, { ...opts, headers });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+};
+
+// ─── AUTH MODAL ───
+const AuthModal = ({ onAuth, onClose }) => {
+  const [mode, setMode] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+    setLoading(true);
+    try {
+      if (mode === "login") {
+        const data = await apiFetch('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+        localStorage.setItem('cf_token', data.token);
+        onAuth(data.user, data.token);
+      } else {
+        const body = { username, email, password };
+        if (referralCode.trim()) body.referralCode = referralCode.trim();
+        const data = await apiFetch('/api/auth/signup', {
+          method: 'POST',
+          body: JSON.stringify(body),
+        });
+        localStorage.setItem('cf_token', data.token);
+        onAuth(data.user, data.token);
+      }
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",backdropFilter:"blur(8px)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
+      <div style={{background:B.card,border:`1px solid ${B.border}`,borderRadius:20,padding:32,width:420,maxWidth:"90vw",position:"relative"}} onClick={e=>e.stopPropagation()}>
+        <button onClick={onClose} style={{position:"absolute",top:14,right:14,background:"none",border:"none",color:B.muted,fontSize:20,cursor:"pointer"}}>✕</button>
+        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:24,fontWeight:800,marginBottom:6,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>
+          {mode==="login"?"Welcome Back":"Create Account"}
+        </h2>
+        <p style={{color:B.muted,fontSize:13,marginBottom:20}}>
+          {mode==="login"?"Log in to access your earnings":"Sign up and get 500 bonus coins ($0.50) free"}
+        </p>
+
+        {err && <div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:10,padding:"10px 14px",marginBottom:14,color:"#F87171",fontSize:13}}>{err}</div>}
+
+        <form onSubmit={handleSubmit}>
+          {mode==="signup" && (
+            <div style={{marginBottom:12}}>
+              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Username</label>
+              <input value={username} onChange={e=>setUsername(e.target.value)} required
+                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Pick a username"/>
+            </div>
+          )}
+          <div style={{marginBottom:12}}>
+            <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Email</label>
+            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required
+              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="you@example.com"/>
+          </div>
+          <div style={{marginBottom:16}}>
+            <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Password</label>
+            <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6}
+              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Min 6 characters"/>
+          </div>
+          {mode==="signup" && (
+            <div style={{marginBottom:16}}>
+              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Referral Code (optional)</label>
+              <input value={referralCode} onChange={e=>setReferralCode(e.target.value)}
+                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Enter referral code"/>
+            </div>
+          )}
+          <button type="submit" disabled={loading} style={{
+            width:"100%",padding:"12px 0",borderRadius:12,border:"none",background:B.grad,color:"#fff",
+            fontSize:15,fontWeight:700,cursor:loading?"wait":"pointer",opacity:loading?.7:1,transition:"opacity .2s"
+          }}>
+            {loading ? "Please wait..." : mode==="login" ? "Log In" : "Sign Up — Get 500 Free Coins 🎁"}
+          </button>
+        </form>
+
+        <p style={{textAlign:"center",marginTop:16,fontSize:13,color:B.muted}}>
+          {mode==="login" ? (
+            <>Don't have an account? <span style={{color:B.accentL,cursor:"pointer",fontWeight:600}} onClick={()=>{setMode("signup");setErr("")}}>Sign Up Free</span></>
+          ) : (
+            <>Already have an account? <span style={{color:B.accentL,cursor:"pointer",fontWeight:600}} onClick={()=>{setMode("login");setErr("")}}>Log In</span></>
+          )}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 // ═══════════════════════════════════════════════════════════════
 //  COMPONENTS
 // ═══════════════════════════════════════════════════════════════
@@ -242,16 +352,20 @@ const LiveTicker = () => {
 };
 
 // ─── NAVBAR ───
-const Nav = ({pg,setPg,coins,streak,role}) => {
+const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
   const lv = getLevel(coins);
   const items = [
     {id:"home",l:"Home",ic:"🏠"},
-    {id:"dash",l:"Dashboard",ic:"📊"},
+    ...(user ? [
+      {id:"dash",l:"Dashboard",ic:"📊"},
+    ] : []),
     {id:"earn",l:"Earn",ic:"💰"},
-    {id:"profile",l:"Profile",ic:"👤"},
-    {id:"rewards",l:"Rewards",ic:"🎁"},
+    ...(user ? [
+      {id:"profile",l:"Profile",ic:"👤"},
+      {id:"rewards",l:"Rewards",ic:"🎁"},
+    ] : []),
     {id:"leaderboard",l:"Leaderboard",ic:"🏆"},
-    ...(role==="admin"?[{id:"admin",l:"Admin",ic:"🛡️"}]:[]),
+    ...(role==="admin"&&user?[{id:"admin",l:"Admin",ic:"🛡️"}]:[]),
   ];
   return (
     <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",background:B.glass,backdropFilter:"blur(24px)",borderBottom:`1px solid ${B.border}`,position:"sticky",top:0,zIndex:100}}>
@@ -272,13 +386,24 @@ const Nav = ({pg,setPg,coins,streak,role}) => {
         ))}
       </div>
       <div style={{display:"flex",alignItems:"center",gap:14}}>
-        {streak>0&&<div className="chip" style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.25)",color:"#F87171"}}>
-          <span className="astreak">🔥</span><b>{streak}</b>
-        </div>}
-        <div className="chip" style={{background:"rgba(124,58,237,.1)",border:`1px solid ${B.border}`,color:B.accentL,cursor:"pointer",fontSize:14}} onClick={()=>setPg("dash")}>
-          {lv.icon} <b>{fmt(coins)}</b> 🪙
-        </div>
-        <div style={{width:34,height:34,borderRadius:"50%",background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,cursor:"pointer",border:`2px solid ${lv.c}`}}>A</div>
+        {user ? (<>
+          {streak>0&&<div className="chip" style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.25)",color:"#F87171"}}>
+            <span className="astreak">🔥</span><b>{streak}</b>
+          </div>}
+          <div className="chip" style={{background:"rgba(124,58,237,.1)",border:`1px solid ${B.border}`,color:B.accentL,cursor:"pointer",fontSize:14}} onClick={()=>setPg("dash")}>
+            {lv.icon} <b>{fmt(coins)}</b> 🪙
+          </div>
+          <div style={{position:"relative",display:"flex",alignItems:"center",gap:8}}>
+            <div onClick={()=>setPg("profile")} style={{width:34,height:34,borderRadius:"50%",background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,cursor:"pointer",border:`2px solid ${lv.c}`}}>
+              {(user.username||"A")[0].toUpperCase()}
+            </div>
+            <button onClick={onLogout} style={{background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.2)",borderRadius:8,padding:"6px 10px",color:"#F87171",fontSize:11,cursor:"pointer",fontWeight:600}}>Logout</button>
+          </div>
+        </>) : (
+          <button onClick={onLogin} style={{background:B.grad,border:"none",borderRadius:10,padding:"8px 18px",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer"}}>
+            Log In / Sign Up
+          </button>
+        )}
       </div>
     </nav>
   );
@@ -341,7 +466,7 @@ const OfferCard = ({o,onEarn,delay=0}) => (
 // ═══════════════════════════════════════════════════════════════
 //  PAGE: HOME / LANDING
 // ═══════════════════════════════════════════════════════════════
-const Home = ({setPg}) => {
+const Home = ({setPg, user, onLogin}) => {
   const [paid,setPaid] = useState(12_438_920);
   const [online,setOnline] = useState(8_412);
   useEffect(()=>{
@@ -396,8 +521,8 @@ const Home = ({setPg}) => {
 
           {/* CTA */}
           <div style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap"}}>
-            <button className="btn-primary ag" onClick={()=>setPg("earn")} style={{fontSize:18,padding:"16px 40px"}}>
-              Start Earning Free — Get 500 Bonus Coins 🎁
+            <button className="btn-primary ag" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:18,padding:"16px 40px"}}>
+              {user ? "Go to Earn Page 💰" : "Start Earning Free — Get 500 Bonus Coins 🎁"}
             </button>
             <button className="btn-ghost" onClick={()=>setPg("leaderboard")} style={{fontSize:16,padding:"16px 28px"}}>
               See Top Earners →
@@ -907,27 +1032,29 @@ const Earn = ({onEarn}) => {
 // ═══════════════════════════════════════════════════════════════
 //  PAGE: PROFILE
 // ═══════════════════════════════════════════════════════════════
-const Profile = ({coins,streak,today,week}) => {
+const Profile = ({coins,streak,today,week,user}) => {
   const lv = getLevel(coins);
   const prog = pct(coins);
   const nxt = LEVELS[lv.idx+1];
-  const totalEarned = coins + 42300; // simulated lifetime
-  const totalWithdrawn = 42300;
-  const referrals = 12;
-  const referralEarnings = 18640;
+  const totalEarned = user ? (user.lifetime_earned || coins) : (coins + 42300);
+  const totalWithdrawn = totalEarned - coins;
+  const referrals = user ? (user.referralCount || 0) : 12;
+  const referralEarnings = user ? (user.referralEarnings || 0) : 18640;
+  const displayName = user ? (user.username || 'User') : 'Andrew';
+  const memberSince = user ? new Date(user.created_at).toLocaleDateString('en-US', {month:'long', year:'numeric'}) : 'March 2026';
 
   return (
     <div style={{maxWidth:900,margin:"0 auto",padding:"28px 24px"}}>
       {/* Profile Header */}
       <div className="card au" style={{padding:28,marginBottom:24,display:"flex",gap:24,alignItems:"center"}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,fontWeight:800,border:`3px solid ${lv.c}`,flexShrink:0}}>A</div>
+        <div style={{width:80,height:80,borderRadius:"50%",background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,fontWeight:800,border:`3px solid ${lv.c}`,flexShrink:0}}>{displayName[0].toUpperCase()}</div>
         <div style={{flex:1}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
-            <h1 style={{fontFamily:"'Space Grotesk'",fontSize:24,fontWeight:800}}>Andrew</h1>
+            <h1 style={{fontFamily:"'Space Grotesk'",fontSize:24,fontWeight:800}}>{displayName}</h1>
             <div className="chip" style={{background:`${lv.c}15`,border:`1px solid ${lv.c}30`,color:lv.c,fontSize:12}}>{lv.icon} {lv.n}</div>
             {streak>=7&&<div className="chip" style={{background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.2)",color:"#F87171",fontSize:12}}>🔥 {streak} day streak</div>}
           </div>
-          <p style={{fontSize:13,color:B.muted}}>Member since March 2026 · Rank #847</p>
+          <p style={{fontSize:13,color:B.muted}}>Member since {memberSince}</p>
           <div style={{marginTop:10}}>
             <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:B.muted,marginBottom:4}}>
               <span>{lv.icon} {lv.n}</span>
@@ -1265,7 +1392,7 @@ const Leaderboard = ({coins}) => {
 // ═══════════════════════════════════════════════════════════════
 //  ADMIN DASHBOARD (Role-gated — only visible to admin users)
 // ═══════════════════════════════════════════════════════════════
-const AdminDash = () => {
+const AdminDash = ({token}) => {
   const [tab,setTab] = useState("overview");
   const [data,setData] = useState(null);
   const [walls,setWalls] = useState([]);
@@ -1276,85 +1403,32 @@ const AdminDash = () => {
   const [search,setSearch] = useState("");
   const [loading,setLoading] = useState(true);
 
-  // Simulated admin data (in production, these come from /api/admin/* endpoints)
+  // Fetch real admin data from API endpoints
   useEffect(()=>{
     setLoading(true);
-    setTimeout(()=>{
-      setData({
-        totalUsers:3842,
-        newUsersToday:47,
-        newUsersWeek:312,
-        activeToday:1289,
-        revenueToday:48720,
-        revenueWeek:312480,
-        revenueMonth:1247600,
-        revenueTotal:8942300,
-        profitToday:19488,
-        profitWeek:124992,
-        profitMonth:499040,
-        profitTotal:3576920,
-        payoutsToday:29232,
-        payoutsWeek:187488,
-        payoutsMonth:748560,
-        payoutsTotal:5365380,
-        offersToday:892,
-        offersWeek:6123,
-        offersMonth:24180,
-        pendingPayouts:23,
-        marginPct:40,
-      });
-      setWalls([
-        {name:"AdGate Media",completions:4821,revenue:218400,payout:130800,margin:40.1},
-        {name:"AdGem",completions:6234,revenue:342800,payout:205680,margin:40.0},
-        {name:"OfferToro",completions:3892,revenue:178200,payout:110400,margin:38.0},
-        {name:"Lootably",completions:2156,revenue:98400,payout:59040,margin:40.0},
-        {name:"Ayet Studios",completions:1893,revenue:112600,payout:69600,margin:38.2},
-        {name:"Revenue Universe",completions:3421,revenue:186200,payout:111720,margin:40.0},
-        {name:"CPX Research",completions:5612,revenue:248900,payout:149340,margin:40.0},
-        {name:"BitLabs",completions:2987,revenue:156300,payout:93780,margin:40.0},
-        {name:"TheoremReach",completions:4123,revenue:178400,payout:107040,margin:40.0},
-        {name:"Pollfish",completions:3567,revenue:142800,payout:87120,margin:39.0},
-        {name:"TyrAds",completions:1234,revenue:89400,payout:53640,margin:40.0},
-        {name:"Torox",completions:987,revenue:62300,payout:37380,margin:40.0},
-      ]);
-      setUsers([
-        {id:1,username:"CryptoKing_99",email:"crypto@example.com",coins:1247320,role:"member",isBanned:0,created:"2025-08-14",lastLogin:"2026-03-03",ip:"192.168.1.1",country:"US"},
-        {id:2,username:"SurveyQueen",email:"queen@example.com",coins:923100,role:"member",isBanned:0,created:"2025-09-22",lastLogin:"2026-03-03",ip:"192.168.1.2",country:"US"},
-        {id:3,username:"GameMaster_X",email:"gm@example.com",coins:789400,role:"member",isBanned:0,created:"2025-10-05",lastLogin:"2026-03-02",ip:"192.168.1.3",country:"UK"},
-        {id:4,username:"SusAccount42",email:"sus@example.com",coins:456200,role:"member",isBanned:1,created:"2026-01-15",lastLogin:"2026-02-28",ip:"10.0.0.5",country:"VN"},
-        {id:5,username:"EarnDaily22",email:"daily@example.com",coins:612800,role:"member",isBanned:0,created:"2025-07-10",lastLogin:"2026-03-03",ip:"172.16.0.1",country:"CA"},
-        {id:6,username:"NewUser_123",email:"new@example.com",coins:2300,role:"member",isBanned:0,created:"2026-03-02",lastLogin:"2026-03-03",ip:"192.168.2.1",country:"US"},
-        {id:7,username:"CashHunter",email:"hunter@example.com",coins:498200,role:"member",isBanned:0,created:"2025-11-01",lastLogin:"2026-03-03",ip:"192.168.1.4",country:"US"},
-        {id:8,username:"OfferPro_Mike",email:"mike@example.com",coins:387600,role:"member",isBanned:0,created:"2025-12-18",lastLogin:"2026-03-01",ip:"192.168.1.5",country:"AU"},
-      ]);
-      setPayouts([
-        {id:101,username:"CryptoKing_99",method:"btc",coins:50000,usd:50.00,destination:"bc1q...x7r2",status:"pending",created:"2026-03-03 08:12"},
-        {id:102,username:"SurveyQueen",method:"paypal",coins:25000,usd:25.00,destination:"queen@email.com",status:"pending",created:"2026-03-03 09:45"},
-        {id:103,username:"GameMaster_X",method:"cashapp",coins:75000,usd:75.00,destination:"$GameMasterX",status:"pending",created:"2026-03-03 10:22"},
-        {id:104,username:"EarnDaily22",method:"amazon",coins:30000,usd:30.00,destination:"daily@email.com",status:"pending",created:"2026-03-02 22:18"},
-        {id:105,username:"CashHunter",method:"venmo",coins:20000,usd:20.00,destination:"@CashHunter",status:"pending",created:"2026-03-02 19:05"},
-      ]);
-      setFraud({
-        multiAccount:[
-          {ip:"10.0.0.5",count:4,users:["SusAccount42","FakeUser1","FakeUser2","BotAcct3"]},
-          {ip:"203.0.113.7",count:3,users:["MultiEarn1","MultiEarn2","MultiEarn3"]},
-        ],
-        highEarners:[
-          {username:"SpeedEarner",coins24h:89000,avgCoins24h:4200,ratio:21.2},
-        ],
-      });
-      setAnalytics([
-        {date:"2026-02-24",newUsers:38,revenue:41200,profit:16480,payouts:24720},
-        {date:"2026-02-25",newUsers:42,revenue:45800,profit:18320,payouts:27480},
-        {date:"2026-02-26",newUsers:35,revenue:38900,profit:15560,payouts:23340},
-        {date:"2026-02-27",newUsers:51,revenue:52100,profit:20840,payouts:31260},
-        {date:"2026-02-28",newUsers:44,revenue:47300,profit:18920,payouts:28380},
-        {date:"2026-03-01",newUsers:53,revenue:56200,profit:22480,payouts:33720},
-        {date:"2026-03-02",newUsers:49,revenue:50800,profit:20320,payouts:30480},
-        {date:"2026-03-03",newUsers:47,revenue:48720,profit:19488,payouts:29232},
-      ]);
-      setLoading(false);
-    },600);
+    const fetchAll = async () => {
+      try {
+        const [dashRes, wallsRes, usersRes, payoutsRes, analyticsRes, fraudRes] = await Promise.allSettled([
+          apiFetch('/api/admin/dashboard'),
+          apiFetch('/api/admin/offerwalls'),
+          apiFetch('/api/admin/users'),
+          apiFetch('/api/admin/payouts'),
+          apiFetch('/api/admin/analytics'),
+          apiFetch('/api/admin/fraud'),
+        ]);
+        if (dashRes.status === 'fulfilled') setData(dashRes.value);
+        if (wallsRes.status === 'fulfilled') setWalls(wallsRes.value.walls || wallsRes.value || []);
+        if (usersRes.status === 'fulfilled') setUsers(usersRes.value.users || usersRes.value || []);
+        if (payoutsRes.status === 'fulfilled') setPayouts(payoutsRes.value.payouts || payoutsRes.value || []);
+        if (analyticsRes.status === 'fulfilled') setAnalytics(analyticsRes.value.analytics || analyticsRes.value || []);
+        if (fraudRes.status === 'fulfilled') setFraud(fraudRes.value || {multiAccount:[],highEarners:[]});
+      } catch(e) {
+        console.error('Admin fetch error:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
   },[]);
 
   const fmtUSD = c => `$${(c/100).toLocaleString(undefined,{minimumFractionDigits:2})}`;
@@ -1767,12 +1841,46 @@ const Footer = () => (
 // ═══════════════════════════════════════════════════════════════
 export default function App() {
   const [pg,setPg] = useState("home");
-  const [coins,setCoins] = useState(24800);
-  const [streak] = useState(5);
-  const [today,setToday] = useState(4200);
-  const [week,setWeek] = useState(18600);
   const [toasts,setToasts] = useState([]);
-  const [role] = useState("admin"); // Toggle to "member" to hide admin dashboard
+  const [showAuth,setShowAuth] = useState(false);
+
+  // ─── Auth State ───
+  const [user,setUser] = useState(null);
+  const [token,setToken] = useState(null);
+  const [authLoading,setAuthLoading] = useState(true);
+
+  // ─── User stats (real from API when logged in, demo when not) ───
+  const coins = user ? (user.coins || 0) : 24800;
+  const streak = user ? (user.streak || 0) : 5;
+  const role = user ? (user.role || 'member') : 'member';
+  const today = user ? (user.todayEarned || 0) : 4200;
+  const week = user ? (user.weekEarned || 0) : 18600;
+
+  // ─── Load persisted auth on mount ───
+  useEffect(() => {
+    const savedToken = localStorage.getItem('cf_token');
+    if (savedToken) {
+      setToken(savedToken);
+      apiFetch('/api/me').then(data => {
+        setUser(data.user || data);
+        setAuthLoading(false);
+      }).catch(() => {
+        localStorage.removeItem('cf_token');
+        setToken(null);
+        setAuthLoading(false);
+      });
+    } else {
+      setAuthLoading(false);
+    }
+  }, []);
+
+  // ─── Refresh user data from API ───
+  const refreshUser = useCallback(async () => {
+    try {
+      const data = await apiFetch('/api/me');
+      setUser(data.user || data);
+    } catch(e) { /* silent */ }
+  }, []);
 
   const toast = useCallback((msg,type="ok")=>{
     const id=Date.now();
@@ -1782,18 +1890,52 @@ export default function App() {
 
   const earn = useCallback(c=>{
     if(!c) return;
-    setCoins(p=>p+c);
-    setToday(p=>p+c);
-    setWeek(p=>p+c);
+    // Optimistic local update, then refresh from server
+    setUser(prev => prev ? {...prev, coins: (prev.coins||0) + c} : prev);
     toast(`+${fmt(c)} coins ($${toUSD(c)}) earned! 🎉`,"coin");
-  },[toast]);
+    refreshUser();
+  },[toast, refreshUser]);
+
+  const handleAuth = useCallback((userData, tkn) => {
+    setUser(userData);
+    setToken(tkn);
+    setShowAuth(false);
+    setPg("dash");
+    toast(`Welcome${userData.username ? ', ' + userData.username : ''}! 🎉`);
+  }, [toast]);
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('cf_token');
+    setUser(null);
+    setToken(null);
+    setPg("home");
+    toast("Logged out successfully");
+  }, [toast]);
 
   // Scroll to top on page change
   useEffect(()=>window.scrollTo({top:0,behavior:"smooth"}),[pg]);
 
+  // Redirect protected pages to auth
+  const requireAuth = (page) => {
+    if (!user) { setShowAuth(true); return false; }
+    return true;
+  };
+
+  const navTo = useCallback((page) => {
+    const protectedPages = ["dash","profile","rewards","admin"];
+    if (protectedPages.includes(page) && !user) {
+      setShowAuth(true);
+      return;
+    }
+    setPg(page);
+  }, [user]);
+
   return (
     <div style={{minHeight:"100vh",background:B.bg,color:B.txt}}>
       <style>{css}</style>
+
+      {/* Auth Modal */}
+      {showAuth && <AuthModal onAuth={handleAuth} onClose={()=>setShowAuth(false)} />}
 
       {/* Toasts */}
       <div className="toast-container">
@@ -1806,16 +1948,16 @@ export default function App() {
       </div>
 
       <LiveTicker/>
-      <Nav pg={pg} setPg={setPg} coins={coins} streak={streak} role={role}/>
+      <Nav pg={pg} setPg={navTo} coins={coins} streak={streak} role={role} user={user} onLogin={()=>setShowAuth(true)} onLogout={handleLogout}/>
 
       <main style={{minHeight:"80vh"}}>
-        {pg==="home"&&<Home setPg={setPg}/>}
-        {pg==="dash"&&<Dash coins={coins} streak={streak} today={today} week={week} setPg={setPg}/>}
+        {pg==="home"&&<Home setPg={navTo} user={user} onLogin={()=>setShowAuth(true)}/>}
+        {pg==="dash"&&user&&<Dash coins={coins} streak={streak} today={today} week={week} setPg={navTo}/>}
         {pg==="earn"&&<Earn onEarn={earn}/>}
-        {pg==="profile"&&<Profile coins={coins} streak={streak} today={today} week={week}/>}
-        {pg==="rewards"&&<Rewards coins={coins}/>}
+        {pg==="profile"&&user&&<Profile coins={coins} streak={streak} today={today} week={week} user={user}/>}
+        {pg==="rewards"&&user&&<Rewards coins={coins}/>}
         {pg==="leaderboard"&&<Leaderboard coins={coins}/>}
-        {pg==="admin"&&role==="admin"&&<AdminDash/>}
+        {pg==="admin"&&role==="admin"&&user&&<AdminDash token={token}/>}
       </main>
 
       <Footer/>

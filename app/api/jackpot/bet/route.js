@@ -8,7 +8,7 @@ const SLOT_COLORS = [
   '#007AFF', '#5856D6', '#AF52DE', '#FF2D55', '#A2845E'
 ];
 
-const MAX_SLOTS_PER_USER = 10; // Temporarily raised for testing
+const MAX_SLOTS_PER_USER = 3;
 
 export async function POST(request) {
   try {

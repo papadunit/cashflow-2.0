@@ -334,7 +334,7 @@ const AuthModal = ({ onAuth, onClose }) => {
 
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",backdropFilter:"blur(8px)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
-      <div style={{background:B.card,border:\`2px solid \${B.border}\`,borderRadius:16,padding:32,width:420,maxWidth:"90vw",position:"relative"}} onClick={e=>e.stopPropagation()}>
+      <div style={{background:B.card,border:`2px solid ${B.border}`,borderRadius:16,padding:32,width:420,maxWidth:"90vw",position:"relative"}} onClick={e=>e.stopPropagation()}>
         <button onClick={onClose} style={{position:"absolute",top:14,right:14,background:"none",border:"none",color:B.muted,fontSize:20,cursor:"pointer"}}>×</button>
         <h2 style={{fontFamily:"'Poppins'",fontSize:22,fontWeight:600,marginBottom:6,color:B.txt}}>
           {mode==="login"?"Welcome Back":"Create Account"}
@@ -350,24 +350,24 @@ const AuthModal = ({ onAuth, onClose }) => {
             <div style={{marginBottom:12}}>
               <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Username</label>
               <input value={username} onChange={e=>setUsername(e.target.value)} required
-                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Pick a username"/>
+                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Pick a username"/>
             </div>
           )}
           <div style={{marginBottom:12}}>
             <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Email</label>
             <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required
-              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="you@example.com"/>
+              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="you@example.com"/>
           </div>
           <div style={{marginBottom:16}}>
             <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Password</label>
             <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6}
-              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Min 6 characters"/>
+              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Min 6 characters"/>
           </div>
           {mode==="signup" && (
             <div style={{marginBottom:16}}>
               <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Referral Code (optional)</label>
               <input value={referralCode} onChange={e=>setReferralCode(e.target.value)}
-                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Enter referral code"/>
+                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Enter referral code"/>
             </div>
           )}
           <button type="submit" disabled={loading} style={{
@@ -401,7 +401,7 @@ const LiveTicker = () => {
   const [i,setI] = useState(0);
   useEffect(()=>{ const t=setInterval(()=>setI(p=>(p+1)%FEED.length),3500); return ()=>clearInterval(t); },[]);
   return (
-    <div style={{background:B.nav,borderBottom:\`2px solid \${B.border}\`,padding:"7px 20px",fontSize:"13px",color:B.accent,textAlign:"center",overflow:"hidden"}}>
+    <div style={{background:B.nav,borderBottom:`2px solid ${B.border}`,padding:"7px 20px",fontSize:"13px",color:B.accent,textAlign:"center",overflow:"hidden"}}>
       <span className="af" key={i}>
         <span style={{width:6,height:6,borderRadius:"50%",background:B.accent,display:"inline-block",marginRight:8}}/>
         LIVE — {FEED[i]}
@@ -414,7 +414,7 @@ const LiveTicker = () => {
 const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
   const lv = getLevel(coins);
   return (
-    <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 32px",height:66,background:B.nav,borderBottom:\`2px solid \${B.border}\`,position:"sticky",top:0,zIndex:100}}>
+    <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 32px",height:66,background:B.nav,borderBottom:`2px solid ${B.border}`,position:"sticky",top:0,zIndex:100}}>
       {/* Left: Logo + Nav Links */}
       <div style={{display:"flex",alignItems:"center",gap:24}}>
         <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setPg("home")}>
@@ -436,7 +436,7 @@ const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
                 color:pg===x.id?B.accent:B.muted,
                 padding:"8px 12px",borderRadius:8,cursor:"pointer",fontSize:13,fontWeight:pg===x.id?600:500,
                 transition:"all .15s",display:"flex",alignItems:"center",gap:8,
-                borderBottom:pg===x.id?\`2px solid \${B.accent}\`:"2px solid transparent",
+                borderBottom:pg===x.id?`2px solid ${B.accent}`:"2px solid transparent",
               }}
               onMouseEnter={e=>{if(pg!==x.id)e.currentTarget.style.color="#fff"}}
               onMouseLeave={e=>{if(pg!==x.id)e.currentTarget.style.color=B.muted}}
@@ -491,7 +491,7 @@ const Counter = ({end,prefix="",suffix="",duration=2000,style:s={}}) => {
 
 // ─── STAT CARD ───
 const Stat = ({label,value,sub,grad,delay=0}) => (
-  <div className="card au" style={{padding:22,animationDelay:\`\${delay}s\`}}>
+  <div className="card au" style={{padding:22,animationDelay:`${delay}s`}}>
     <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:grad,borderRadius:"16px 16px 0 0"}}/>
     <div style={{fontSize:12,color:B.muted,fontWeight:500,marginBottom:6}}>{label}</div>
     <div style={{fontSize:24,fontWeight:800,fontFamily:"'Poppins'"}}>{value}</div>
@@ -506,12 +506,12 @@ const OfferCard = ({o,onEarn,onStart,delay=0}) => {
   const bgColor = colors[colorIdx];
 
   return (
-    <div className="card au" style={{overflow:"hidden",cursor:"pointer",animationDelay:\`\${delay}s\`,display:"flex",flexDirection:"column"}}
+    <div className="card au" style={{overflow:"hidden",cursor:"pointer",animationDelay:`${delay}s`,display:"flex",flexDirection:"column"}}
       onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.borderColor="rgba(1,214,118,.3)";e.currentTarget.style.boxShadow="0 12px 24px rgba(0,0,0,.4)"}}
       onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=B.border;e.currentTarget.style.boxShadow="none"}}
     >
       {/* Hero Image Area */}
-      <div style={{width:"100%",height:200,background:\`linear-gradient(135deg, \${bgColor} 0%, \${bgColor}cc 100%)\`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
+      <div style={{width:"100%",height:200,background:`linear-gradient(135deg, ${bgColor} 0%, ${bgColor}cc 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:12,left:12,background:B.accent,padding:"4px 10px",borderRadius:6,fontSize:11,fontWeight:700,color:"#000",display:"flex",alignItems:"center",gap:4}}>
           {Icon.star(14,"#FFB800")} 5.0
         </div>
@@ -538,7 +538,7 @@ const OfferCard = ({o,onEarn,onStart,delay=0}) => {
         {/* Success Rate */}
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14,flex:1}}>
           <div style={{flex:1,height:3,background:"rgba(255,255,255,.06)",borderRadius:2,overflow:"hidden"}}>
-            <div className="progress-bar" style={{width:\`\${o.rate}%\`,background:o.rate>80?B.ok:o.rate>50?B.warn:B.hot}}/>
+            <div className="progress-bar" style={{width:`${o.rate}%`,background:o.rate>80?B.ok:o.rate>50?B.warn:B.hot}}/>
           </div>
           <span style={{fontSize:11,color:B.muted,whiteSpace:"nowrap"}}>{o.rate}%</span>
         </div>
@@ -551,7 +551,7 @@ const OfferCard = ({o,onEarn,onStart,delay=0}) => {
         onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
         onMouseLeave={e=>e.currentTarget.style.background=B.accent}
         >
-          Start Offer — \${toUSD(o.coins)}
+          Start Offer — ${toUSD(o.coins)}
         </button>
       </div>
     </div>
@@ -584,7 +584,7 @@ const Home = ({setPg, user, onLogin}) => {
                 onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
                 onMouseLeave={e=>e.currentTarget.style.background=B.accent}
               >Get Started — Free</button>
-              <button onClick={()=>setPg("earn")} style={{background:"transparent",border:\`2px solid \${B.border}\`,color:B.txt,padding:"12px 28px",borderRadius:8,fontSize:15,fontWeight:600,cursor:"pointer",transition:"all .2s"}}
+              <button onClick={()=>setPg("earn")} style={{background:"transparent",border:`2px solid ${B.border}`,color:B.txt,padding:"12px 28px",borderRadius:8,fontSize:15,fontWeight:600,cursor:"pointer",transition:"all .2s"}}
                 onMouseEnter={e=>e.currentTarget.style.borderColor=B.accent}
                 onMouseLeave={e=>e.currentTarget.style.borderColor=B.border}
               >Browse Offers</button>
@@ -618,13 +618,13 @@ const Home = ({setPg, user, onLogin}) => {
       </section>
 
       {/* ─── EMAIL SIGNUP ─── */}
-      <section style={{padding:"40px 32px",background:"rgba(1,214,118,.04)",borderTop:\`2px solid \${B.border}\`,borderBottom:\`2px solid \${B.border}\`,textAlign:"center"}}>
+      <section style={{padding:"40px 32px",background:"rgba(1,214,118,.04)",borderTop:`2px solid ${B.border}`,borderBottom:`2px solid ${B.border}`,textAlign:"center"}}>
         <h2 style={{fontSize:28,fontWeight:700,marginBottom:12,color:B.txt}}>Get Daily Earn Alerts</h2>
         <p style={{fontSize:14,color:B.muted,marginBottom:20}}>Be notified of new high-paying offers instantly</p>
         <div style={{display:"flex",gap:8,maxWidth:400,margin:"0 auto"}}>
           <input type="email" value={signupEmail} onChange={e=>setSignupEmail(e.target.value)}
             placeholder="your@email.com"
-            style={{flex:1,padding:"10px 14px",borderRadius:6,border:\`1px solid \${B.border}\`,background:B.card,color:B.txt,fontSize:14}}
+            style={{flex:1,padding:"10px 14px",borderRadius:6,border:`1px solid ${B.border}`,background:B.card,color:B.txt,fontSize:14}}
           />
           <button onClick={()=>setSignupEmail("")} style={{background:B.accent,border:"none",color:"#000",padding:"10px 24px",borderRadius:6,fontWeight:700,cursor:"pointer",transition:"all .2s"}}
             onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
@@ -665,7 +665,7 @@ const Home = ({setPg, user, onLogin}) => {
             {n:"3",t:"Earn Rewards",d:"Get paid instantly to your account"},
             {n:"4",t:"Cash Out",d:"Withdraw to PayPal, gift cards, or crypto"},
           ].map((s,i)=>(
-            <div key={i} className="card au" style={{padding:28,textAlign:"center",animationDelay:\`\${i*0.05}s\`}}>
+            <div key={i} className="card au" style={{padding:28,textAlign:"center",animationDelay:`${i*0.05}s`}}>
               <div style={{width:48,height:48,background:B.accent,color:"#000",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:800,margin:"0 auto 16px"}}>
                 {s.n}
               </div>
@@ -917,10 +917,10 @@ const Dashboard = ({user, coins, streak}) => {
 
       {/* Quick Stats */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))",gap:16,marginBottom:40}}>
-        <Stat label="Total Earned" value={\`\$\${toUSD(coins)}\`} grad={B.gradOk} delay={0} />
-        <Stat label="Current Level" value={lv.n} sub={\`\${lv.bonus}% bonus\`} grad={B.gradGold} delay={0.1} />
-        <Stat label="Active Streak" value={\`\${streak} days\`} grad={B.gradHot} delay={0.2} />
-        <Stat label="Available Balance" value={\`\$\${toUSD(coins)}\`} grad={B.gradFomo} delay={0.3} />
+        <Stat label="Total Earned" value={`\$${toUSD(coins)}`} grad={B.gradOk} delay={0} />
+        <Stat label="Current Level" value={lv.n} sub={`${lv.bonus}% bonus`} grad={B.gradGold} delay={0.1} />
+        <Stat label="Active Streak" value={`${streak} days`} grad={B.gradHot} delay={0.2} />
+        <Stat label="Available Balance" value={`\$${toUSD(coins)}`} grad={B.gradFomo} delay={0.3} />
       </div>
 
       {/* Streak Tracker */}
@@ -932,7 +932,7 @@ const Dashboard = ({user, coins, streak}) => {
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(28px, 1fr))",gap:6,maxWidth:400}}>
           {Array.from({length:30}).map((_,i)=>(
             <div key={i} style={{width:"100%",paddingBottom:"100%",position:"relative"}}>
-              <div style={{position:"absolute",inset:0,borderRadius:4,background:i<streak?B.accent:"rgba(255,255,255,.06)",border:\`1px solid \${i<streak?"transparent":B.border}\`}}/>
+              <div style={{position:"absolute",inset:0,borderRadius:4,background:i<streak?B.accent:"rgba(255,255,255,.06)",border:`1px solid ${i<streak?"transparent":B.border}`}}/>
             </div>
           ))}
         </div>
@@ -944,7 +944,7 @@ const Dashboard = ({user, coins, streak}) => {
         <div style={{height:200,background:"rgba(1,214,118,.04)",borderRadius:8,display:"flex",alignItems:"flex-end",gap:12,padding:"20px",justifyContent:"space-around"}}>
           {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((day,i)=>{
             const h = 30 + Math.random() * 150;
-            return <div key={day} style={{flex:1,background:B.accent,height:\`\${h}px\`,borderRadius:4,opacity:0.7+Math.random()*0.3}}title={day}/>;
+            return <div key={day} style={{flex:1,background:B.accent,height:`${h}px`,borderRadius:4,opacity:0.7+Math.random()*0.3}}title={day}/>;
           })}
         </div>
       </div>
@@ -966,7 +966,7 @@ const Leaderboard = () => {
 
       <div style={{display:"flex",flexDirection:"column",gap:12}}>
         {LEADERS.map((l,i)=>(
-          <div key={l.r} className="card au" style={{padding:16,display:"flex",alignItems:"center",gap:16,animationDelay:\`\${i*0.03}s\`}}>
+          <div key={l.r} className="card au" style={{padding:16,display:"flex",alignItems:"center",gap:16,animationDelay:`${i*0.03}s`}}>
             <div style={{width:40,height:40,borderRadius:"50%",background:[B.gold,"#c0c0c0","#cd7f32"][i]||B.muted,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:"#000"}}>
               {medals[i]||l.r}
             </div>
@@ -979,7 +979,7 @@ const Leaderboard = () => {
             </div>
             <div style={{display:"flex",gap:12,alignItems:"center"}}>
               <div style={{textAlign:"right"}}>
-                <div style={{fontSize:14,fontWeight:700,color:B.accent}}>\${toUSD(l.coins)}</div>
+                <div style={{fontSize:14,fontWeight:700,color:B.accent}}>${toUSD(l.coins)}</div>
                 <div style={{fontSize:11,color:B.muted}}>{l.streak}d streak</div>
               </div>
             </div>
@@ -1000,7 +1000,7 @@ const Rewards = ({user, coins, onCashout}) => {
 
   const handleCashout = async () => {
     if(amount<selectedMethod.min) {
-      setErr(\`Minimum \$\${toUSD(selectedMethod.min)}\`);
+      setErr(`Minimum \$${toUSD(selectedMethod.min)}`);
       return;
     }
     try {
@@ -1014,7 +1014,7 @@ const Rewards = ({user, coins, onCashout}) => {
   return (
     <div style={{padding:"40px 32px",maxWidth:600,margin:"0 auto"}}>
       <h1 style={{fontSize:28,fontWeight:800,marginBottom:8,color:B.txt}}>Cash Out</h1>
-      <p style={{fontSize:14,color:B.muted,marginBottom:32}}>Your available balance: \${toUSD(coins)}</p>
+      <p style={{fontSize:14,color:B.muted,marginBottom:32}}>Your available balance: ${toUSD(coins)}</p>
 
       {err&&<div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:10,padding:"10px 14px",marginBottom:20,color:"#F87171",fontSize:13}}>{err}</div>}
 
@@ -1023,9 +1023,9 @@ const Rewards = ({user, coins, onCashout}) => {
         <label style={{display:"block",fontSize:12,color:B.muted,marginBottom:8,fontWeight:600}}>Amount to Withdraw</label>
         <div style={{display:"flex",gap:8}}>
           <input type="number" value={amount} onChange={e=>setAmount(Math.max(0,Number(e.target.value)))}
-            style={{flex:1,padding:"12px 14px",borderRadius:8,border:\`1px solid \${B.border}\`,background:B.card,color:B.txt,fontSize:14}}
+            style={{flex:1,padding:"12px 14px",borderRadius:8,border:`1px solid ${B.border}`,background:B.card,color:B.txt,fontSize:14}}
           />
-          <button onClick={()=>setAmount(coins)} style={{padding:"12px 16px",borderRadius:8,border:\`1px solid \${B.border}\`,background:"transparent",color:B.accent,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}}>Max</button>
+          <button onClick={()=>setAmount(coins)} style={{padding:"12px 16px",borderRadius:8,border:`1px solid ${B.border}`,background:"transparent",color:B.accent,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}}>Max</button>
         </div>
       </div>
 
@@ -1034,8 +1034,8 @@ const Rewards = ({user, coins, onCashout}) => {
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(100px, 1fr))",gap:12,marginBottom:24}}>
         {CASHOUTS.filter(c=>c.pop).map(c=>(
           <button key={c.id} onClick={()=>setSelectedMethod(c)} style={{
-            padding:16,borderRadius:8,border:\`2px solid \${selectedMethod.id===c.id?B.accent:B.border}\`,
-            background:selectedMethod.id===c.id?\`\${B.accent}15\`:"transparent",
+            padding:16,borderRadius:8,border:`2px solid ${selectedMethod.id===c.id?B.accent:B.border}`,
+            background:selectedMethod.id===c.id?`${B.accent}15`:"transparent",
             cursor:"pointer",transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center",gap:8
           }}>
             <div style={{width:36,height:36,borderRadius:6,background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:"#000"}}>
@@ -1047,10 +1047,10 @@ const Rewards = ({user, coins, onCashout}) => {
       </div>
 
       {/* Info */}
-      <div style={{background:"rgba(1,214,118,.06)",border:\`1px solid rgba(1,214,118,.2)\`,borderRadius:8,padding:14,marginBottom:24,fontSize:13,color:B.light}}>
+      <div style={{background:"rgba(1,214,118,.06)",border:`1px solid rgba(1,214,118,.2)`,borderRadius:8,padding:14,marginBottom:24,fontSize:13,color:B.light}}>
         <div>Fee: <strong>{selectedMethod.fee}</strong></div>
         <div>Speed: <strong>{selectedMethod.spd}</strong></div>
-        <div style={{marginTop:8,color:B.muted}}>You'll receive \${toUSD(amount*(1-parseFloat(selectedMethod.fee)/100))}</div>
+        <div style={{marginTop:8,color:B.muted}}>You'll receive ${toUSD(amount*(1-parseFloat(selectedMethod.fee)/100))}</div>
       </div>
 
       <button onClick={handleCashout} style={{
@@ -1059,7 +1059,7 @@ const Rewards = ({user, coins, onCashout}) => {
       }}
       onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
       onMouseLeave={e=>e.currentTarget.style.background=B.accent}
-      >Withdraw \${toUSD(amount)}</button>
+      >Withdraw ${toUSD(amount)}</button>
     </div>
   );
 };
@@ -1521,7 +1521,7 @@ const Profile = ({user, coins, streak}) => {
         </div>
         <h2 style={{fontSize:20,fontWeight:700,color:B.txt,marginBottom:8}}>{user?.username}</h2>
         <p style={{color:B.muted,fontSize:13,marginBottom:16}}>{user?.email}</p>
-        <div style={{display:"flex",justifyContent:"center",gap:20,paddingTop:16,borderTop:\`1px solid \${B.border}\`}}>
+        <div style={{display:"flex",justifyContent:"center",gap:20,paddingTop:16,borderTop:`1px solid ${B.border}`}}>
           <div>
             <div style={{fontSize:18,fontWeight:800,color:B.accent}}>Level {lv.idx+1}</div>
             <div style={{fontSize:12,color:B.muted}}>{lv.n}</div>
@@ -1531,7 +1531,7 @@ const Profile = ({user, coins, streak}) => {
             <div style={{fontSize:12,color:B.muted}}>Day Streak</div>
           </div>
           <div>
-            <div style={{fontSize:18,fontWeight:800,color:B.accent}}>\${toUSD(coins)}</div>
+            <div style={{fontSize:18,fontWeight:800,color:B.accent}}>${toUSD(coins)}</div>
             <div style={{fontSize:12,color:B.muted}}>Total Earned</div>
           </div>
         </div>
@@ -1544,10 +1544,10 @@ const Profile = ({user, coins, streak}) => {
           <span style={{fontSize:12,color:B.accent,fontWeight:700}}>{Math.round(pct(coins))}%</span>
         </div>
         <div style={{height:6,background:"rgba(255,255,255,.06)",borderRadius:3,overflow:"hidden"}}>
-          <div className="progress-bar" style={{width:\`\${pct(coins)}%\`,background:B.accent}}/>
+          <div className="progress-bar" style={{width:`${pct(coins)}%`,background:B.accent}}/>
         </div>
         {lv.next&&<div style={{fontSize:11,color:B.muted,marginTop:8}}>
-          \${toUSD(lv.next-coins)} to next level
+          ${toUSD(lv.next-coins)} to next level
         </div>}
       </div>
 
@@ -1641,10 +1641,10 @@ export default function App() {
   const handleEarn = (o) => {
     if(!user) { setShowAuth(true); return; }
     if(!o.wall || o.wall==="Direct") {
-      showToast(\`Offer wall not configured: \${o.wall}\`);
+      showToast(`Offer wall not configured: ${o.wall}`);
       return;
     }
-    const wall = process.env[\`NEXT_PUBLIC_\${o.wall.toUpperCase().replace(/ /g,"_")}_URL\`];
+    const wall = process.env[`NEXT_PUBLIC_${o.wall.toUpperCase().replace(/ /g,"_")}_URL`];
     if(wall) window.open(wall, "_blank");
     else showToast("Offerwall URL not found");
   };

@@ -45,14 +45,14 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No active round. Please wait for a new round to start.' }, { status: 400 });
     }
 
-    // Get existing bets for this round
-    const { data: existingBets } = await db
+    // Get existing bets for this round (use select('*') to avoid RLS column-filtering issues)
+    const { data: existingBetsRaw } = await db
       .from('jackpot_bets')
-      .select('slot_number, user_id')
+      .select('*')
       .eq('round_id', activeRound.id)
       .order('slot_number', { ascending: true });
 
-    const filledSlots = existingBets || [];
+    const filledSlots = (existingBetsRaw || []).map(b => ({ slot_number: b.slot_number, user_id: b.user_id }));
 
     // Check if round is full
     if (filledSlots.length >= tier.slots_total) {

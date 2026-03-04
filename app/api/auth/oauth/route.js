@@ -7,8 +7,10 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const provider = searchParams.get('provider');
 
-    if (!['google', 'apple', 'facebook'].includes(provider)) {
-      return NextResponse.json({ error: 'Invalid provider' }, { status: 400 });
+    // Only Google is enabled in Supabase right now
+    const enabledProviders = ['google'];
+    if (!enabledProviders.includes(provider)) {
+      return NextResponse.json({ error: `Provider "${provider}" is not enabled yet. Only Google sign-in is available.` }, { status: 400 });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

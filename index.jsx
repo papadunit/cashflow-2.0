@@ -390,18 +390,6 @@ const AuthModal = ({ onAuth, onClose }) => {
             {oauthLoading==="google" ? <span style={{width:20,height:20,border:"2px solid #ccc",borderTopColor:"#4285F4",borderRadius:"50%",animation:"spin .6s linear infinite"}}/> : OAuthIcon.google(20)}
             Continue with Google
           </button>
-          <div style={{display:"flex",gap:10}}>
-            <button onClick={()=>handleOAuth("apple")} disabled={!!oauthLoading} style={{...oauthBtnBase,background:"#000",color:"#fff",flex:1,opacity:oauthLoading&&oauthLoading!=="apple"?.5:1}}
-              onMouseEnter={e=>{if(!oauthLoading)e.currentTarget.style.opacity="0.85"}} onMouseLeave={e=>{if(!oauthLoading)e.currentTarget.style.opacity="1"}}>
-              {oauthLoading==="apple" ? <span style={{width:20,height:20,border:"2px solid #555",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .6s linear infinite"}}/> : OAuthIcon.apple(20)}
-              Apple
-            </button>
-            <button onClick={()=>handleOAuth("facebook")} disabled={!!oauthLoading} style={{...oauthBtnBase,background:"#1877F2",color:"#fff",flex:1,opacity:oauthLoading&&oauthLoading!=="facebook"?.5:1}}
-              onMouseEnter={e=>{if(!oauthLoading)e.currentTarget.style.opacity="0.85"}} onMouseLeave={e=>{if(!oauthLoading)e.currentTarget.style.opacity="1"}}>
-              {oauthLoading==="facebook" ? <span style={{width:20,height:20,border:"2px solid #5a9cf5",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .6s linear infinite"}}/> : OAuthIcon.facebook(20)}
-              Facebook
-            </button>
-          </div>
         </div>
 
         {/* Divider */}
@@ -731,12 +719,10 @@ const Home = ({setPg, user, onLogin}) => {
       <section style={{padding:"40px 32px",textAlign:"center"}}>
         <h2 style={{fontSize:24,fontWeight:700,marginBottom:20,color:B.txt}}>Join With Your Account</h2>
         <div style={{display:"flex",gap:12,justifyContent:"center"}}>
-          {[{n:"Apple",c:"#000"},{n:"Google",c:"#ea4335"},{n:"Facebook",c:"#1877F2"}].map(x=>(
-            <button key={x.n} onClick={onLogin} style={{background:x.c,border:"none",color:"#fff",padding:"10px 32px",borderRadius:6,fontWeight:600,cursor:"pointer",transition:"all .2s"}}
-              onMouseEnter={e=>e.currentTarget.style.opacity=.8}
-              onMouseLeave={e=>e.currentTarget.style.opacity=1}
-            >{x.n}</button>
-          ))}
+          <button onClick={onLogin} style={{background:"#fff",border:"1px solid #ddd",color:"#1f1f1f",padding:"12px 40px",borderRadius:8,fontWeight:600,cursor:"pointer",transition:"all .2s",display:"flex",alignItems:"center",gap:10,fontSize:16}}
+            onMouseEnter={e=>e.currentTarget.style.opacity=.8}
+            onMouseLeave={e=>e.currentTarget.style.opacity=1}
+          >{OAuthIcon.google(22)} Continue with Google</button>
         </div>
       </section>
 

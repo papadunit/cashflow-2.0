@@ -1266,7 +1266,7 @@ const OFFERWALLS = [
 
 const Earn = ({onEarn, user}) => {
   const [activeWall, setActiveWall] = useState(null);
-  const [tab, setTab] = useState("walls"); // "walls" | "featured"
+  const [tab, setTab] = useState("featured"); // "featured" (offerwalls hidden until configured)
   const [cat,setCat] = useState("featured");
   const [sort,setSort] = useState("pop");
   const [search,setSearch] = useState("");
@@ -1292,102 +1292,9 @@ const Earn = ({onEarn, user}) => {
         <p style={{color:B.muted,fontSize:14}}>Complete offers, surveys, and app installs to earn real coins</p>
       </div>
 
-      {/* Tab Toggle: Offerwalls vs Featured Offers */}
-      <div style={{display:"flex",gap:4,marginBottom:22,background:B.card,borderRadius:12,padding:4,border:`1px solid ${B.border}`}}>
-        <button onClick={()=>{setTab("walls");setActiveWall(null);}} style={{
-          flex:1,padding:"10px 16px",borderRadius:10,fontSize:13,fontWeight:600,cursor:"pointer",border:"none",transition:"all .2s",
-          background:tab==="walls"?B.grad:"transparent",color:tab==="walls"?"#fff":B.muted,
-        }}>🏢 Offerwalls</button>
-        <button onClick={()=>setTab("featured")} style={{
-          flex:1,padding:"10px 16px",borderRadius:10,fontSize:13,fontWeight:600,cursor:"pointer",border:"none",transition:"all .2s",
-          background:tab==="featured"?B.grad:"transparent",color:tab==="featured"?"#fff":B.muted,
-        }}>🔥 Featured Offers</button>
-      </div>
-
-      {/* ─── OFFERWALLS TAB ─── */}
-      {tab==="walls" && !activeWall && (
-        <>
-          {/* How it works banner */}
-          <div className="card au" style={{padding:"16px 22px",marginBottom:22,background:"linear-gradient(135deg,rgba(0,210,106,.06),rgba(139,92,246,.06))",border:"1px solid rgba(0,210,106,.12)"}}>
-            <div style={{fontSize:13,fontWeight:700,marginBottom:4}}>💡 How Offerwalls Work</div>
-            <div style={{fontSize:12,color:B.muted,lineHeight:1.5}}>
-              Pick a wall below → browse their offers → complete tasks → coins are <strong style={{color:B.ok}}>automatically credited</strong> to your account. Each wall has different offers, so check them all for the best payouts!
-            </div>
-          </div>
-
-          {/* Offerwall Grid */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:14}}>
-            {OFFERWALLS.map((w, i) => {
-              const configured = isConfigured(w);
-              return (
-                <div key={w.id} className="card au" style={{
-                  padding:20,cursor:configured?"pointer":"default",animationDelay:`${i*.04}s`,
-                  opacity:configured?1:.55,position:"relative",overflow:"hidden",
-                  border:`1px solid ${configured?w.color+"25":B.border}`,
-                  background:configured?`linear-gradient(135deg,${w.color}08,transparent)`:B.card,
-                }}
-                onClick={()=>configured && setActiveWall(w)}
-                onMouseEnter={e=>{if(configured){e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.borderColor=w.color+"50";}}}
-                onMouseLeave={e=>{if(configured){e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=w.color+"25";}}}
-                >
-                  <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
-                    <div style={{width:44,height:44,borderRadius:12,background:`${w.color}12`,border:`1px solid ${w.color}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>{w.icon}</div>
-                    <div>
-                      <div style={{fontSize:14,fontWeight:700}}>{w.name}</div>
-                      <div style={{fontSize:11,color:B.muted}}>{w.desc}</div>
-                    </div>
-                  </div>
-                  {configured ? (
-                    <button style={{
-                      width:"100%",padding:"10px",borderRadius:10,border:"none",cursor:"pointer",
-                      background:`linear-gradient(135deg,${w.color},${w.color}cc)`,
-                      color:"#fff",fontSize:13,fontWeight:700,boxShadow:`0 4px 16px ${w.color}30`,
-                    }}>Browse Offers →</button>
-                  ) : (
-                    <div style={{
-                      width:"100%",padding:"10px",borderRadius:10,textAlign:"center",
-                      background:"rgba(255,255,255,.03)",border:`1px solid ${B.border}`,
-                      color:B.muted,fontSize:12,fontWeight:600,
-                    }}>⏳ Coming Soon</div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {/* ─── ACTIVE OFFERWALL IFRAME ─── */}
-      {tab==="walls" && activeWall && (
-        <div>
-          <button onClick={()=>setActiveWall(null)} style={{
-            display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:B.accentL,
-            fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:16,padding:0,
-          }}>← Back to all offerwalls</button>
-
-          <div className="card" style={{overflow:"hidden",border:`1px solid ${activeWall.color}30`}}>
-            <div style={{padding:"14px 20px",display:"flex",alignItems:"center",gap:12,borderBottom:`1px solid ${B.border}`,background:`linear-gradient(135deg,${activeWall.color}08,transparent)`}}>
-              <span style={{fontSize:22}}>{activeWall.icon}</span>
-              <div>
-                <div style={{fontSize:15,fontWeight:700}}>{activeWall.name}</div>
-                <div style={{fontSize:11,color:B.muted}}>Coins are credited automatically when you complete offers</div>
-              </div>
-            </div>
-            <iframe
-              src={activeWall.iframeUrl(uid, activeWall.key, activeWall.key2)}
-              style={{width:"100%",height:"70vh",border:"none",background:B.bg}}
-              title={`${activeWall.name} Offerwall`}
-              sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
-              allow="clipboard-write"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* ─── FEATURED OFFERS TAB (original browse experience) ─── */}
-      {tab==="featured" && (
-        <>
-          {/* AI Recommendation */}
+      {/* ─── OFFERS ─── */}
+      <>
+        {/* AI Recommendation */}
           <div className="card au" style={{padding:"16px 22px",marginBottom:22,display:"flex",alignItems:"center",justifyContent:"space-between",background:"linear-gradient(135deg,rgba(124,58,237,.08),rgba(96,165,250,.08))",border:"1px solid rgba(124,58,237,.15)"}}>
             <div>
               <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>🤖 Smart Pick for You</div>
@@ -1428,8 +1335,7 @@ const Earn = ({onEarn, user}) => {
             {filtered.map((o,i)=><OfferCard key={o.id} o={o} onEarn={onEarn} delay={i*.04}/>)}
           </div>
           {filtered.length===0&&<div style={{textAlign:"center",padding:60,color:B.muted}}>No offers match your search. Try a different category.</div>}
-        </>
-      )}
+      </>
     </div>
   );
 };

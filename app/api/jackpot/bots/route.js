@@ -65,7 +65,7 @@ export async function POST(request) {
     const existingUserIds = new Set(filledSlots.map(b => b.user_id));
     const { data: allBots } = await db.from('users')
       .select('id, username')
-      .eq('role', 'bot')
+      .like('email', '%@pocketlined.bot')
       .order('username', { ascending: true });
 
     const availableBots = (allBots || []).filter(b => !existingUserIds.has(b.id));

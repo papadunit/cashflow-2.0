@@ -42,7 +42,7 @@ async function autoFillBots(db, activeRound, tier) {
     const existingUserIds = new Set((currentBets || []).map(b => b.user_id));
     const { data: availableBots } = await db.from('users')
       .select('id, username')
-      .eq('role', 'bot');
+      .like('email', '%@pocketlined.bot');
 
     const bots = (availableBots || [])
       .filter(b => !existingUserIds.has(b.id))

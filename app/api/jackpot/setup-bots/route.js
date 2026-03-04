@@ -53,7 +53,7 @@ export async function POST(request) {
         username: name,
         email: botEmail,
         password_hash: 'BOT_ACCOUNT_NO_LOGIN',
-        role: 'bot',
+        role: 'member',
         coins: 0,
         lifetime_earned: 0,
         streak: 0,
@@ -93,7 +93,7 @@ export async function GET(request) {
     const db = createServiceClient();
     const { data: bots } = await db.from('users')
       .select('id, username, email')
-      .eq('role', 'bot')
+      .like('email', '%@pocketlined.bot')
       .order('username', { ascending: true });
 
     return NextResponse.json({

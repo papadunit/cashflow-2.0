@@ -69,9 +69,9 @@ export async function POST(request) {
       resolved_at: new Date().toISOString(),
     }).eq('id', round_id);
 
-    // Check if winner is a bot (role='bot' in users table)
-    const { data: winnerUser } = await db.from('users').select('role').eq('id', winnerBet.user_id).single();
-    const isBot = winnerUser?.role === 'bot';
+    // Check if winner is a bot (email ends with @pocketlined.bot)
+    const { data: winnerUser } = await db.from('users').select('email').eq('id', winnerBet.user_id).single();
+    const isBot = winnerUser?.email?.endsWith('@pocketlined.bot');
 
     // Only credit real users — bot wins go to the house
     if (!isBot) {

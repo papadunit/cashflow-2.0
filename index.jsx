@@ -469,9 +469,9 @@ const Stat = ({label,value,sub,grad,delay=0}) => (
 );
 
 // ─── OFFER CARD ───
-const OfferCard = ({o,onEarn,delay=0}) => (
+const OfferCard = ({o,onEarn,onStart,delay=0}) => (
   <div className="card au" style={{padding:18,display:"flex",gap:14,cursor:"pointer",animationDelay:`${delay}s`}}
-    onClick={()=>onEarn(o.coins)}
+    onClick={()=>onStart?onStart(o):onEarn(o.coins)}
     onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 12px 40px rgba(0,0,0,.4)"}}
     onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="none"}}
   >
@@ -1285,6 +1285,28 @@ const Earn = ({onEarn, user}) => {
     return k && k.length > 3 && !k.startsWith("your-");
   };
 
+  // Find the matching offerwall for an offer's "wall" field
+  const findWall = (wallName) => OFFERWALLS.find(w =>
+    w.name.toLowerCase() === wallName.toLowerCase() ||
+    w.name.toLowerCase().includes(wallName.toLowerCase()) ||
+    wallName.toLowerCase().includes(w.name.toLowerCase())
+  );
+
+  // When user clicks an offer, open the corresponding offerwall
+  const handleOfferStart = (offer) => {
+    if (offer.wall === "PocketLined" || offer.wall === "Direct") {
+      onEarn(offer.coins);
+      return;
+    }
+    const wall = findWall(offer.wall);
+    if (wall && isConfigured(wall)) {
+      setActiveWall(wall);
+    } else {
+      onEarn(0); // trigger toast
+      alert(`${offer.wall} is coming soon! Complete other available offers to start earning.`);
+    }
+  };
+
   return (
     <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
       <div className="au" style={{marginBottom:24}}>
@@ -1292,7 +1314,32 @@ const Earn = ({onEarn, user}) => {
         <p style={{color:B.muted,fontSize:14}}>Complete offers, surveys, and app installs to earn real coins</p>
       </div>
 
-      {/* ─── OFFERS ─── */}
+      {/* ─── ACTIVE OFFERWALL IFRAME ─── */}
+      {activeWall ? (
+        <div>
+          <button onClick={()=>setActiveWall(null)} style={{
+            display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:B.accentL,
+            fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:16,padding:0,
+          }}>← Back to offers</button>
+
+          <div className="card" style={{overflow:"hidden",border:`1px solid ${activeWall.color}30`}}>
+            <div style={{padding:"14px 20px",display:"flex",alignItems:"center",gap:12,borderBottom:`1px solid ${B.border}`,background:`linear-gradient(135deg,${activeWall.color}08,transparent)`}}>
+              <span style={{fontSize:22}}>{activeWall.icon}</span>
+              <div>
+                <div style={{fontSize:15,fontWeight:700}}>{activeWall.name}</div>
+                <div style={{fontSize:11,color:B.muted}}>Coins are credited automatically when you complete offers</div>
+              </div>
+            </div>
+            <iframe
+              src={activeWall.iframeUrl(uid, activeWall.key, activeWall.key2)}
+              style={{width:"100%",height:"70vh",border:"none",background:B.bg}}
+              title={`${activeWall.name} Offerwall`}
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
+              allow="clipboard-write"
+            />
+          </div>
+        </div>
+      ) : (
       <>
         {/* AI Recommendation */}
           <div className="card au" style={{padding:"16px 22px",marginBottom:22,display:"flex",alignItems:"center",justifyContent:"space-between",background:"linear-gradient(135deg,rgba(124,58,237,.08),rgba(96,165,250,.08))",border:"1px solid rgba(124,58,237,.15)"}}>
@@ -1332,10 +1379,11 @@ const Earn = ({onEarn, user}) => {
 
           {/* Offers Grid */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
-            {filtered.map((o,i)=><OfferCard key={o.id} o={o} onEarn={onEarn} delay={i*.04}/>)}
+            {filtered.map((o,i)=><OfferCard key={o.id} o={o} onEarn={onEarn} onStart={handleOfferStart} delay={i*.04}/>)}
           </div>
           {filtered.length===0&&<div style={{textAlign:"center",padding:60,color:B.muted}}>No offers match your search. Try a different category.</div>}
       </>
+      )}
     </div>
   );
 };

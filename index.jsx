@@ -1266,6 +1266,7 @@ const OFFERWALLS = [
 
 const Earn = ({onEarn, user}) => {
   const [activeWall, setActiveWall] = useState(null);
+  const [comingSoonWall, setComingSoonWall] = useState(null);
   const [tab, setTab] = useState("featured"); // "featured" (offerwalls hidden until configured)
   const [cat,setCat] = useState("featured");
   const [sort,setSort] = useState("pop");
@@ -1302,13 +1303,19 @@ const Earn = ({onEarn, user}) => {
     if (wall && isConfigured(wall)) {
       setActiveWall(wall);
     } else {
-      onEarn(0); // trigger toast
-      alert(`${offer.wall} is coming soon! Complete other available offers to start earning.`);
+      setComingSoonWall(offer.wall);
+      setTimeout(() => setComingSoonWall(null), 3000);
     }
   };
 
   return (
     <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
+      {/* Coming Soon Toast */}
+      {comingSoonWall && (
+        <div className="au" style={{position:"fixed",top:80,right:20,zIndex:9999,padding:"14px 24px",borderRadius:12,background:"rgba(255,159,28,.15)",border:"1px solid rgba(255,159,28,.3)",backdropFilter:"blur(20px)",color:B.warn,fontWeight:600,fontSize:14}}>
+          ⏳ {comingSoonWall} is coming soon! Try other offers.
+        </div>
+      )}
       <div className="au" style={{marginBottom:24}}>
         <h1 style={{fontFamily:"'Space Grotesk'",fontSize:26,fontWeight:800}}>Earn Coins 💰</h1>
         <p style={{color:B.muted,fontSize:14}}>Complete offers, surveys, and app installs to earn real coins</p>

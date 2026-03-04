@@ -18,7 +18,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 // Purple = brand/premium · Hot Pink = scarcity/FOMO · Cyan = novelty/fresh
 // Dark bg with high-contrast accents maximizes visual dopamine response
 const B = {
-  accent: "#8B5CF6", accentL: "#A78BFA", accentD: "#7C3AED",
+  accent: "#00E701", accentL: "#2EFF2E", accentD: "#00C600",
   ok: "#00D26A", okL: "#4ADE80",                          // Vivid money-green: "you're earning"
   warn: "#FF9F1C", warnL: "#FFB84D",                      // Amber-orange: urgency without alarm
   hot: "#FF3B30", hotL: "#FF6B5B",                         // iOS-red: immediate action trigger
@@ -26,15 +26,15 @@ const B = {
   fomo: "#FF2D78",                                         // Hot pink: scarcity & FOMO trigger
   cyan: "#00E5FF",                                         // Electric cyan: novelty & "new"
   money: "#00D26A",                                        // Alias for earnings displays
-  bg: "#050A18", card: "#0C1425", surface: "#131D33",      // Deeper navy-black: content pops more
-  border: "rgba(139,92,246,.15)",
+  bg: "#171A21", card: "#1E2230", surface: "#252A3A",      // Deeper navy-black: content pops more
+  border: "rgba(255,255,255,0.06)",
   txt: "#F8FAFC", muted: "#94A3B8", dim: "#64748B",
   // CTA gradient: orange→pink creates urgency + excitement (proven highest click-through)
-  gradCTA: "linear-gradient(135deg,#FF6B35 0%,#FF2D78 100%)",
+  gradCTA: "linear-gradient(135deg,#00E701 0%,#2EFF2E 100%)",
   // Brand gradient: purple→blue signals trust + premium
-  grad: "linear-gradient(135deg,#8B5CF6 0%,#6366F1 40%,#3B82F6 100%)",
+  grad: "linear-gradient(135deg,#00E701 0%,#3B82F6 40%,#6366F1 100%)",
   // Money gradient: green tones trigger "earning" dopamine
-  gradOk: "linear-gradient(135deg,#00D26A 0%,#4ADE80 50%,#86EFAC 100%)",
+  gradOk: "linear-gradient(135deg,#00E701 0%,#2EFF2E 50%,#86EFAC 100%)",
   // Hot deals: red→orange = "act now before it's gone"
   gradHot: "linear-gradient(135deg,#FF3B30 0%,#FF9F1C 100%)",
   // Achievement: warm gold with shimmer feel
@@ -169,7 +169,7 @@ const pct = coins => {
 };
 
 // ─── CSS ───
-const css = `
+const const css = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -177,7 +177,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:${B.bg}}
 ::-webkit-scrollbar-thumb{background:${B.accent};border-radius:3px}
-::selection{background:rgba(139,92,246,.3)}
+::selection{background:rgba(0,231,1,.2)}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -212,11 +212,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 .abounce{animation:bounceIn .4s ease-out both}
 
 .btn-primary{
-  background:${B.gradCTA};border:none;color:#fff;padding:14px 32px;border-radius:14px;
-  font-weight:700;font-size:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
-  text-shadow:0 1px 2px rgba(0,0,0,.2);
+  background:${B.accent};border:none;color:#000;padding:14px 32px;border-radius:10px;
+  font-weight:800;font-size:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
 }
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,107,53,.4),0 0 60px rgba(255,45,120,.15)}
+.btn-primary:hover{transform:translateY(-2px);background:#2EFF2E;box-shadow:0 8px 32px rgba(0,231,1,.3)}
 .btn-primary:active{transform:translateY(0)}
 
 .btn-secondary{
@@ -226,16 +225,16 @@ body{font-family:'Inter',-apple-system,sans-serif;background:${B.bg};color:${B.t
 .btn-secondary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(139,92,246,.35)}
 
 .btn-ghost{
-  background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);color:${B.accentL};
-  padding:12px 24px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;
+  background:rgba(0,231,1,.06);border:1px solid rgba(0,231,1,.2);color:${B.accent};
+  padding:12px 24px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;
 }
-.btn-ghost:hover{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4)}
+.btn-ghost:hover{background:rgba(0,231,1,.12);border-color:rgba(0,231,1,.35)}
 
 .card{
-  background:${B.card};border:1px solid ${B.border};border-radius:16px;
+  background:${B.card};border:1px solid ${B.border};border-radius:12px;
   transition:all .25s;position:relative;overflow:hidden;
 }
-.card:hover{border-color:rgba(139,92,246,.3);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(139,92,246,.1)}
+.card:hover{border-color:rgba(0,231,1,.15);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(0,231,1,.08)}
 
 .chip{
   display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;
@@ -388,58 +387,67 @@ const LiveTicker = () => {
   );
 };
 
-// ─── NAVBAR ───
+// ─── NAVBAR (Freecash-style) ───
 const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
   const lv = getLevel(coins);
-  const items = [
-    {id:"home",l:"Home",ic:"🏠"},
-    ...(user ? [
-      {id:"dash",l:"Dashboard",ic:"📊"},
-    ] : []),
-    {id:"earn",l:"Earn",ic:"💰"},
-    ...(user ? [
-      {id:"profile",l:"Profile",ic:"👤"},
-      {id:"rewards",l:"Rewards",ic:"🎁"},
-    ] : []),
-    {id:"leaderboard",l:"Leaderboard",ic:"🏆"},
-    ...(role==="admin"&&user?[{id:"admin",l:"Admin",ic:"🛡️"}]:[]),
-  ];
   return (
-    <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",background:B.glass,backdropFilter:"blur(24px)",borderBottom:`1px solid ${B.border}`,position:"sticky",top:0,zIndex:100}}>
-      <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setPg("home")}>
-        <div style={{width:36,height:36,borderRadius:10,background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>💰</div>
-        <span style={{fontSize:22,fontFamily:"'Space Grotesk'",fontWeight:800,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PocketLined</span>
-      </div>
-      <div style={{display:"flex",gap:2}}>
-        {items.map(x=>(
-          <button key={x.id} onClick={()=>setPg(x.id)} style={{
-            background:pg===x.id?(x.id==="admin"?"rgba(239,68,68,.12)":"rgba(124,58,237,.12)"):(x.id==="admin"?"rgba(239,68,68,.04)":"transparent"),
-            border:pg===x.id?(x.id==="admin"?"1px solid rgba(239,68,68,.3)":"1px solid rgba(124,58,237,.3)"):"1px solid transparent",
-            color:pg===x.id?(x.id==="admin"?"#F87171":B.accentL):B.muted,
-            padding:"8px 14px",borderRadius:10,cursor:"pointer",fontSize:13,fontWeight:x.id==="admin"?700:500,
-            transition:"all .15s",display:"flex",alignItems:"center",gap:5,
-          }}>{x.ic} {x.l}</button>
-        ))}
-      </div>
-      <div style={{display:"flex",alignItems:"center",gap:14}}>
-        {user ? (<>
-          {streak>0&&<div className="chip" style={{background:"rgba(255,107,53,.1)",border:"1px solid rgba(255,107,53,.25)",color:"#FF6B35"}}>
-            <span className="astreak">🔥</span><b>{streak}</b>
-          </div>}
-          <div className="chip" style={{background:"rgba(0,210,106,.08)",border:"1px solid rgba(0,210,106,.2)",color:B.money,cursor:"pointer",fontSize:14}} onClick={()=>setPg("dash")}>
-            {lv.icon} <b>{fmt(coins)}</b> 🪙
+    <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 32px",height:60,background:"rgba(23,26,33,.97)",backdropFilter:"blur(24px)",borderBottom:`1px solid ${B.border}`,position:"sticky",top:0,zIndex:100}}>
+      {/* Left: Logo + Cashout link */}
+      <div style={{display:"flex",alignItems:"center",gap:24}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setPg("home")}>
+          <div style={{width:32,height:32,borderRadius:8,background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:"#000",fontWeight:900}}>$</div>
+          <span style={{fontSize:20,fontFamily:"'Space Grotesk'",fontWeight:800,color:"#fff",letterSpacing:"-0.3px"}}>
+            <span style={{color:B.accent}}>POCKET</span>LINED
+          </span>
+        </div>
+        {user && (
+          <div style={{display:"flex",gap:2,marginLeft:8}}>
+            {[
+              {id:"earn",l:"Earn",ic:"💰"},
+              {id:"rewards",l:"Cashout",ic:"💳"},
+              ...(user ? [{id:"dash",l:"Dashboard",ic:"📊"},{id:"leaderboard",l:"Leaderboard",ic:"🏆"}] : []),
+              ...(role==="admin"&&user?[{id:"admin",l:"Admin",ic:"🛡️"}]:[]),
+            ].map(x=>(
+              <button key={x.id} onClick={()=>setPg(x.id)} style={{
+                background:pg===x.id?"rgba(0,231,1,.08)":"transparent",
+                border:"none",
+                color:pg===x.id?B.accent:B.muted,
+                padding:"8px 14px",borderRadius:8,cursor:"pointer",fontSize:13,fontWeight:pg===x.id?700:500,
+                transition:"all .15s",display:"flex",alignItems:"center",gap:5,
+              }}
+              onMouseEnter={e=>{if(pg!==x.id)e.currentTarget.style.color="#fff"}}
+              onMouseLeave={e=>{if(pg!==x.id)e.currentTarget.style.color=B.muted}}
+              >{x.ic} {x.l}</button>
+            ))}
           </div>
-          <div style={{position:"relative",display:"flex",alignItems:"center",gap:8}}>
-            <div onClick={()=>setPg("profile")} style={{width:34,height:34,borderRadius:"50%",background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,cursor:"pointer",border:`2px solid ${lv.c}`}}>
-              {(user.username||"A")[0].toUpperCase()}
-            </div>
-            <button onClick={onLogout} style={{background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.2)",borderRadius:8,padding:"6px 10px",color:"#F87171",fontSize:11,cursor:"pointer",fontWeight:600}}>Logout</button>
-          </div>
-        </>) : (
-          <button onClick={onLogin} style={{background:B.grad,border:"none",borderRadius:10,padding:"8px 18px",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer"}}>
-            Log In / Sign Up
-          </button>
         )}
+      </div>
+      {/* Right: Auth / User */}
+      <div style={{display:"flex",alignItems:"center",gap:10}}>
+        {user ? (<>
+          {streak>0&&<div style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:8,background:"rgba(255,107,53,.08)",fontSize:13,color:"#FF6B35",fontWeight:700}}>
+            <span className="astreak">🔥</span>{streak}
+          </div>}
+          <div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",borderRadius:8,background:"rgba(0,231,1,.06)",border:"1px solid rgba(0,231,1,.12)",cursor:"pointer",fontSize:14,color:B.accent,fontWeight:700}} onClick={()=>setPg("dash")}>
+            {lv.icon} {fmt(coins)} 🪙
+          </div>
+          <div onClick={()=>setPg("profile")} style={{width:34,height:34,borderRadius:"50%",background:"rgba(0,231,1,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,cursor:"pointer",border:`2px solid ${B.accent}`,color:B.accent}}>
+            {(user.username||"A")[0].toUpperCase()}
+          </div>
+          <button onClick={onLogout} style={{background:"none",border:"1px solid rgba(255,255,255,.1)",borderRadius:8,padding:"6px 12px",color:B.muted,fontSize:12,cursor:"pointer",fontWeight:500,transition:"all .15s"}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(239,68,68,.3)";e.currentTarget.style.color="#F87171"}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.1)";e.currentTarget.style.color=B.muted}}
+          >Sign Out</button>
+        </>) : (<>
+          <button onClick={onLogin} style={{background:"none",border:"1px solid rgba(255,255,255,.15)",borderRadius:8,padding:"8px 18px",color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",transition:"all .15s"}}
+            onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,.3)"}
+            onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,.15)"}
+          >Sign In</button>
+          <button onClick={onLogin} style={{background:B.accent,border:"none",borderRadius:8,padding:"8px 20px",color:"#000",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all .15s",display:"flex",alignItems:"center",gap:6}}
+            onMouseEnter={e=>e.currentTarget.style.background="#2EFF2E"}
+            onMouseLeave={e=>e.currentTarget.style.background=B.accent}
+          >✏️ Sign Up</button>
+        </>)}
       </div>
     </nav>
   );
@@ -500,194 +508,239 @@ const OfferCard = ({o,onEarn,onStart,delay=0}) => (
 );
 
 // ═══════════════════════════════════════════════════════════════
-//  PAGE: HOME / LANDING
+//  PAGE: HOME / LANDING (Freecash-inspired)
 // ═══════════════════════════════════════════════════════════════
 const Home = ({setPg, user, onLogin}) => {
-  const [online,setOnline] = useState(2_147);
-  useEffect(()=>{
-    const t=setInterval(()=>{
-      setOnline(p=>Math.max(1800,p+Math.floor(Math.random()*8-3)));
-    },4000);
-    return ()=>clearInterval(t);
-  },[]);
+  const [signupCount] = useState(()=>94000+Math.floor(Math.random()*8000));
+  const [offerCount] = useState(()=>8000+Math.floor(Math.random()*1500));
+  const [signupEmail,setSignupEmail] = useState("");
 
   return (
     <div>
-      {/* ─── HERO — Honest value prop ─── */}
-      <section style={{minHeight:"92vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"60px 24px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:"-25%",left:"50%",transform:"translateX(-50%)",width:900,height:900,background:"radial-gradient(circle,rgba(139,92,246,.1) 0%,rgba(255,107,53,.04) 40%,transparent 70%)",pointerEvents:"none"}}/>
-        <div className="afl" style={{position:"absolute",top:"8%",right:"8%",width:350,height:350,background:"radial-gradient(circle,rgba(255,45,120,.06) 0%,transparent 70%)",pointerEvents:"none"}}/>
-        <div className="afl" style={{position:"absolute",bottom:"10%",left:"5%",width:250,height:250,background:"radial-gradient(circle,rgba(0,210,106,.06) 0%,transparent 70%)",pointerEvents:"none",animationDelay:"2s"}}/>
+      {/* ─── HERO — Freecash-style two-column ─── */}
+      <section style={{position:"relative",overflow:"hidden",padding:"60px 0 40px"}}>
+        {/* Background app logos collage */}
+        <div style={{position:"absolute",inset:0,opacity:.06,background:"url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"400\"><text x=\"50\" y=\"80\" font-size=\"60\">📱</text><text x=\"200\" y=\"120\" font-size=\"50\">🎮</text><text x=\"350\" y=\"70\" font-size=\"55\">📊</text><text x=\"500\" y=\"110\" font-size=\"45\">🛍️</text><text x=\"650\" y=\"80\" font-size=\"50\">💰</text><text x=\"100\" y=\"200\" font-size=\"55\">🎯</text><text x=\"300\" y=\"250\" font-size=\"50\">📺</text><text x=\"450\" y=\"200\" font-size=\"60\">🏰</text><text x=\"600\" y=\"240\" font-size=\"45\">₿</text><text x=\"750\" y=\"200\" font-size=\"50\">🔍</text></svg>') center/cover",pointerEvents:"none"}}/>
 
-        <div className="au" style={{position:"relative",zIndex:1,maxWidth:850}}>
-          <div className="chip" style={{background:"rgba(0,210,106,.08)",border:"1px solid rgba(0,210,106,.25)",color:B.money,marginBottom:28}}>
-            <span style={{width:8,height:8,borderRadius:"50%",background:B.money,display:"inline-block"}} className="ap"/>
-            {online.toLocaleString()} people online right now
-          </div>
+        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px",display:"grid",gridTemplateColumns:"1fr 420px",gap:60,alignItems:"center",position:"relative",zIndex:1}}>
+          {/* LEFT: Headline + Offer Cards */}
+          <div>
+            <h1 className="au" style={{fontFamily:"'Space Grotesk'",fontSize:"clamp(36px,4.5vw,56px)",fontWeight:900,lineHeight:1.12,marginBottom:20}}>
+              <span style={{color:B.accent}}>Get paid</span> for testing apps, games & surveys
+            </h1>
+            <p className="au" style={{fontSize:17,color:B.muted,marginBottom:32,animationDelay:".05s"}}>
+              Earn up to <strong style={{color:"#fff"}}>$3,000</strong> per offer{" "}
+              <span style={{display:"inline-flex",alignItems:"center",gap:6,marginLeft:8}}>
+                <span style={{width:8,height:8,borderRadius:"50%",background:B.accent,display:"inline-block"}}/>
+                <strong style={{color:"#fff"}}>{offerCount.toLocaleString()}</strong> Offers available now
+              </span>
+            </p>
 
-          <h1 style={{fontFamily:"'Space Grotesk'",fontSize:"clamp(38px,5.5vw,68px)",fontWeight:900,lineHeight:1.08,marginBottom:24}}>
-            <span>Earn Real Money </span>
-            <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>In Your Free Time</span>
-          </h1>
-
-          <p style={{fontSize:20,color:B.muted,lineHeight:1.65,marginBottom:8,maxWidth:650,margin:"0 auto 8px"}}>
-            Complete simple tasks — surveys, app trials, games — and get paid to your PayPal, Venmo, or crypto wallet.
-          </p>
-          <p style={{fontSize:17,color:B.txt,lineHeight:1.65,marginBottom:24,maxWidth:650,margin:"0 auto 24px"}}>
-            It's not a full-time job replacement, but it's
-            <strong style={{color:B.money}}> real money</strong> for time you'd otherwise spend scrolling.
-          </p>
-
-          {/* Trust Stats — honest, verifiable claims only */}
-          <div style={{display:"flex",justifyContent:"center",gap:40,marginBottom:36,flexWrap:"wrap"}}>
-            {[
-              {v:"$5",l:"Minimum Cashout",c:B.gradOk},
-              {v:"12+",l:"Payout Methods",c:B.gradGold},
-              {v:"100+",l:"Available Offers",c:B.grad},
-              {v:"Free",l:"Always, No Hidden Fees",c:B.gradHot},
-            ].map((s,i)=>(
-              <div key={i} style={{textAlign:"center"}}>
-                <div style={{fontSize:30,fontWeight:900,fontFamily:"'Space Grotesk'",background:s.c,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{s.v}</div>
-                <div style={{fontSize:11,color:B.muted,marginTop:2}}>{s.l}</div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap"}}>
-            <button className="btn-primary ag" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:18,padding:"16px 40px"}}>
-              {user ? "Browse Offers" : "Create Free Account"}
-            </button>
-            <button className="btn-ghost" onClick={()=>setPg("earn")} style={{fontSize:16,padding:"16px 28px"}}>
-              See Available Tasks →
-            </button>
-          </div>
-
-          <p style={{marginTop:20,fontSize:13,color:B.dim}}>
-            New members get <strong style={{color:B.money}}>250 coins ($0.25)</strong> just for signing up — a head start on your earnings.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── HOW IT WORKS — Honest about what this is ─── */}
-      <section style={{padding:"80px 24px",background:"linear-gradient(180deg,transparent,rgba(0,210,106,.02),transparent)"}}>
-        <div style={{maxWidth:1000,margin:"0 auto"}}>
-          <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-            How It <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Actually</span> Works
-          </h2>
-          <p style={{textAlign:"center",color:B.muted,marginBottom:48,fontSize:16}}>No tricks. Here's the straightforward process.</p>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24}}>
-            {[
-              {s:"01",ic:"👆",t:"Pick a Task",d:"Browse surveys, app trials, game offers, and more. Each one shows exactly how much it pays and how long it takes. Start with the quick ones.",ac:"#3B82F6",sub:"You choose what to do"},
-              {s:"02",ic:"📱",t:"Complete It",d:"Do the task on your phone or laptop. Some take 3 minutes, some take a few days. Higher effort usually means higher pay — just like anything else.",ac:"#FF9F1C",sub:"Works on any device"},
-              {s:"03",ic:"💸",t:"Cash Out",d:"Once you hit $5, withdraw to PayPal, Venmo, Cash App, gift cards, or crypto. Most payouts process quickly — many within minutes.",ac:"#00D26A",sub:"$5 minimum to withdraw"},
-            ].map((x,i)=>(
-              <div key={i} className="card au" style={{padding:28,textAlign:"center",animationDelay:`${i*.12}s`}}>
-                <div style={{position:"absolute",top:-8,right:-8,fontSize:72,fontWeight:900,fontFamily:"'Space Grotesk'",color:`${x.ac}08`}}>{x.s}</div>
-                <div style={{fontSize:48,marginBottom:14}}>{x.ic}</div>
-                <h3 style={{fontSize:18,fontWeight:700,marginBottom:6}}>{x.t}</h3>
-                <div className="chip" style={{background:`${x.ac}10`,border:`1px solid ${x.ac}25`,color:x.ac,fontSize:11,marginBottom:12,display:"inline-flex"}}>{x.sub}</div>
-                <p style={{color:B.muted,fontSize:14,lineHeight:1.6}}>{x.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── WHAT YOU CAN EARN — Realistic ranges with caveats ─── */}
-      <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto"}}>
-        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-          What <span style={{background:B.gradCTA,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>People Typically</span> Earn
-        </h2>
-        <p style={{textAlign:"center",color:B.muted,marginBottom:40,maxWidth:600,margin:"0 auto 40px"}}>
-          Your earnings depend on how much time you put in. Here are realistic ranges.
-        </p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>
-          {[
-            {tier:"Casual",who:"A few tasks here and there",time:"15–30 min/day",range:"$20 – $75/mo",desc:"Fill out a survey during lunch, try an app before bed. Enough to cover a streaming subscription or two.",color:"#3B82F6",ic:"☕",pays:"Subscriptions & coffee"},
-            {tier:"Regular",who:"Consistent daily effort",time:"1–2 hrs/day",range:"$75 – $300/mo",desc:"Work through offers regularly, complete game milestones, do daily surveys. Takes real time but pays out consistently.",color:"#FF9F1C",ic:"📱",pays:"Phone bill or groceries"},
-            {tier:"Dedicated",who:"Treating it like a side gig",time:"3+ hrs/day",range:"$300 – $800/mo",desc:"Stack high-value offers, build referrals, hit every daily bonus. This takes serious effort, but the higher-paying offers are there.",color:"#00D26A",ic:"💪",pays:"Car payment or utilities"},
-          ].map((e,i)=>(
-            <div key={i} className="card au" style={{padding:24,animationDelay:`${i*.12}s`}}>
-              <div style={{fontSize:36,marginBottom:8}}>{e.ic}</div>
-              <div style={{fontSize:13,color:e.color,fontWeight:700,marginBottom:2}}>{e.tier}</div>
-              <div style={{fontSize:28,fontWeight:900,fontFamily:"'Space Grotesk'",marginBottom:2,color:B.txt}}>{e.range}</div>
-              <div style={{fontSize:12,color:B.dim,marginBottom:8}}>{e.time} · {e.who}</div>
-              <div className="chip" style={{background:`${e.color}10`,border:`1px solid ${e.color}25`,color:e.color,fontSize:11,marginBottom:12,display:"inline-flex"}}>Typically covers: {e.pays}</div>
-              <p style={{fontSize:13,color:B.muted,lineHeight:1.6}}>{e.desc}</p>
+            {/* 3 Featured Offer Preview Cards */}
+            <div className="au" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:28,animationDelay:".1s"}}>
+              {[
+                {img:"💸",name:"Cash App",desc:"Sign Up + $5 Deposit",price:"$25.00",rating:"5.0"},
+                {img:"🏰",name:"Royal Match",desc:"Reach level 300",price:"$52.00",rating:"5.0"},
+                {img:"🎯",name:"TikTok",desc:"Sign up",price:"$2.00",rating:"5.0"},
+              ].map((o,i)=>(
+                <div key={i} style={{
+                  background:i===1?"rgba(0,231,1,.04)":B.card,
+                  border:i===1?`1px solid rgba(0,231,1,.15)`:`1px solid ${B.border}`,
+                  borderRadius:14,padding:16,cursor:"pointer",transition:"all .2s",
+                }}
+                onClick={()=>user?setPg("earn"):onLogin()}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.borderColor="rgba(0,231,1,.25)"}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=i===1?"rgba(0,231,1,.15)":B.border}}
+                >
+                  <div style={{width:56,height:56,borderRadius:12,background:"rgba(255,255,255,.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:30,marginBottom:10}}>{o.img}</div>
+                  <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>{o.name}</div>
+                  <div style={{fontSize:11,color:B.muted,marginBottom:8}}>{o.desc}</div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <span style={{fontWeight:800,fontSize:15}}>{o.price}</span>
+                    <span style={{fontSize:11,color:B.gold}}>★ {o.rating}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <p style={{textAlign:"center",color:B.dim,fontSize:12,marginTop:24,maxWidth:600,margin:"24px auto 0"}}>
-          Earnings vary by location, offer availability, and time invested. These ranges reflect typical results, not guarantees.
-        </p>
-      </section>
 
-      {/* ─── COMMON QUESTIONS — Honest answers ─── */}
-      <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto"}}>
-        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-          Common <span style={{color:B.accentL}}>Questions</span>
-        </h2>
-        <p style={{textAlign:"center",color:B.muted,marginBottom:40}}>Fair questions deserve straight answers.</p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
-          {[
-            {q:"\"How does this actually make money?\"",a:"Brands pay us when you try their apps, take their surveys, or sign up for their services. We split that payment with you. That's the whole model — no tricks.",ic:"🛡️",ac:"#3B82F6"},
-            {q:"\"Do I need any skills?\"",a:"Nope. If you can use a phone or computer, you can do this. Most tasks are things like answering questions, trying free apps, or playing mobile games.",ic:"🎯",ac:"#00D26A"},
-            {q:"\"Do I have to pay anything?\"",a:"Never. PocketLined is 100% free. No premium tier, no hidden fees, no credit card required. We give you $0.25 just for creating an account.",ic:"💸",ac:"#FFB800"},
-            {q:"\"How fast do I get paid?\"",a:"Most payouts process within minutes once you request them. The minimum cashout is $5, so you don't have to wait long to see real money in your account.",ic:"⚡",ac:"#FF6B35"},
-            {q:"\"Is this going to replace my job?\"",a:"Let's be real: no. This is extra money, not a salary. Think of it like getting paid for time you'd spend on your phone anyway. Some people earn $50/month, some earn $500 — it depends on your effort.",ic:"📊",ac:"#FF2D78"},
-            {q:"\"What's the catch?\"",a:"The catch is that it takes time and effort. This isn't passive income. You're trading your time for money, just like any other work — but you do it from wherever you want, whenever you want.",ic:"✅",ac:"#00E5FF"},
-          ].map((x,i)=>(
-            <div key={i} className="card au" style={{padding:22,animationDelay:`${i*.06}s`}}>
-              <div style={{display:"flex",gap:14}}>
-                <div style={{width:44,height:44,borderRadius:12,background:`${x.ac}12`,border:`1px solid ${x.ac}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{x.ic}</div>
-                <div>
-                  <div style={{fontWeight:700,fontSize:15,marginBottom:6,color:x.ac}}>{x.q}</div>
-                  <div style={{fontSize:13,color:B.muted,lineHeight:1.65}}>{x.a}</div>
+            {/* Trustpilot-style badge */}
+            <div className="au" style={{animationDelay:".15s"}}>
+              <div style={{fontSize:13,color:B.muted,marginBottom:6}}>See our reviews on</div>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:15}}>★</span>
+                <span style={{fontWeight:700,fontSize:15}}>Trustpilot</span>
+                <div style={{display:"flex",gap:2}}>
+                  {[1,2,3,4,5].map(i=>(
+                    <div key={i} style={{width:24,height:24,background:i<=4?"#00B67A":"#DCDCE6",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"#fff"}}>★</div>
+                  ))}
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* RIGHT: Signup Form */}
+          <div className="au" style={{animationDelay:".1s"}}>
+            <div style={{background:B.card,border:`1px solid ${B.border}`,borderRadius:16,padding:28}}>
+              <h2 style={{fontFamily:"'Space Grotesk'",fontSize:22,fontWeight:800,textAlign:"center",marginBottom:20}}>Sign Up for Free</h2>
+
+              <div style={{position:"relative",marginBottom:14}}>
+                <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:16,color:B.muted}}>✉️</span>
+                <input type="email" placeholder="Email address" value={signupEmail} onChange={e=>setSignupEmail(e.target.value)}
+                  style={{width:"100%",padding:"14px 16px 14px 42px",background:B.surface,border:`1px solid ${B.border}`,borderRadius:10,color:B.txt,fontSize:15}}/>
+              </div>
+
+              <button onClick={onLogin} style={{
+                width:"100%",padding:"14px 0",borderRadius:10,border:"none",
+                background:B.accent,color:"#000",fontSize:16,fontWeight:800,cursor:"pointer",
+                transition:"all .2s",marginBottom:16,
+              }}
+              onMouseEnter={e=>e.currentTarget.style.background="#2EFF2E"}
+              onMouseLeave={e=>e.currentTarget.style.background=B.accent}
+              >Start earning now</button>
+
+              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
+                <div style={{flex:1,height:1,background:"rgba(255,255,255,.08)"}}/>
+                <span style={{fontSize:12,color:B.muted,fontWeight:500}}>OR</span>
+                <div style={{flex:1,height:1,background:"rgba(255,255,255,.08)"}}/>
+              </div>
+
+              {/* Social Auth Buttons */}
+              <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                <button onClick={onLogin} style={{width:"100%",padding:"12px 0",borderRadius:10,border:"none",background:"#000",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"opacity .2s"}}
+                  onMouseEnter={e=>e.currentTarget.style.opacity=".85"}
+                  onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+                >🍎 Sign Up with Apple</button>
+
+                <button onClick={onLogin} style={{width:"100%",padding:"12px 0",borderRadius:10,border:`1px solid rgba(255,255,255,.12)`,background:"transparent",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"all .2s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.04)"}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}
+                >G Sign Up with Google</button>
+
+                <button onClick={onLogin} style={{width:"100%",padding:"12px 0",borderRadius:10,border:"none",background:"#1877F2",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"opacity .2s"}}
+                  onMouseEnter={e=>e.currentTarget.style.opacity=".85"}
+                  onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+                >f Sign Up with Facebook</button>
+              </div>
+
+              <p style={{textAlign:"center",marginTop:16,fontSize:13,color:B.muted}}>
+                <strong style={{color:"#fff"}}>{signupCount.toLocaleString()}+</strong> sign ups in the past 24 hours
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── STATS BAR — 3 big metrics ─── */}
+      <section style={{padding:"40px 0",background:"transparent"}}>
+        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px"}}>
+          <div style={{background:B.card,border:`1px solid ${B.border}`,borderRadius:16,padding:"36px 48px",display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:0}}>
+            {[
+              {icon:"🚀",val:"17m 12s",label:"Average time until user earns their first reward"},
+              {icon:"🔥",val:"$28",label:"Average money earned by users yesterday"},
+              {icon:"",val:"$50,000,000+",label:"Total amount earned on PocketLined"},
+            ].map((s,i)=>(
+              <div key={i} style={{textAlign:"center",borderRight:i<2?`1px solid ${B.border}`:"none",padding:"0 24px"}}>
+                <div style={{fontSize:32,fontWeight:900,fontFamily:"'Space Grotesk'",marginBottom:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+                  {s.icon&&<span>{s.icon}</span>}
+                  <span>{s.val}</span>
+                </div>
+                <div style={{fontSize:14,color:B.muted,lineHeight:1.4}}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── RECOMMENDED BY ─── */}
+      <section style={{padding:"48px 0",textAlign:"center"}}>
+        <h3 style={{fontSize:20,fontWeight:800,marginBottom:28}}>Recommended by</h3>
+        <div style={{display:"flex",justifyContent:"center",gap:48,alignItems:"center",opacity:.5}}>
+          {["PaidFromSurveys","BENZINGA","SurveyPolice","TechCrunch","Forbes"].map(name=>(
+            <span key={name} style={{fontSize:18,fontWeight:800,fontFamily:"'Space Grotesk'",letterSpacing:"0.5px",textTransform:"uppercase"}}>{name}</span>
           ))}
         </div>
       </section>
 
-      {/* ─── TRENDING OFFERS PREVIEW ─── */}
-      <section style={{padding:"80px 24px",background:"linear-gradient(180deg,transparent,rgba(255,59,48,.02),transparent)"}}>
-        <div style={{maxWidth:1000,margin:"0 auto"}}>
-          <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,textAlign:"center",marginBottom:12}}>
-            Popular Offers <span style={{color:B.money}}>Right Now</span>
+      {/* ─── HOW IT WORKS ─── */}
+      <section style={{padding:"60px 0 80px"}}>
+        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px",display:"grid",gridTemplateColumns:"1fr 1.3fr",gap:60,alignItems:"start"}}>
+          {/* Left */}
+          <div>
+            <h2 style={{fontFamily:"'Space Grotesk'",fontSize:36,fontWeight:900,lineHeight:1.15,marginBottom:24}}>
+              Want to earn free cash within minutes?<br/>
+              <span style={{color:B.accent}}>Here's how</span>
+            </h2>
+            <button className="btn-primary" onClick={()=>user?setPg("earn"):onLogin()} style={{fontSize:16,padding:"14px 36px",marginBottom:24}}>Start earning now</button>
+            <div>
+              <div style={{fontSize:13,color:B.muted,marginBottom:6}}>See our reviews on</div>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:15}}>★</span>
+                <span style={{fontWeight:700,fontSize:15}}>Trustpilot</span>
+                <div style={{display:"flex",gap:2}}>
+                  {[1,2,3,4,5].map(i=>(
+                    <div key={i} style={{width:22,height:22,background:i<=4?"#00B67A":"#DCDCE6",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#fff"}}>★</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Right — Steps */}
+          <div style={{display:"flex",flexDirection:"column",gap:28}}>
+            {[
+              {n:"1",t:"Choose an offer",d:"Take your pick from the tasks on the earn page. We list the best offers from companies who want to advertise their apps, surveys, and products."},
+              {n:"2",t:"Complete the task",d:"Follow the instructions for the offer you selected. This could be downloading an app, taking a survey, or reaching a game level."},
+              {n:"3",t:"Get paid instantly",d:"Once you complete the offer, coins are added to your balance automatically. Cash out to PayPal, Venmo, crypto, or gift cards — most arrive in minutes."},
+            ].map((step,i)=>(
+              <div key={i} style={{display:"flex",gap:20,alignItems:"flex-start"}}>
+                <div style={{width:48,height:48,borderRadius:12,background:"rgba(0,231,1,.06)",border:"1px solid rgba(0,231,1,.12)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <span style={{fontSize:14,fontWeight:800,color:B.accent}}>{step.n}</span>
+                </div>
+                <div>
+                  <h4 style={{fontSize:17,fontWeight:700,marginBottom:6}}>{step.n}. {step.t}</h4>
+                  <p style={{fontSize:14,color:B.muted,lineHeight:1.6}}>{step.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── POPULAR OFFERS ─── */}
+      <section style={{padding:"60px 0",background:"linear-gradient(180deg,transparent,rgba(0,231,1,.01),transparent)"}}>
+        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px"}}>
+          <h2 style={{fontFamily:"'Space Grotesk'",fontSize:32,fontWeight:800,textAlign:"center",marginBottom:12}}>
+            Popular Offers <span style={{color:B.accent}}>Right Now</span>
           </h2>
-          <p style={{textAlign:"center",color:B.muted,marginBottom:40}}>Here's what people are completing today</p>
+          <p style={{textAlign:"center",color:B.muted,marginBottom:36}}>Here's what people are completing today</p>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
             {OFFERS.filter(o=>o.hot).slice(0,6).map((o,i)=>(
-              <div key={o.id} className="card au" style={{padding:18,cursor:"pointer",animationDelay:`${i*.08}s`}}
+              <div key={o.id} className="card au" style={{padding:18,cursor:"pointer",animationDelay:`${i*.06}s`}}
                 onClick={()=>user ? setPg("earn") : onLogin()}
-                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)"}}
-                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.borderColor="rgba(0,231,1,.2)"}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=B.border}}
               >
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:10}}>
-                  <span style={{fontSize:30}}>{o.img}</span>
-                  <span style={{background:B.gradOk,padding:"4px 12px",borderRadius:8,fontSize:13,fontWeight:800,color:"#fff",boxShadow:"0 2px 8px rgba(0,210,106,.2)"}}>
-                    ${toUSD(o.coins)}
-                  </span>
+                  <div style={{width:48,height:48,borderRadius:12,background:"rgba(255,255,255,.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>{o.img}</div>
+                  <span style={{background:B.accent,padding:"5px 12px",borderRadius:8,fontSize:14,fontWeight:800,color:"#000"}}>${toUSD(o.coins)}</span>
                 </div>
                 <div style={{fontSize:14,fontWeight:600,marginBottom:6,lineHeight:1.3}}>{o.t}</div>
-                <div style={{display:"flex",gap:10,fontSize:11,color:B.muted}}>
-                  <span>⏱ {o.time}</span>
-                  <span style={{color:B.ok}}>🟢 {o.diff}</span>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:11,color:B.muted}}>
+                  <span>⏱ {o.time} · {o.diff}</span>
+                  <span style={{color:B.gold}}>★ 5.0</span>
                 </div>
               </div>
             ))}
           </div>
-          <div style={{textAlign:"center",marginTop:36}}>
+          <div style={{textAlign:"center",marginTop:32}}>
             <button className="btn-primary" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:16,padding:"14px 36px"}}>Browse All Offers →</button>
           </div>
         </div>
       </section>
 
-      {/* ─── LIVE CASHOUTS (Social Proof Marquee) ─── */}
-      <section style={{padding:"60px 0",overflow:"hidden"}}>
-        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:28,fontWeight:800,textAlign:"center",marginBottom:32}}>
-          Recent <span style={{color:B.money}}>Cashouts</span>
+      {/* ─── LIVE CASHOUTS MARQUEE ─── */}
+      <section style={{padding:"50px 0",overflow:"hidden"}}>
+        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:28,fontWeight:800,textAlign:"center",marginBottom:28}}>
+          Recent <span style={{color:B.accent}}>Cashouts</span>
         </h2>
         <div style={{overflow:"hidden",position:"relative"}}>
           <div className="marquee-track">
@@ -703,10 +756,10 @@ const Home = ({setPg, user, onLogin}) => {
                 {u:"Amanda P.",a:"$5.00",m:"Cash App",t:"25 min ago"},
               ].map((c,i)=>(
                 <div key={`${dup}-${i}`} style={{
-                  minWidth:220,padding:"14px 20px",margin:"0 8px",background:B.card,borderRadius:14,
-                  border:`1px solid rgba(0,210,106,.12)`,textAlign:"center",flexShrink:0,
+                  minWidth:200,padding:"14px 20px",margin:"0 8px",background:B.card,borderRadius:12,
+                  border:`1px solid ${B.border}`,textAlign:"center",flexShrink:0,
                 }}>
-                  <div style={{fontSize:20,fontWeight:800,color:B.money,fontFamily:"'Space Grotesk'"}}>{c.a}</div>
+                  <div style={{fontSize:20,fontWeight:800,color:B.accent,fontFamily:"'Space Grotesk'"}}>{c.a}</div>
                   <div style={{fontSize:13,fontWeight:600,marginTop:2}}>{c.u}</div>
                   <div style={{fontSize:11,color:B.muted,marginTop:2}}>{c.m} · {c.t}</div>
                 </div>
@@ -717,39 +770,34 @@ const Home = ({setPg, user, onLogin}) => {
       </section>
 
       {/* ─── PAYOUT METHODS ─── */}
-      <section style={{padding:"80px 24px",maxWidth:1000,margin:"0 auto",textAlign:"center"}}>
-        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:34,fontWeight:800,marginBottom:12}}>
-          Your Money, <span style={{color:B.money}}>Your Way</span>
+      <section style={{padding:"60px 24px",maxWidth:1200,margin:"0 auto",textAlign:"center"}}>
+        <h2 style={{fontFamily:"'Space Grotesk'",fontSize:32,fontWeight:800,marginBottom:12}}>
+          Your Money, <span style={{color:B.accent}}>Your Way</span>
         </h2>
-        <p style={{color:B.muted,marginBottom:40}}>12+ payout options. $5 minimum. Most arrive within minutes.</p>
+        <p style={{color:B.muted,marginBottom:36}}>12+ payout options. $5 minimum. Most arrive within minutes.</p>
         <div style={{display:"flex",justifyContent:"center",gap:12,flexWrap:"wrap"}}>
           {CASHOUTS.map((c,i)=>(
-            <div key={c.id} className="card au" style={{padding:"16px 20px",textAlign:"center",width:100,animationDelay:`${i*.04}s`}}>
+            <div key={c.id} className="card au" style={{padding:"16px 18px",textAlign:"center",width:100,animationDelay:`${i*.03}s`}}>
               <div style={{fontSize:28,marginBottom:6}}>{c.ic}</div>
               <div style={{fontSize:12,fontWeight:600}}>{c.n}</div>
-              <div style={{fontSize:10,color:B.money,marginTop:2,fontWeight:600}}>{c.spd}</div>
+              <div style={{fontSize:10,color:B.accent,marginTop:2,fontWeight:600}}>{c.spd}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── FINAL CTA — Inviting, not pushy ─── */}
-      <section style={{padding:"80px 24px",textAlign:"center",background:"linear-gradient(180deg,transparent,rgba(139,92,246,.04))"}}>
+      {/* ─── FINAL CTA ─── */}
+      <section style={{padding:"80px 24px",textAlign:"center",background:"linear-gradient(180deg,transparent,rgba(0,231,1,.02))"}}>
         <h2 style={{fontFamily:"'Space Grotesk'",fontSize:38,fontWeight:900,marginBottom:14}}>
-          Ready to <span style={{background:B.gradOk,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Give It a Try</span>?
+          Ready to <span style={{color:B.accent}}>start earning</span>?
         </h2>
-        <p style={{color:B.muted,fontSize:18,marginBottom:8}}>
-          It's free, it takes 30 seconds, and you get $0.25 just for signing up.
+        <p style={{color:B.muted,fontSize:18,marginBottom:32}}>
+          It's free, takes 30 seconds, and you get $0.25 just for signing up.
         </p>
-        <p style={{color:B.dim,fontSize:15,marginBottom:32}}>
-          No commitment. Cash out anytime you hit $5.
-        </p>
-        <button className="btn-primary ap" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:20,padding:"18px 48px"}}>
+        <button className="btn-primary" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:18,padding:"16px 44px"}}>
           {user ? "Browse Offers →" : "Create Free Account →"}
         </button>
-        <p style={{marginTop:16,fontSize:12,color:B.dim}}>
-          No credit card required. Unsubscribe anytime.
-        </p>
+        <p style={{marginTop:14,fontSize:12,color:B.dim}}>No credit card required</p>
       </section>
     </div>
   );
@@ -2346,18 +2394,21 @@ const AdminDash = ({token}) => {
 
 // ─── FOOTER ───
 const Footer = () => (
-  <footer style={{padding:"48px 24px 20px",borderTop:`1px solid ${B.border}`,textAlign:"center",color:B.muted,fontSize:13}}>
-    <div style={{display:"flex",justifyContent:"center",gap:20,marginBottom:14,flexWrap:"wrap",fontSize:13}}>
-      {["About","How It Works","FAQ","Blog","Advertise","Terms","Privacy","Contact"].map(l=>(
-        <span key={l} style={{cursor:"pointer",transition:"color .15s"}}
-          onMouseEnter={e=>e.currentTarget.style.color=B.accentL}
-          onMouseLeave={e=>e.currentTarget.style.color=B.muted}>{l}</span>
-      ))}
+  <footer style={{padding:"48px 32px 24px",borderTop:`1px solid ${B.border}`,maxWidth:1200,margin:"0 auto"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{width:28,height:28,borderRadius:6,background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"#000",fontWeight:900}}>$</div>
+        <span style={{fontSize:18,fontFamily:"'Space Grotesk'",fontWeight:800}}><span style={{color:B.accent}}>POCKET</span>LINED</span>
+      </div>
+      <div style={{display:"flex",gap:20,fontSize:13,color:B.muted}}>
+        {["About","FAQ","Blog","Terms","Privacy","Contact"].map(l=>(
+          <span key={l} style={{cursor:"pointer",transition:"color .15s"}}
+            onMouseEnter={e=>e.currentTarget.style.color="#fff"}
+            onMouseLeave={e=>e.currentTarget.style.color=B.muted}>{l}</span>
+        ))}
+      </div>
     </div>
-    <div style={{marginBottom:6}}>
-      <span style={{fontFamily:"'Space Grotesk'",fontWeight:800,background:B.grad,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PocketLined</span> — The Smartest Way to Earn
-    </div>
-    <div style={{fontSize:10,color:B.dim}}>
+    <div style={{borderTop:`1px solid ${B.border}`,paddingTop:16,fontSize:12,color:B.dim,textAlign:"center"}}>
       © 2026 PocketLined. All earnings come from advertiser-funded offers. PocketLined never charges users.
     </div>
   </footer>
@@ -2477,7 +2528,7 @@ export default function App() {
       <div className="toast-container">
         {toasts.map(t=>(
           <div key={t.id} className="toast" style={{
-            background:t.type==="coin"?"rgba(124,58,237,.9)":t.type==="ok"?"rgba(16,185,129,.9)":"rgba(239,68,68,.9)",
+            background:t.type==="coin"?"rgba(0,231,1,.9)":t.type==="ok"?"rgba(0,231,1,.9)":"rgba(239,68,68,.9)",
             color:"#fff",
           }}>{t.msg}</div>
         ))}

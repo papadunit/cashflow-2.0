@@ -21,7 +21,10 @@ export async function POST(request) {
     const { data: deletedRounds } = await db.from('jackpot_rounds').delete().neq('id', '00000000-0000-0000-0000-000000000000').select('id');
 
     // 4. Give admin user 50000 coins ($50) for testing
-    await db.from('users').update({ coins: 50000 }).eq('id', user.id);
+    const { data: updatedUser, error: updateErr } = await db.from('users').update({ coins: 50000 }).eq('id', user.id).select('id, coins').single();
+
+    // Verify
+    const { data: verify } = await db.from('users').select('id, coins').eq('id', user.id).single();
 
     // 5. Create exactly one active round per tier
     const { data: tiers } = await db.from('jackpot_tiers').select('id, name').eq('is_active', true);
@@ -39,6 +42,10 @@ export async function POST(request) {
       deleted_bets: deletedBets?.length || 0,
       deleted_rounds: deletedRounds?.length || 0,
       coins_set: 50000,
+      update_result: updatedUser,
+      update_error: updateErr?.message || null,
+      verify_coins: verify?.coins,
+      user_id: user.id,
       new_rounds: newRounds,
     });
   } catch (err) {

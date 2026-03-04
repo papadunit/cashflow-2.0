@@ -27,9 +27,6 @@ export async function GET(request) {
     // Check user coins
     const { data: userCheck } = await db.from('users').select('id, coins').eq('id', user.id).single();
 
-    // Check RLS status
-    const { data: rlsCheck, error: rlsErr } = await db.rpc('check_rls_status', {}).catch(() => ({ data: null, error: 'no rpc' }));
-
     return NextResponse.json({
       user_coins: userCheck?.coins,
       active_rounds: activeRounds,

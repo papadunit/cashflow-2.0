@@ -530,8 +530,10 @@ const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
           <div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",borderRadius:8,background:"rgba(1,214,118,.06)",border:"1px solid rgba(1,214,118,.12)",cursor:"pointer",fontSize:14,color:B.accent,fontWeight:700}} onClick={()=>setPg("dash")}>
             $ {fmt(coins)}
           </div>
-          <div onClick={()=>setPg("profile")} style={{width:34,height:34,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,cursor:"pointer",color:"#000"}}>
-            {(user.username||"A")[0].toUpperCase()}
+          <div onClick={()=>setPg("profile")} style={{width:34,height:34,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,cursor:"pointer",color:"#000",overflow:"hidden"}}>
+            {user.avatar_url ? (
+              <img src={user.avatar_url} alt="" style={{width:34,height:34,borderRadius:"50%",objectFit:"cover"}} referrerPolicy="no-referrer" />
+            ) : (user.username||"A")[0].toUpperCase()}
           </div>
           <button onClick={onLogout} style={{background:"none",border:"1px solid rgba(255,255,255,.1)",borderRadius:8,padding:"6px 12px",color:B.muted,fontSize:12,cursor:"pointer",fontWeight:500,transition:"all .15s",display:"flex",alignItems:"center",gap:6}}
             onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(239,68,68,.3)";e.currentTarget.style.color="#F87171"}}
@@ -1053,8 +1055,8 @@ const Leaderboard = () => {
             <div style={{width:40,height:40,borderRadius:"50%",background:[B.gold,"#c0c0c0","#cd7f32"][i]||B.muted,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:"#000"}}>
               {medals[i]||l.r}
             </div>
-            <div style={{width:36,height:36,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"#000"}}>
-              {l.av}
+            <div style={{width:36,height:36,borderRadius:"50%",overflow:"hidden"}}>
+              <img src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(l.name)}&size=36`} alt="" style={{width:36,height:36,borderRadius:"50%"}} />
             </div>
             <div style={{flex:1}}>
               <div style={{fontSize:14,fontWeight:700,color:B.txt}}>{l.name}</div>
@@ -2005,8 +2007,10 @@ const Profile = ({user, coins, streak}) => {
 
       {/* User Card */}
       <div className="card au" style={{padding:24,marginBottom:24,textAlign:"center"}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,fontWeight:700,color:"#000",margin:"0 auto 16px"}}>
-          {(user?.username||"A")[0].toUpperCase()}
+        <div style={{width:80,height:80,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,fontWeight:700,color:"#000",margin:"0 auto 16px",overflow:"hidden"}}>
+          {user?.avatar_url ? (
+            <img src={user.avatar_url} alt="" style={{width:80,height:80,borderRadius:"50%",objectFit:"cover"}} referrerPolicy="no-referrer" />
+          ) : (user?.username||"A")[0].toUpperCase()}
         </div>
         <h2 style={{fontSize:20,fontWeight:700,color:B.txt,marginBottom:8}}>{user?.username}</h2>
         <p style={{color:B.muted,fontSize:13,marginBottom:16}}>{user?.email}</p>

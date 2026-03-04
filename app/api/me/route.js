@@ -4,11 +4,25 @@ import { authenticate, getLevel } from '@/lib/auth';
 import { createServiceClient } from '@/lib/supabase';
 
 export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const debugUpdate = searchParams.get('debug_update');
+
   const user = await authenticate(request);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  // Debug: direct query to compare with authenticate result
   const db = createServiceClient();
+
+  // Debug: test if /api/me can write
+  let writeTest = null;
+  if (debugUpdate === '1') {
+    const { data: before } = await db.from('users').select('id, coins').eq('id', user.id).single();
+    const { data: upd, error: updErr } = await db.from('users').update({ coins: 77777 }).eq('id', user.id).select('id, coins').single();
+    const { data: after } = await db.from('users').select('id, coins').eq('id', user.id).single();
+    writeTest = { before: before?.coins, update_returned: upd?.coins, update_err: updErr?.message, after: after?.coins };
+    // Reset to original
+    await db.from('users').update({ coins: before?.coins ?? user.coins }).eq('id', user.id);
+  }
+
   const { data: directUser } = await db.from('users').select('*').eq('id', user.id).single();
 
   const level = getLevel(directUser?.coins ?? user.coins);
@@ -20,5 +34,6 @@ export async function GET(request) {
     referral_code: user.referral_code, created_at: user.created_at,
     _debug_auth_coins: user.coins,
     _debug_direct_coins: directUser?.coins,
+    _debug_write_test: writeTest,
   });
 }

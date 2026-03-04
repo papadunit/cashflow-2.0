@@ -3,6 +3,46 @@ import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/auth';
 import { createServiceClient } from '@/lib/supabase';
 
+// GET: Debug endpoint to check bets and rounds state
+export async function GET(request) {
+  try {
+    const user = await authenticate(request);
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const db = createServiceClient();
+
+    // Check all active rounds
+    const { data: activeRounds, error: roundsErr } = await db
+      .from('jackpot_rounds')
+      .select('*')
+      .eq('status', 'active');
+
+    // Check all bets
+    const { data: allBets, error: betsErr } = await db
+      .from('jackpot_bets')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    // Check user coins
+    const { data: userCheck } = await db.from('users').select('id, coins').eq('id', user.id).single();
+
+    // Check RLS status
+    const { data: rlsCheck, error: rlsErr } = await db.rpc('check_rls_status', {}).catch(() => ({ data: null, error: 'no rpc' }));
+
+    return NextResponse.json({
+      user_coins: userCheck?.coins,
+      active_rounds: activeRounds,
+      rounds_error: roundsErr?.message,
+      all_bets: allBets,
+      bets_error: betsErr?.message,
+      bets_count: allBets?.length || 0,
+    });
+  } catch (err) {
+    return NextResponse.json({ error: 'Server error: ' + err.message }, { status: 500 });
+  }
+}
+
 export async function POST(request) {
   try {
     const user = await authenticate(request);
@@ -10,23 +50,22 @@ export async function POST(request) {
 
     const db = createServiceClient();
 
-    // 1. Check user role (admin only)
     const { data: u } = await db.from('users').select('role').eq('id', user.id).single();
     if (u?.role !== 'admin') return NextResponse.json({ error: 'Admin only' }, { status: 403 });
 
-    // 2. Delete all bets (they're orphaned anyway)
+    // Delete all bets
     const { data: deletedBets } = await db.from('jackpot_bets').delete().neq('id', '00000000-0000-0000-0000-000000000000').select('id');
 
-    // 3. Delete all rounds
+    // Delete all rounds
     const { data: deletedRounds } = await db.from('jackpot_rounds').delete().neq('id', '00000000-0000-0000-0000-000000000000').select('id');
 
-    // 4. Give admin user 50000 coins ($50) for testing
+    // Give admin user 50000 coins
     const { data: updatedUser, error: updateErr } = await db.from('users').update({ coins: 50000 }).eq('id', user.id).select('id, coins').single();
 
     // Verify
     const { data: verify } = await db.from('users').select('id, coins').eq('id', user.id).single();
 
-    // 5. Create exactly one active round per tier
+    // Create one active round per tier
     const { data: tiers } = await db.from('jackpot_tiers').select('id, name').eq('is_active', true);
     const newRounds = [];
     for (const tier of (tiers || [])) {

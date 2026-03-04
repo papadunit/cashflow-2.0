@@ -69,8 +69,9 @@ export async function POST(request) {
     // Give admin user 50000 coins
     const { data: updatedUser, error: updateErr } = await db.from('users').update({ coins: 50000 }).eq('id', user.id).select('id, coins').single();
 
-    // Verify
-    const { data: verify } = await db.from('users').select('id, coins').eq('id', user.id).single();
+    // Verify with a SEPARATE service client to check cross-connection persistence
+    const db2 = createServiceClient();
+    const { data: verify } = await db2.from('users').select('id, coins').eq('id', user.id).single();
 
     // Create one active round per tier
     const { data: tiers } = await db.from('jackpot_tiers').select('id, name').eq('is_active', true);

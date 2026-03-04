@@ -35,5 +35,8 @@ export async function GET(request) {
     _debug_auth_coins: user.coins,
     _debug_direct_coins: directUser?.coins,
     _debug_write_test: writeTest,
+    _debug_service_key_prefix: (process.env.SUPABASE_SERVICE_ROLE_KEY || '').slice(0, 20),
+    _debug_anon_key_prefix: (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').slice(0, 20),
+    _debug_keys_match: (process.env.SUPABASE_SERVICE_ROLE_KEY || '') === (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
   });
 }

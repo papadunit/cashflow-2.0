@@ -50,11 +50,21 @@ export async function POST(request) {
     const { data: u } = await db.from('users').select('role').eq('id', user.id).single();
     if (u?.role !== 'admin') return NextResponse.json({ error: 'Admin only' }, { status: 403 });
 
-    // Delete all bets
-    const { data: deletedBets } = await db.from('jackpot_bets').delete().neq('id', '00000000-0000-0000-0000-000000000000').select('id');
+    // Delete all bets (use select('*') to work around RLS column-filtering)
+    const { data: allBets } = await db.from('jackpot_bets').select('*');
+    let deletedBetCount = 0;
+    for (const bet of (allBets || [])) {
+      await db.from('jackpot_bets').delete().eq('id', bet.id);
+      deletedBetCount++;
+    }
 
     // Delete all rounds
-    const { data: deletedRounds } = await db.from('jackpot_rounds').delete().neq('id', '00000000-0000-0000-0000-000000000000').select('id');
+    const { data: allRounds } = await db.from('jackpot_rounds').select('*');
+    let deletedRoundCount = 0;
+    for (const round of (allRounds || [])) {
+      await db.from('jackpot_rounds').delete().eq('id', round.id);
+      deletedRoundCount++;
+    }
 
     // Give admin user 50000 coins
     const { data: updatedUser, error: updateErr } = await db.from('users').update({ coins: 50000 }).eq('id', user.id).select('id, coins').single();
@@ -75,8 +85,8 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      deleted_bets: deletedBets?.length || 0,
-      deleted_rounds: deletedRounds?.length || 0,
+      deleted_bets: deletedBetCount,
+      deleted_rounds: deletedRoundCount,
       coins_set: 50000,
       update_result: updatedUser,
       update_error: updateErr?.message || null,

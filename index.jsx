@@ -294,6 +294,12 @@ const apiFetch = async (path, opts = {}) => {
 };
 
 // ─── AUTH MODAL ───
+const OAuthIcon = {
+  google: (s=20) => <svg width={s} height={s} viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>,
+  apple: (s=20) => <svg width={s} height={s} viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>,
+  facebook: (s=20) => <svg width={s} height={s} viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>,
+};
+
 const AuthModal = ({ onAuth, onClose }) => {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
@@ -302,6 +308,7 @@ const AuthModal = ({ onAuth, onClose }) => {
   const [referralCode, setReferralCode] = useState("");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -332,60 +339,140 @@ const AuthModal = ({ onAuth, onClose }) => {
     }
   };
 
+  const handleOAuth = async (provider) => {
+    setOauthLoading(provider);
+    setErr("");
+    try {
+      const res = await fetch(`/api/auth/oauth?provider=${provider}`);
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setErr(data.error || "OAuth not available");
+        setOauthLoading("");
+      }
+    } catch {
+      setErr("Failed to start OAuth");
+      setOauthLoading("");
+    }
+  };
+
+  const inputStyle = {width:"100%",padding:"11px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14,outline:"none",transition:"border-color .2s"};
+  const oauthBtnBase = {width:"100%",padding:"11px 0",borderRadius:10,border:"none",fontSize:14,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:10,transition:"opacity .15s,transform .15s"};
+
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",backdropFilter:"blur(8px)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
-      <div style={{background:B.card,border:`2px solid ${B.border}`,borderRadius:16,padding:32,width:420,maxWidth:"90vw",position:"relative"}} onClick={e=>e.stopPropagation()}>
-        <button onClick={onClose} style={{position:"absolute",top:14,right:14,background:"none",border:"none",color:B.muted,fontSize:20,cursor:"pointer"}}>×</button>
-        <h2 style={{fontFamily:"'Poppins'",fontSize:22,fontWeight:600,marginBottom:6,color:B.txt}}>
-          {mode==="login"?"Welcome Back":"Create Account"}
-        </h2>
-        <p style={{color:B.muted,fontSize:13,marginBottom:20}}>
-          {mode==="login"?"Log in to access your earnings":"Sign up and get 250 bonus coins ($0.25) free"}
-        </p>
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.75)",backdropFilter:"blur(12px)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={onClose}>
+      <div style={{background:B.card,border:`1px solid ${B.border}`,borderRadius:20,padding:"36px 32px 28px",width:440,maxWidth:"100%",position:"relative",boxShadow:"0 24px 80px rgba(0,0,0,.6)"}} onClick={e=>e.stopPropagation()}>
 
-        {err && <div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:10,padding:"10px 14px",marginBottom:14,color:"#F87171",fontSize:13}}>{err}</div>}
+        {/* Close button */}
+        <button onClick={onClose} style={{position:"absolute",top:16,right:16,width:32,height:32,borderRadius:8,background:B.surface,border:`1px solid ${B.border}`,color:B.muted,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"background .15s"}}
+          onMouseEnter={e=>e.currentTarget.style.background=B.border} onMouseLeave={e=>e.currentTarget.style.background=B.surface}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="1" y1="1" x2="13" y2="13"/><line x1="13" y1="1" x2="1" y2="13"/></svg>
+        </button>
 
+        {/* Logo + Header */}
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{width:48,height:48,borderRadius:12,background:B.accent,display:"inline-flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h2 style={{fontFamily:"'Poppins'",fontSize:24,fontWeight:700,color:B.txt,marginBottom:6}}>
+            {mode==="login"?"Welcome back":"Join PocketLined"}
+          </h2>
+          <p style={{color:B.muted,fontSize:13,lineHeight:1.5}}>
+            {mode==="login"?"Sign in to continue earning rewards":"Create your free account and get 250 bonus coins"}
+          </p>
+        </div>
+
+        {/* OAuth Buttons */}
+        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+          <button onClick={()=>handleOAuth("google")} disabled={!!oauthLoading} style={{...oauthBtnBase,background:"#fff",color:"#1f1f1f",opacity:oauthLoading&&oauthLoading!=="google"?.5:1}}
+            onMouseEnter={e=>{if(!oauthLoading)e.currentTarget.style.opacity="0.9"}} onMouseLeave={e=>{if(!oauthLoading)e.currentTarget.style.opacity="1"}}>
+            {oauthLoading==="google" ? <span style={{width:20,height:20,border:"2px solid #ccc",borderTopColor:"#4285F4",borderRadius:"50%",animation:"spin .6s linear infinite"}}/> : OAuthIcon.google(20)}
+            Continue with Google
+          </button>
+          <div style={{display:"flex",gap:10}}>
+            <button onClick={()=>handleOAuth("apple")} disabled={!!oauthLoading} style={{...oauthBtnBase,background:"#000",color:"#fff",flex:1,opacity:oauthLoading&&oauthLoading!=="apple"?.5:1}}
+              onMouseEnter={e=>{if(!oauthLoading)e.currentTarget.style.opacity="0.85"}} onMouseLeave={e=>{if(!oauthLoading)e.currentTarget.style.opacity="1"}}>
+              {oauthLoading==="apple" ? <span style={{width:20,height:20,border:"2px solid #555",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .6s linear infinite"}}/> : OAuthIcon.apple(20)}
+              Apple
+            </button>
+            <button onClick={()=>handleOAuth("facebook")} disabled={!!oauthLoading} style={{...oauthBtnBase,background:"#1877F2",color:"#fff",flex:1,opacity:oauthLoading&&oauthLoading!=="facebook"?.5:1}}
+              onMouseEnter={e=>{if(!oauthLoading)e.currentTarget.style.opacity="0.85"}} onMouseLeave={e=>{if(!oauthLoading)e.currentTarget.style.opacity="1"}}>
+              {oauthLoading==="facebook" ? <span style={{width:20,height:20,border:"2px solid #5a9cf5",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .6s linear infinite"}}/> : OAuthIcon.facebook(20)}
+              Facebook
+            </button>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:20}}>
+          <div style={{flex:1,height:1,background:B.border}}/>
+          <span style={{fontSize:12,color:B.muted,fontWeight:500,textTransform:"uppercase",letterSpacing:.5}}>or</span>
+          <div style={{flex:1,height:1,background:B.border}}/>
+        </div>
+
+        {/* Error */}
+        {err && <div style={{background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.2)",borderRadius:10,padding:"10px 14px",marginBottom:14,color:"#F87171",fontSize:13,display:"flex",alignItems:"center",gap:8}}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#F87171" strokeWidth="1.5"/><path d="M8 5v3.5M8 10.5v.5" stroke="#F87171" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          {err}
+        </div>}
+
+        {/* Form */}
         <form onSubmit={handleSubmit}>
           {mode==="signup" && (
             <div style={{marginBottom:12}}>
-              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Username</label>
+              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5,fontWeight:500}}>Username</label>
               <input value={username} onChange={e=>setUsername(e.target.value)} required
-                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Pick a username"/>
+                style={inputStyle} placeholder="Choose a username"
+                onFocus={e=>e.target.style.borderColor=B.accent} onBlur={e=>e.target.style.borderColor=B.border}/>
             </div>
           )}
           <div style={{marginBottom:12}}>
-            <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Email</label>
+            <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5,fontWeight:500}}>Email</label>
             <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required
-              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="you@example.com"/>
+              style={inputStyle} placeholder="you@example.com"
+              onFocus={e=>e.target.style.borderColor=B.accent} onBlur={e=>e.target.style.borderColor=B.border}/>
           </div>
-          <div style={{marginBottom:16}}>
-            <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Password</label>
+          <div style={{marginBottom:mode==="signup"?12:18}}>
+            <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5,fontWeight:500}}>Password</label>
             <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6}
-              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Min 6 characters"/>
+              style={inputStyle} placeholder={mode==="login"?"Enter your password":"Min 6 characters"}
+              onFocus={e=>e.target.style.borderColor=B.accent} onBlur={e=>e.target.style.borderColor=B.border}/>
           </div>
           {mode==="signup" && (
-            <div style={{marginBottom:16}}>
-              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Referral Code (optional)</label>
+            <div style={{marginBottom:18}}>
+              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5,fontWeight:500}}>Referral Code <span style={{opacity:.5}}>(optional)</span></label>
               <input value={referralCode} onChange={e=>setReferralCode(e.target.value)}
-                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Enter referral code"/>
+                style={inputStyle} placeholder="Enter referral code"
+                onFocus={e=>e.target.style.borderColor=B.accent} onBlur={e=>e.target.style.borderColor=B.border}/>
             </div>
           )}
           <button type="submit" disabled={loading} style={{
             width:"100%",padding:"12px 0",borderRadius:12,border:"none",
-            background:B.accent,color:"#000",
-            fontSize:15,fontWeight:600,cursor:loading?"wait":"pointer",opacity:loading?.7:1,transition:"opacity .2s",
-            fontFamily:"'Poppins',sans-serif",
-          }}>
-            {loading ? "Please wait..." : mode==="login" ? "Log In" : "Sign Up — Get 500 Free Coins"}
+            background:`linear-gradient(135deg, ${B.accent}, #00B865)`,color:"#000",
+            fontSize:15,fontWeight:700,cursor:loading?"wait":"pointer",opacity:loading?.7:1,transition:"all .2s",
+            fontFamily:"'Poppins',sans-serif",boxShadow:`0 4px 16px ${B.accent}33`,
+          }}
+          onMouseEnter={e=>{if(!loading)e.currentTarget.style.transform="translateY(-1px)";e.currentTarget.style.boxShadow=`0 6px 24px ${B.accent}55`}}
+          onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=`0 4px 16px ${B.accent}33`}}>
+            {loading ? "Please wait..." : mode==="login" ? "Log In" : "Create Account — 250 Free Coins"}
           </button>
         </form>
 
-        <p style={{textAlign:"center",marginTop:16,fontSize:13,color:B.muted}}>
+        {/* Toggle mode */}
+        <p style={{textAlign:"center",marginTop:20,fontSize:13,color:B.muted}}>
           {mode==="login" ? (
-            <>Don't have an account? <span style={{color:B.accentL,cursor:"pointer",fontWeight:600}} onClick={()=>{setMode("signup");setErr("")}}>Sign Up Free</span></>
+            <>New to PocketLined? <span style={{color:B.accent,cursor:"pointer",fontWeight:600,transition:"opacity .15s"}} onClick={()=>{setMode("signup");setErr("")}}
+              onMouseEnter={e=>e.currentTarget.style.opacity=".8"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>Create an account</span></>
           ) : (
-            <>Already have an account? <span style={{color:B.accentL,cursor:"pointer",fontWeight:600}} onClick={()=>{setMode("login");setErr("")}}>Log In</span></>
+            <>Already have an account? <span style={{color:B.accent,cursor:"pointer",fontWeight:600,transition:"opacity .15s"}} onClick={()=>{setMode("login");setErr("")}}
+              onMouseEnter={e=>e.currentTarget.style.opacity=".8"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>Log in</span></>
           )}
+        </p>
+
+        {/* Terms */}
+        <p style={{textAlign:"center",marginTop:12,fontSize:11,color:B.muted,opacity:.6,lineHeight:1.4}}>
+          By continuing, you agree to our Terms of Service and Privacy Policy
         </p>
       </div>
     </div>
@@ -1622,7 +1709,19 @@ export default function App() {
     const t = localStorage.getItem('cf_token');
     if(t) {
       setToken(t);
-      setUser({username:"User",email:"user@example.com"});
+      // Check if we have OAuth user data stored
+      const savedUser = localStorage.getItem('cf_user');
+      if(savedUser) {
+        try {
+          const u = JSON.parse(savedUser);
+          setUser(u);
+          if(u.coins) setCoins(u.coins);
+          if(u.streak) setStreak(u.streak);
+          if(u.role) setRole(u.role);
+        } catch { setUser({username:"User",email:"user@example.com"}); }
+      } else {
+        setUser({username:"User",email:"user@example.com"});
+      }
     }
   }, []);
 
@@ -1635,6 +1734,10 @@ export default function App() {
   const handleAuth = (u, tk) => {
     setUser(u);
     setToken(tk);
+    if(u.coins) setCoins(u.coins);
+    if(u.streak) setStreak(u.streak);
+    if(u.role) setRole(u.role);
+    localStorage.setItem('cf_user', JSON.stringify(u));
     setShowAuth(false);
     showToast("Welcome!");
   };
@@ -1643,6 +1746,7 @@ export default function App() {
     setUser(null);
     setToken(null);
     localStorage.removeItem('cf_token');
+    localStorage.removeItem('cf_user');
     setPg("home");
     showToast("Logged out");
   };

@@ -144,16 +144,34 @@ export async function GET(request) {
       .eq('round_id', activeRound.id)
       .order('slot_number', { ascending: true });
 
-    // Map to needed fields + add avatar_url for profile images
-    const bets = (rawBets || []).map(b => ({
-      slot_number: b.slot_number,
-      bet_amount: b.bet_amount,
-      user_color: b.user_color,
-      user_avatar: b.user_avatar,
-      user_id: b.user_id,
-      username: b.username,
-      avatar_url: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(b.username || 'anon')}&size=64`,
-    }));
+    // Batch-fetch avatar_url from users table for all bettors
+    const userIds = [...new Set((rawBets || []).map(b => b.user_id))];
+    let userAvatarMap = {};
+    if (userIds.length > 0) {
+      const { data: userRows } = await db
+        .from('users')
+        .select('id, avatar_url, email')
+        .in('id', userIds);
+      for (const u of (userRows || [])) {
+        userAvatarMap[u.id] = u;
+      }
+    }
+
+    // Map to needed fields — use Google OAuth avatar for real users, DiceBear for bots
+    const bets = (rawBets || []).map(b => {
+      const userRow = userAvatarMap[b.user_id];
+      const isBot = userRow?.email?.endsWith('@pocketlined.bot');
+      const oauthAvatar = !isBot && userRow?.avatar_url ? userRow.avatar_url : null;
+      return {
+        slot_number: b.slot_number,
+        bet_amount: b.bet_amount,
+        user_color: b.user_color,
+        user_avatar: b.user_avatar,
+        user_id: b.user_id,
+        username: b.username,
+        avatar_url: oauthAvatar || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(b.username || 'anon')}&size=64`,
+      };
+    });
 
     const totalPool = bets.reduce((sum, b) => sum + Number(b.bet_amount), 0);
     const slotsFilled = bets.length;

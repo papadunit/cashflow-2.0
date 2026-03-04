@@ -27,8 +27,8 @@ export async function POST(request) {
         last_active: today,
         streak: newStreak,
         updated_at: new Date().toISOString(),
-        // Update avatar if they don't have one
-        ...(avatar && !existing.avatar_url ? { avatar_url: avatar } : {}),
+        // Always update avatar from OAuth (keeps profile pic fresh)
+        ...(avatar ? { avatar_url: avatar } : {}),
       }).eq('id', existing.id);
 
       const token = signToken({ id: existing.id, role: existing.role });
@@ -39,6 +39,7 @@ export async function POST(request) {
           coins: existing.coins, role: existing.role, streak: newStreak,
           level_idx: existing.level_idx, referral_code: existing.referral_code,
           lifetime_earned: existing.lifetime_earned, created_at: existing.created_at,
+          avatar_url: avatar || existing.avatar_url || null,
         },
       });
     }

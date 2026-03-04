@@ -82,26 +82,26 @@ const CATS = [
 
 // ─── SAMPLE OFFERS ───
 const OFFERS = [
-  { id:1,  t:"Cash App — Sign Up + $5 Deposit",   cat:"apps",     coins:25000, time:"5 min",   diff:"Easy",   img:"CA", wall:"Revenue Universe", pop:99, rate:94, hot:true },
-  { id:2,  t:"Temu — First Purchase Bonus",        cat:"apps",     coins:30000, time:"5 min",   diff:"Easy",   img:"TE", wall:"AdGate Media",     pop:97, rate:91, hot:true },
-  { id:3,  t:"Royal Match — Level 300",            cat:"games",    coins:52000, time:"5-7 days", diff:"Medium", img:"RM", wall:"AdGem",            pop:95, rate:72, hot:true },
-  { id:4,  t:"Raid: Shadow Legends — 2 Champions", cat:"games",    coins:78000, time:"10-14d",  diff:"Hard",   img:"RS", wall:"OfferToro",         pop:88, rate:45, hot:false },
-  { id:5,  t:"Branded Survey — 12 Questions",      cat:"surveys",  coins:3500,  time:"8 min",   diff:"Easy",   img:"SU", wall:"CPX Research",      pop:92, rate:89, hot:false },
-  { id:6,  t:"Quick Opinion Poll",                 cat:"surveys",  coins:1200,  time:"3 min",   diff:"Easy",   img:"OP", wall:"TheoremReach",      pop:90, rate:95, hot:false },
-  { id:7,  t:"Coinbase — Verify + Trade $50",      cat:"crypto",   coins:42000, time:"10 min",  diff:"Medium", img:"CB", wall:"AdGem",            pop:86, rate:78, hot:true },
-  { id:8,  t:"State of Survival — HQ Level 21",    cat:"games",    coins:95000, time:"18-21d",  diff:"Hard",   img:"SV", wall:"Ayet Studios",     pop:78, rate:38, hot:false },
-  { id:9,  t:"Watch 5 Entertainment Videos",       cat:"videos",   coins:900,   time:"6 min",   diff:"Easy",   img:"VD", wall:"Lootably",          pop:85, rate:97, hot:false },
-  { id:10, t:"Fetch Rewards — Scan First Receipt", cat:"apps",     coins:18000, time:"5 min",   diff:"Easy",   img:"FR", wall:"Revenue Universe",  pop:93, rate:88, hot:true },
-  { id:11, t:"Product Review — 100 Words",         cat:"tasks",    coins:2800,  time:"8 min",   diff:"Easy",   img:"PR", wall:"Direct",            pop:74, rate:90, hot:false },
-  { id:12, t:"AFK Arena — Chapter 32",             cat:"games",    coins:65000, time:"8-12d",   diff:"Medium", img:"AA", wall:"OfferToro",         pop:81, rate:55, hot:false },
-  { id:13, t:"SoFi — Open Account + $10 Deposit",  cat:"apps",     coins:55000, time:"10 min",  diff:"Easy",   img:"SF", wall:"AdGate Media",      pop:91, rate:85, hot:true },
-  { id:14, t:"Lifestyle Survey — 15 min",          cat:"surveys",  coins:4200,  time:"15 min",  diff:"Easy",   img:"LS", wall:"Pollfish",          pop:87, rate:82, hot:false },
-  { id:15, t:"Robinhood — Sign Up & Deposit",      cat:"crypto",   coins:48000, time:"10 min",  diff:"Medium", img:"RH", wall:"TyrAds",            pop:89, rate:80, hot:true },
-  { id:16, t:"Swagbucks Search — 10 Searches",     cat:"search",   coins:500,   time:"5 min",   diff:"Easy",   img:"SB", wall:"Direct",            pop:70, rate:99, hot:false },
-  { id:17, t:"Amazon Cashback — Any Purchase",     cat:"shopping", coins:0,     time:"Varies",  diff:"Easy",   img:"AM", wall:"Direct",            pop:96, rate:100,hot:false, cashback:"Up to 8%" },
-  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:500, time:"1 min",   diff:"Easy",   img:"RF", wall:"PocketLined",          pop:94, rate:100,hot:true },
-  { id:19, t:"Daily Trivia — 5 Questions",         cat:"tasks",    coins:600,   time:"2 min",   diff:"Easy",   img:"TR", wall:"Direct",            pop:83, rate:96, hot:false },
-  { id:20, t:"Norton VPN — Free Trial + Use 3 Days",cat:"apps",    coins:35000, time:"3 days",  diff:"Easy",   img:"NV", wall:"Lootably",          pop:80, rate:74, hot:false },
+  { id:1,  t:"Cash App — Sign Up + $5 Deposit",   cat:"apps",     coins:25000, time:"5 min",   diff:"Easy",   img:"https://logo.clearbit.com/cash.app", wall:"Revenue Universe", pop:99, rate:94, hot:true },
+  { id:2,  t:"Temu — First Purchase Bonus",        cat:"apps",     coins:30000, time:"5 min",   diff:"Easy",   img:"https://logo.clearbit.com/temu.com", wall:"AdGate Media",     pop:97, rate:91, hot:true },
+  { id:3,  t:"Royal Match — Level 300",            cat:"games",    coins:52000, time:"5-7 days", diff:"Medium", img:"https://play-lh.googleusercontent.com/GBYSf20osBl2CRl-uxnEMVtKs13Lrfjr2MkHHMROS6ZVOohiAF0M8EBsI4H_Jr-OPnMH", wall:"AdGem",            pop:95, rate:72, hot:true },
+  { id:4,  t:"Raid: Shadow Legends — 2 Champions", cat:"games",    coins:78000, time:"10-14d",  diff:"Hard",   img:"https://play-lh.googleusercontent.com/5_tVRaTiS7UEwFNSeIaj4-so3d_IHVPmFmhZQRglj4FX8wd8VxJD1VhnxLcRb1DVvQ", wall:"OfferToro",         pop:88, rate:45, hot:false },
+  { id:5,  t:"Branded Survey — 12 Questions",      cat:"surveys",  coins:3500,  time:"8 min",   diff:"Easy",   img:"https://logo.clearbit.com/branded.com", wall:"CPX Research",      pop:92, rate:89, hot:false },
+  { id:6,  t:"Quick Opinion Poll",                 cat:"surveys",  coins:1200,  time:"3 min",   diff:"Easy",   img:"https://logo.clearbit.com/surveymonkey.com", wall:"TheoremReach",      pop:90, rate:95, hot:false },
+  { id:7,  t:"Coinbase — Verify + Trade $50",      cat:"crypto",   coins:42000, time:"10 min",  diff:"Medium", img:"https://logo.clearbit.com/coinbase.com", wall:"AdGem",            pop:86, rate:78, hot:true },
+  { id:8,  t:"State of Survival — HQ Level 21",    cat:"games",    coins:95000, time:"18-21d",  diff:"Hard",   img:"https://play-lh.googleusercontent.com/D5pB42o_6-hhKVrSxvnQ3aQfKNiG4Yhr0dOODGB-d0J9GI28LPYOHzNgmq4byYfCl38", wall:"Ayet Studios",     pop:78, rate:38, hot:false },
+  { id:9,  t:"Watch 5 Entertainment Videos",       cat:"videos",   coins:900,   time:"6 min",   diff:"Easy",   img:"https://logo.clearbit.com/youtube.com", wall:"Lootably",          pop:85, rate:97, hot:false },
+  { id:10, t:"Fetch Rewards — Scan First Receipt", cat:"apps",     coins:18000, time:"5 min",   diff:"Easy",   img:"https://logo.clearbit.com/fetchrewards.com", wall:"Revenue Universe",  pop:93, rate:88, hot:true },
+  { id:11, t:"Product Review — 100 Words",         cat:"tasks",    coins:2800,  time:"8 min",   diff:"Easy",   img:"https://logo.clearbit.com/amazon.com", wall:"Direct",            pop:74, rate:90, hot:false },
+  { id:12, t:"AFK Arena — Chapter 32",             cat:"games",    coins:65000, time:"8-12d",   diff:"Medium", img:"https://play-lh.googleusercontent.com/r-0BXf-bMjJYL-0r4u2P2qT9D6EfJi11aeqXjK-MQ8h0ITQ6yKjbYR3_SrNj1NuP7go", wall:"OfferToro",         pop:81, rate:55, hot:false },
+  { id:13, t:"SoFi — Open Account + $10 Deposit",  cat:"apps",     coins:55000, time:"10 min",  diff:"Easy",   img:"https://logo.clearbit.com/sofi.com", wall:"AdGate Media",      pop:91, rate:85, hot:true },
+  { id:14, t:"Lifestyle Survey — 15 min",          cat:"surveys",  coins:4200,  time:"15 min",  diff:"Easy",   img:"https://logo.clearbit.com/pollfish.com", wall:"Pollfish",          pop:87, rate:82, hot:false },
+  { id:15, t:"Robinhood — Sign Up & Deposit",      cat:"crypto",   coins:48000, time:"10 min",  diff:"Medium", img:"https://logo.clearbit.com/robinhood.com", wall:"TyrAds",            pop:89, rate:80, hot:true },
+  { id:16, t:"Swagbucks Search — 10 Searches",     cat:"search",   coins:500,   time:"5 min",   diff:"Easy",   img:"https://logo.clearbit.com/swagbucks.com", wall:"Direct",            pop:70, rate:99, hot:false },
+  { id:17, t:"Amazon Cashback — Any Purchase",     cat:"shopping", coins:0,     time:"Varies",  diff:"Easy",   img:"https://logo.clearbit.com/amazon.com", wall:"Direct",            pop:96, rate:100,hot:false, cashback:"Up to 8%" },
+  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:500, time:"1 min",   diff:"Easy",   img:"https://logo.clearbit.com/pocketlined.com", wall:"PocketLined",          pop:94, rate:100,hot:true },
+  { id:19, t:"Daily Trivia — 5 Questions",         cat:"tasks",    coins:600,   time:"2 min",   diff:"Easy",   img:"https://logo.clearbit.com/trivia.com", wall:"Direct",            pop:83, rate:96, hot:false },
+  { id:20, t:"Norton VPN — Free Trial + Use 3 Days",cat:"apps",    coins:35000, time:"3 days",  diff:"Easy",   img:"https://logo.clearbit.com/norton.com", wall:"Lootably",          pop:80, rate:74, hot:false },
 ];
 
 // ─── LEADERBOARD ───
@@ -511,13 +511,20 @@ const OfferCard = ({o,onEarn,onStart,delay=0}) => {
       onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=B.border;e.currentTarget.style.boxShadow="none"}}
     >
       {/* Hero Image Area */}
-      <div style={{width:"100%",height:200,background:`linear-gradient(135deg, ${bgColor} 0%, ${bgColor}cc 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:12,left:12,background:B.accent,padding:"4px 10px",borderRadius:6,fontSize:11,fontWeight:700,color:"#000",display:"flex",alignItems:"center",gap:4}}>
-          {Icon.star(14,"#FFB800")} 5.0
+      <div style={{width:"100%",height:200,background:`linear-gradient(135deg, ${bgColor}22 0%, ${bgColor}44 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:12,left:12,background:"rgba(0,0,0,.5)",backdropFilter:"blur(8px)",padding:"4px 10px",borderRadius:6,fontSize:11,fontWeight:700,color:"#fff",display:"flex",alignItems:"center",gap:4,zIndex:2}}>
+          {Icon.star(14,"#FFB800")} {(4.5 + Math.random() * 0.5).toFixed(1)}
         </div>
-        <div style={{fontSize:48,fontWeight:700,color:"rgba(255,255,255,.9)",letterSpacing:"-1px"}}>{o.img}</div>
-        {o.hot && <div style={{position:"absolute",top:12,right:12,background:"rgba(0,0,0,.2)",padding:"6px 12px",borderRadius:6,fontSize:11,fontWeight:700,color:"#fff",display:"flex",alignItems:"center",gap:4}}>
-          {Icon.fire(14,"#FFB800")} HOT
+        {o.img && o.img.startsWith("http") ? (
+          <img src={o.img} alt={o.t} style={{width:100,height:100,borderRadius:20,objectFit:"cover",boxShadow:"0 8px 32px rgba(0,0,0,.4)"}}
+            onError={e=>{e.target.style.display="none";e.target.nextSibling.style.display="flex"}}
+          />
+        ) : null}
+        <div style={{display:o.img&&o.img.startsWith("http")?"none":"flex",width:100,height:100,borderRadius:20,background:bgColor,alignItems:"center",justifyContent:"center",fontSize:36,fontWeight:800,color:"#fff",boxShadow:"0 8px 32px rgba(0,0,0,.4)"}}>
+          {(o.t[0]||"?").toUpperCase()}
+        </div>
+        {o.hot && <div style={{position:"absolute",top:12,right:12,background:B.accent,padding:"5px 12px",borderRadius:6,fontSize:11,fontWeight:700,color:"#000",display:"flex",alignItems:"center",gap:4,zIndex:2}}>
+          {Icon.fire(14,"#000")} HOT
         </div>}
       </div>
 
@@ -604,8 +611,8 @@ const Home = ({setPg, user, onLogin}) => {
               <div key={o.id} className="card au" style={{padding:12,cursor:"pointer",display:"flex",gap:10,alignItems:"flex-start"}}
                 onClick={()=>setPg("earn")}
               >
-                <div style={{width:48,height:48,borderRadius:8,background:["#FF6B35","#01D676","#3B82F6","#A855F7","#FFB800"][o.id%5],display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:700,color:"#fff",flexShrink:0}}>
-                  {o.img}
+                <div style={{width:48,height:48,borderRadius:8,background:["#FF6B35","#01D676","#3B82F6","#A855F7","#FFB800"][o.id%5],display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden"}}>
+                  {o.img&&o.img.startsWith("http") ? <img src={o.img} alt="" style={{width:48,height:48,objectFit:"cover"}} onError={e=>{e.target.style.display="none"}}/> : <span style={{fontSize:20,fontWeight:700,color:"#fff"}}>{o.img}</span>}
                 </div>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{fontSize:13,fontWeight:600,marginBottom:4,color:B.txt}}>{o.t.split(" — ")[0]}</div>
@@ -1652,7 +1659,7 @@ export default function App() {
   const handleCashout = async (methodId, amt) => {
     if(!user) { setShowAuth(true); return; }
     try {
-      await apiFetch('/api/cashout', { method:'POST', body:JSON.stringify({methodId,amount:amt}) });
+      await apiFetch('/api/payouts', { method:'POST', body:JSON.stringify({method:methodId, coins:amt, destination:methodId}) });
       setCoins(c => c-amt);
       showToast("Cashout initiated! Check your email.");
     } catch(e) {

@@ -15,12 +15,56 @@ export async function GET(request) {
   // Debug: test if /api/me can write
   let writeTest = null;
   if (debugUpdate === '1') {
-    const { data: before } = await db.from('users').select('id, coins').eq('id', user.id).single();
-    const { data: upd, error: updErr } = await db.from('users').update({ coins: 77777 }).eq('id', user.id).select('id, coins').single();
-    const { data: after } = await db.from('users').select('id, coins').eq('id', user.id).single();
-    writeTest = { before: before?.coins, update_returned: upd?.coins, update_err: updErr?.message, after: after?.coins };
-    // Reset to original
-    await db.from('users').update({ coins: before?.coins ?? user.coins }).eq('id', user.id);
+    // Try direct REST API call instead of JS client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    // Read via REST
+    const readRes = await fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}&select=id,coins`, {
+      headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey }
+    });
+    const readData = await readRes.json();
+
+    // Update via REST
+    const updateRes = await fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': serviceKey,
+        'Authorization': 'Bearer ' + serviceKey,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify({ coins: 77777 })
+    });
+    const updateData = await updateRes.json();
+    const updateStatus = updateRes.status;
+
+    // Read again via REST
+    const readRes2 = await fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}&select=id,coins`, {
+      headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey }
+    });
+    const readData2 = await readRes2.json();
+
+    // Also read with select=* via REST
+    const readRes3 = await fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}&select=*`, {
+      headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey }
+    });
+    const readData3 = await readRes3.json();
+
+    // Reset
+    await fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}`, {
+      method: 'PATCH',
+      headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coins: readData3?.[0]?.coins || 500 })
+    });
+
+    writeTest = {
+      rest_before: readData?.[0]?.coins,
+      rest_update_status: updateStatus,
+      rest_update_returned: updateData?.[0]?.coins,
+      rest_after_cols: readData2?.[0]?.coins,
+      rest_after_star: readData3?.[0]?.coins,
+    };
   }
 
   const { data: directUser } = await db.from('users').select('*').eq('id', user.id).single();

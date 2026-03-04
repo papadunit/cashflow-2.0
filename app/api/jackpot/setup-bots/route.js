@@ -32,6 +32,7 @@ export async function POST(request) {
 
     const created = [];
     const skipped = [];
+    const errors = [];
 
     for (const name of BOT_NAMES) {
       const botEmail = `bot_${name.toLowerCase()}@pocketlined.bot`;
@@ -58,17 +59,22 @@ export async function POST(request) {
         streak: 0,
       }).select('id, username, email').single();
 
-      if (!insertErr && newUser) {
+      if (insertErr) {
+        errors.push({ name, error: insertErr.message });
+      } else if (newUser) {
         created.push({ id: newUser.id, username: newUser.username });
       }
     }
 
     return NextResponse.json({
       success: true,
+      total_bot_names: BOT_NAMES.length,
       created_count: created.length,
       skipped_count: skipped.length,
+      error_count: errors.length,
       created,
       skipped,
+      errors: errors.slice(0, 5),  // First 5 errors for debug
     });
   } catch (err) {
     return NextResponse.json({ error: 'Server error: ' + err.message }, { status: 500 });

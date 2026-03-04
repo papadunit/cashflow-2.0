@@ -1186,80 +1186,80 @@ const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
 
 // Offerwall config — reads NEXT_PUBLIC_* env vars at build time.
 // When you plug in a real key, the wall auto-activates (no code changes needed).
-const _e = (k) => typeof process!=="undefined" && process.env ? process.env[k] : undefined;
-
+// Next.js requires direct process.env.NEXT_PUBLIC_* references for build-time inlining
+// (dynamic lookup via process.env[key] does NOT work in client components)
 const OFFERWALLS = [
   {
     id: "adgate",  name: "AdGate Media", icon: "🛡️", color: "#3B82F6",
     desc: "Premium offers, surveys & app installs",
-    key: _e("NEXT_PUBLIC_ADGATE_WALL_CODE"),
+    key: process.env.NEXT_PUBLIC_ADGATE_WALL_CODE || "",
     iframeUrl: (uid, k) => `https://wall.adgatemedia.com/${k}/${uid}`,
   },
   {
     id: "adgem",  name: "AdGem", icon: "💎", color: "#8B5CF6",
     desc: "High-converting games & app offers",
-    key: _e("NEXT_PUBLIC_ADGEM_APP_ID"),
+    key: process.env.NEXT_PUBLIC_ADGEM_APP_ID || "",
     iframeUrl: (uid, k) => `https://api.adgem.com/v1/wall?appid=${k}&playerid=${uid}`,
   },
   {
     id: "offertoro", name: "OfferToro", icon: "🐂", color: "#FF6B35",
     desc: "Global offers with high payouts",
-    key: _e("NEXT_PUBLIC_OFFERTORO_PUB_ID"),
-    key2: _e("NEXT_PUBLIC_OFFERTORO_APP_ID"),
+    key: process.env.NEXT_PUBLIC_OFFERTORO_PUB_ID || "",
+    key2: process.env.NEXT_PUBLIC_OFFERTORO_APP_ID || "",
     iframeUrl: (uid, k, k2) => `https://www.offertoro.com/ifr/show/${k}/${k2||"1"}/${uid}/0`,
   },
   {
     id: "lootably", name: "Lootably", icon: "🎁", color: "#00D26A",
     desc: "Rewarded surveys & video offers",
-    key: _e("NEXT_PUBLIC_LOOTABLY_PLACEMENT"),
+    key: process.env.NEXT_PUBLIC_LOOTABLY_PLACEMENT || "",
     iframeUrl: (uid, k) => `https://wall.lootably.com/?placementID=${k}&sid=${uid}`,
   },
   {
     id: "ayet", name: "Ayet Studios", icon: "🎮", color: "#A855F7",
     desc: "Top mobile game offers",
-    key: _e("NEXT_PUBLIC_AYET_APP_KEY"),
+    key: process.env.NEXT_PUBLIC_AYET_APP_KEY || "",
     iframeUrl: (uid, k) => `https://www.ayetstudios.com/offers/web_offerwall/${k}?external_identifier=${uid}`,
   },
   {
     id: "cpxresearch", name: "CPX Research", icon: "📊", color: "#FF9F1C",
     desc: "Paid surveys from top researchers",
-    key: _e("NEXT_PUBLIC_CPX_APP_ID"),
+    key: process.env.NEXT_PUBLIC_CPX_APP_ID || "",
     iframeUrl: (uid, k) => `https://offers.cpx-research.com/index.php?app_id=${k}&ext_user_id=${uid}`,
   },
   {
     id: "bitlabs", name: "BitLabs", icon: "🧪", color: "#00E5FF",
     desc: "Surveys & offers with instant credit",
-    key: _e("NEXT_PUBLIC_BITLABS_TOKEN"),
+    key: process.env.NEXT_PUBLIC_BITLABS_TOKEN || "",
     iframeUrl: (uid, k) => `https://web.bitlabs.ai/?uid=${uid}&token=${k}`,
   },
   {
     id: "theoremreach", name: "TheoremReach", icon: "📋", color: "#FF2D78",
     desc: "Quick surveys, paid instantly",
-    key: _e("NEXT_PUBLIC_THEOREMREACH_KEY"),
+    key: process.env.NEXT_PUBLIC_THEOREMREACH_KEY || "",
     iframeUrl: (uid, k) => `https://theoremreach.com/respondent_entry/direct?api_key=${k}&user_id=${uid}`,
   },
   {
     id: "revenueuniverse", name: "Revenue Universe", icon: "🌐", color: "#FFB800",
     desc: "Diverse offers from top advertisers",
-    key: _e("NEXT_PUBLIC_RU_APP_HASH"),
+    key: process.env.NEXT_PUBLIC_RU_APP_HASH || "",
     iframeUrl: (uid, k) => `https://wall.revenueuniverse.com/wall/${k}?uid=${uid}`,
   },
   {
     id: "pollfish", name: "Pollfish", icon: "📝", color: "#4ADE80",
     desc: "Market research surveys",
-    key: _e("NEXT_PUBLIC_POLLFISH_KEY"),
+    key: process.env.NEXT_PUBLIC_POLLFISH_KEY || "",
     iframeUrl: (uid, k) => `https://wss.pollfish.com/v2/device/register/true?api_key=${k}&request_uuid=${uid}`,
   },
   {
     id: "torox", name: "Torox", icon: "⚡", color: "#FF3B30",
     desc: "Performance-based CPI offers",
-    key: _e("NEXT_PUBLIC_TOROX_PUB_ID"),
+    key: process.env.NEXT_PUBLIC_TOROX_PUB_ID || "",
     iframeUrl: (uid, k) => `https://torfrnt.com/offerwall?pubid=${k}&sid=${uid}`,
   },
   {
     id: "tyrads", name: "TyrAds", icon: "🏹", color: "#6366F1",
     desc: "Premium mobile CPI campaigns",
-    key: _e("NEXT_PUBLIC_TYRADS_KEY"),
+    key: process.env.NEXT_PUBLIC_TYRADS_KEY || "",
     iframeUrl: (uid, k) => `https://www.tyrads.com/api/v1/offerwall?apiKey=${k}&userId=${uid}`,
   },
 ];

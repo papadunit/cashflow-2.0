@@ -45,14 +45,14 @@ const B = {
 // Colors escalate warmth: cool gray → blue → green → amber → gold → red → purple
 // Warm colors at higher levels create aspiration pull (people want "warmer" status)
 const LEVELS = [
-  { n:"Starter",    min:0,      icon:"🌱", c:"#94A3B8", bonus:0,  next:1000 },
-  { n:"Explorer",   min:1000,   icon:"🧭", c:"#3B82F6", bonus:2,  next:5000 },
-  { n:"Earner",     min:5000,   icon:"💸", c:"#00D26A", bonus:5,  next:15000 },
-  { n:"Hustler",    min:15000,  icon:"🔥", c:"#FF9F1C", bonus:8,  next:40000 },
-  { n:"Pro",        min:40000,  icon:"⚡", c:"#FFB800", bonus:12, next:100000 },
-  { n:"Elite",      min:100000, icon:"💎", c:"#FF6B35", bonus:15, next:300000 },
-  { n:"Legend",     min:300000, icon:"👑", c:"#FF2D78", bonus:20, next:750000 },
-  { n:"Titan",      min:750000, icon:"🏆", c:"#A855F7", bonus:25, next:null },
+  { n:"Starter",    min:0,      icon:"1", c:"#94A3B8", bonus:0,  next:1000 },
+  { n:"Explorer",   min:1000,   icon:"2", c:"#3B82F6", bonus:2,  next:5000 },
+  { n:"Earner",     min:5000,   icon:"3", c:"#00D26A", bonus:5,  next:15000 },
+  { n:"Hustler",    min:15000,  icon:"4", c:"#FF9F1C", bonus:8,  next:40000 },
+  { n:"Pro",        min:40000,  icon:"5", c:"#FFB800", bonus:12, next:100000 },
+  { n:"Elite",      min:100000, icon:"6", c:"#FF6B35", bonus:15, next:300000 },
+  { n:"Legend",     min:300000, icon:"7", c:"#FF2D78", bonus:20, next:750000 },
+  { n:"Titan",      min:750000, icon:"8", c:"#A855F7", bonus:25, next:null },
 ];
 
 // ─── OFFERWALL PROVIDERS (Admin-only data — never rendered to users) ───
@@ -68,86 +68,86 @@ const OFFERWALLS_ADMIN = [
 // Gold = premium/featured, Blue = trust/surveys, Purple = fun/games
 // Green = money/apps, Orange = energy/videos, Red = excitement/shopping
 const CATS = [
-  { id:"featured", n:"🔥 Featured",    d:"Hand-picked highest value", c:"#FFB800" },
-  { id:"surveys",  n:"📊 Surveys",     d:"Quick opinions, quick cash", c:"#3B82F6" },
-  { id:"games",    n:"🎮 Games",       d:"Play games, earn big",       c:"#A855F7" },
-  { id:"apps",     n:"📲 Apps & Signups",d:"Try apps, earn instantly",  c:"#00D26A" },
-  { id:"videos",   n:"▶️ Watch",       d:"Watch & earn passively",     c:"#FF9F1C" },
-  { id:"shopping", n:"🛍️ Cashback",    d:"Shop and earn back",         c:"#FF3B30" },
-  { id:"tasks",    n:"⚡ Micro Tasks",  d:"Tiny tasks, instant pay",   c:"#FF6B35" },
-  { id:"crypto",   n:"₿ Crypto",       d:"Crypto rewards & staking",  c:"#8B5CF6" },
-  { id:"referrals",n:"🤝 Referrals",   d:"Earn from your network",    c:"#FF2D78" },
-  { id:"search",   n:"🔍 Search",      d:"Earn while you browse",     c:"#00E5FF" },
+  { id:"featured", n:"Featured",    d:"Hand-picked highest value", c:"#FFB800" },
+  { id:"surveys",  n:"Surveys",     d:"Quick opinions, quick cash", c:"#3B82F6" },
+  { id:"games",    n:"Games",       d:"Play games, earn big",       c:"#A855F7" },
+  { id:"apps",     n:"Apps & Signups",d:"Try apps, earn instantly",  c:"#00D26A" },
+  { id:"videos",   n:"Watch",       d:"Watch & earn passively",     c:"#FF9F1C" },
+  { id:"shopping", n:"Cashback",    d:"Shop and earn back",         c:"#FF3B30" },
+  { id:"tasks",    n:"Micro Tasks",  d:"Tiny tasks, instant pay",   c:"#FF6B35" },
+  { id:"crypto",   n:"Crypto",       d:"Crypto rewards & staking",  c:"#8B5CF6" },
+  { id:"referrals",n:"Referrals",   d:"Earn from your network",    c:"#FF2D78" },
+  { id:"search",   n:"Search",      d:"Earn while you browse",     c:"#00E5FF" },
 ];
 
 // ─── SAMPLE OFFERS ───
 const OFFERS = [
-  { id:1,  t:"Cash App — Sign Up + $5 Deposit",   cat:"apps",     coins:25000, time:"5 min",   diff:"Easy",   img:"💸", wall:"Revenue Universe", pop:99, rate:94, hot:true },
-  { id:2,  t:"Temu — First Purchase Bonus",        cat:"apps",     coins:30000, time:"5 min",   diff:"Easy",   img:"🛍️", wall:"AdGate Media",     pop:97, rate:91, hot:true },
-  { id:3,  t:"Royal Match — Level 300",            cat:"games",    coins:52000, time:"5-7 days", diff:"Medium", img:"🏰", wall:"AdGem",            pop:95, rate:72, hot:true },
-  { id:4,  t:"Raid: Shadow Legends — 2 Champions", cat:"games",    coins:78000, time:"10-14d",  diff:"Hard",   img:"⚔️", wall:"OfferToro",         pop:88, rate:45, hot:false },
-  { id:5,  t:"Branded Survey — 12 Questions",      cat:"surveys",  coins:3500,  time:"8 min",   diff:"Easy",   img:"📊", wall:"CPX Research",      pop:92, rate:89, hot:false },
-  { id:6,  t:"Quick Opinion Poll",                 cat:"surveys",  coins:1200,  time:"3 min",   diff:"Easy",   img:"📝", wall:"TheoremReach",      pop:90, rate:95, hot:false },
-  { id:7,  t:"Coinbase — Verify + Trade $50",      cat:"crypto",   coins:42000, time:"10 min",  diff:"Medium", img:"₿",  wall:"AdGem",            pop:86, rate:78, hot:true },
-  { id:8,  t:"State of Survival — HQ Level 21",    cat:"games",    coins:95000, time:"18-21d",  diff:"Hard",   img:"🧟", wall:"Ayet Studios",     pop:78, rate:38, hot:false },
-  { id:9,  t:"Watch 5 Entertainment Videos",       cat:"videos",   coins:900,   time:"6 min",   diff:"Easy",   img:"📺", wall:"Lootably",          pop:85, rate:97, hot:false },
-  { id:10, t:"Fetch Rewards — Scan First Receipt", cat:"apps",     coins:18000, time:"5 min",   diff:"Easy",   img:"🧾", wall:"Revenue Universe",  pop:93, rate:88, hot:true },
-  { id:11, t:"Product Review — 100 Words",         cat:"tasks",    coins:2800,  time:"8 min",   diff:"Easy",   img:"✍️", wall:"Direct",            pop:74, rate:90, hot:false },
-  { id:12, t:"AFK Arena — Chapter 32",             cat:"games",    coins:65000, time:"8-12d",   diff:"Medium", img:"🗡️", wall:"OfferToro",         pop:81, rate:55, hot:false },
-  { id:13, t:"SoFi — Open Account + $10 Deposit",  cat:"apps",     coins:55000, time:"10 min",  diff:"Easy",   img:"🏦", wall:"AdGate Media",      pop:91, rate:85, hot:true },
-  { id:14, t:"Lifestyle Survey — 15 min",          cat:"surveys",  coins:4200,  time:"15 min",  diff:"Easy",   img:"🏠", wall:"Pollfish",          pop:87, rate:82, hot:false },
-  { id:15, t:"Robinhood — Sign Up & Deposit",      cat:"crypto",   coins:48000, time:"10 min",  diff:"Medium", img:"📈", wall:"TyrAds",            pop:89, rate:80, hot:true },
-  { id:16, t:"Swagbucks Search — 10 Searches",     cat:"search",   coins:500,   time:"5 min",   diff:"Easy",   img:"🔍", wall:"Direct",            pop:70, rate:99, hot:false },
-  { id:17, t:"Amazon Cashback — Any Purchase",     cat:"shopping", coins:0,     time:"Varies",  diff:"Easy",   img:"🛒", wall:"Direct",            pop:96, rate:100,hot:false, cashback:"Up to 8%" },
-  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:500, time:"1 min",   diff:"Easy",   img:"🤝", wall:"PocketLined",          pop:94, rate:100,hot:true },
-  { id:19, t:"Daily Trivia — 5 Questions",         cat:"tasks",    coins:600,   time:"2 min",   diff:"Easy",   img:"🧠", wall:"Direct",            pop:83, rate:96, hot:false },
-  { id:20, t:"Norton VPN — Free Trial + Use 3 Days",cat:"apps",    coins:35000, time:"3 days",  diff:"Easy",   img:"🔒", wall:"Lootably",          pop:80, rate:74, hot:false },
+  { id:1,  t:"Cash App — Sign Up + $5 Deposit",   cat:"apps",     coins:25000, time:"5 min",   diff:"Easy",   img:"CA", wall:"Revenue Universe", pop:99, rate:94, hot:true },
+  { id:2,  t:"Temu — First Purchase Bonus",        cat:"apps",     coins:30000, time:"5 min",   diff:"Easy",   img:"TE", wall:"AdGate Media",     pop:97, rate:91, hot:true },
+  { id:3,  t:"Royal Match — Level 300",            cat:"games",    coins:52000, time:"5-7 days", diff:"Medium", img:"RM", wall:"AdGem",            pop:95, rate:72, hot:true },
+  { id:4,  t:"Raid: Shadow Legends — 2 Champions", cat:"games",    coins:78000, time:"10-14d",  diff:"Hard",   img:"RS", wall:"OfferToro",         pop:88, rate:45, hot:false },
+  { id:5,  t:"Branded Survey — 12 Questions",      cat:"surveys",  coins:3500,  time:"8 min",   diff:"Easy",   img:"SU", wall:"CPX Research",      pop:92, rate:89, hot:false },
+  { id:6,  t:"Quick Opinion Poll",                 cat:"surveys",  coins:1200,  time:"3 min",   diff:"Easy",   img:"OP", wall:"TheoremReach",      pop:90, rate:95, hot:false },
+  { id:7,  t:"Coinbase — Verify + Trade $50",      cat:"crypto",   coins:42000, time:"10 min",  diff:"Medium", img:"CB", wall:"AdGem",            pop:86, rate:78, hot:true },
+  { id:8,  t:"State of Survival — HQ Level 21",    cat:"games",    coins:95000, time:"18-21d",  diff:"Hard",   img:"SV", wall:"Ayet Studios",     pop:78, rate:38, hot:false },
+  { id:9,  t:"Watch 5 Entertainment Videos",       cat:"videos",   coins:900,   time:"6 min",   diff:"Easy",   img:"VD", wall:"Lootably",          pop:85, rate:97, hot:false },
+  { id:10, t:"Fetch Rewards — Scan First Receipt", cat:"apps",     coins:18000, time:"5 min",   diff:"Easy",   img:"FR", wall:"Revenue Universe",  pop:93, rate:88, hot:true },
+  { id:11, t:"Product Review — 100 Words",         cat:"tasks",    coins:2800,  time:"8 min",   diff:"Easy",   img:"PR", wall:"Direct",            pop:74, rate:90, hot:false },
+  { id:12, t:"AFK Arena — Chapter 32",             cat:"games",    coins:65000, time:"8-12d",   diff:"Medium", img:"AA", wall:"OfferToro",         pop:81, rate:55, hot:false },
+  { id:13, t:"SoFi — Open Account + $10 Deposit",  cat:"apps",     coins:55000, time:"10 min",  diff:"Easy",   img:"SF", wall:"AdGate Media",      pop:91, rate:85, hot:true },
+  { id:14, t:"Lifestyle Survey — 15 min",          cat:"surveys",  coins:4200,  time:"15 min",  diff:"Easy",   img:"LS", wall:"Pollfish",          pop:87, rate:82, hot:false },
+  { id:15, t:"Robinhood — Sign Up & Deposit",      cat:"crypto",   coins:48000, time:"10 min",  diff:"Medium", img:"RH", wall:"TyrAds",            pop:89, rate:80, hot:true },
+  { id:16, t:"Swagbucks Search — 10 Searches",     cat:"search",   coins:500,   time:"5 min",   diff:"Easy",   img:"SB", wall:"Direct",            pop:70, rate:99, hot:false },
+  { id:17, t:"Amazon Cashback — Any Purchase",     cat:"shopping", coins:0,     time:"Varies",  diff:"Easy",   img:"AM", wall:"Direct",            pop:96, rate:100,hot:false, cashback:"Up to 8%" },
+  { id:18, t:"Refer a Friend",                     cat:"referrals",coins:500, time:"1 min",   diff:"Easy",   img:"RF", wall:"PocketLined",          pop:94, rate:100,hot:true },
+  { id:19, t:"Daily Trivia — 5 Questions",         cat:"tasks",    coins:600,   time:"2 min",   diff:"Easy",   img:"TR", wall:"Direct",            pop:83, rate:96, hot:false },
+  { id:20, t:"Norton VPN — Free Trial + Use 3 Days",cat:"apps",    coins:35000, time:"3 days",  diff:"Easy",   img:"NV", wall:"Lootably",          pop:80, rate:74, hot:false },
 ];
 
 // ─── LEADERBOARD ───
 const LEADERS = [
-  { r:1, name:"CryptoKing_99",  lvl:"Titan",  coins:1247320, av:"👑", streak:189 },
-  { r:2, name:"SurveyQueen",    lvl:"Legend",  coins:923100,  av:"💎", streak:134 },
-  { r:3, name:"GameMaster_X",   lvl:"Legend",  coins:789400,  av:"🎮", streak:98  },
-  { r:4, name:"EarnDaily22",    lvl:"Elite",   coins:612800,  av:"⚡", streak:267 },
-  { r:5, name:"CashHunter",     lvl:"Elite",   coins:498200,  av:"🔥", streak:78  },
-  { r:6, name:"OfferPro_Mike",  lvl:"Pro",     coins:387600,  av:"🏆", streak:55  },
-  { r:7, name:"RewardSeeker",   lvl:"Pro",     coins:345100,  av:"💰", streak:89  },
-  { r:8, name:"TaskNinja",      lvl:"Pro",     coins:298300,  av:"🥷", streak:44  },
-  { r:9, name:"LuckyPlayer",    lvl:"Hustler", coins:234500,  av:"🍀", streak:33  },
-  { r:10,name:"MoneyMaven",     lvl:"Hustler", coins:198700,  av:"✨", streak:61  },
+  { r:1, name:"CryptoKing_99",  lvl:"Titan",  coins:1247320, av:"C", streak:189 },
+  { r:2, name:"SurveyQueen",    lvl:"Legend",  coins:923100,  av:"S", streak:134 },
+  { r:3, name:"GameMaster_X",   lvl:"Legend",  coins:789400,  av:"G", streak:98  },
+  { r:4, name:"EarnDaily22",    lvl:"Elite",   coins:612800,  av:"E", streak:267 },
+  { r:5, name:"CashHunter",     lvl:"Elite",   coins:498200,  av:"C", streak:78  },
+  { r:6, name:"OfferPro_Mike",  lvl:"Pro",     coins:387600,  av:"O", streak:55  },
+  { r:7, name:"RewardSeeker",   lvl:"Pro",     coins:345100,  av:"R", streak:89  },
+  { r:8, name:"TaskNinja",      lvl:"Pro",     coins:298300,  av:"T", streak:44  },
+  { r:9, name:"LuckyPlayer",    lvl:"Hustler", coins:234500,  av:"L", streak:33  },
+  { r:10,name:"MoneyMaven",     lvl:"Hustler", coins:198700,  av:"M", streak:61  },
 ];
 
 // ─── CASHOUT OPTIONS ───
 const CASHOUTS = [
-  { id:"paypal",  n:"PayPal",        ic:"💳", min:5000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"venmo",   n:"Venmo",         ic:"📲", min:5000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"cashapp", n:"Cash App",      ic:"💵", min:5000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"btc",     n:"Bitcoin",       ic:"₿",  min:5000,  fee:"0%", spd:"~5 min",    pop:true },
-  { id:"eth",     n:"Ethereum",      ic:"⟠",  min:5000,  fee:"0%", spd:"~3 min",    pop:false },
-  { id:"usdt",    n:"USDT",          ic:"💲", min:5000,  fee:"0%", spd:"~3 min",    pop:false },
-  { id:"amazon",  n:"Amazon",        ic:"📦", min:5000,  fee:"0%", spd:"Instant",   pop:true },
-  { id:"visa",    n:"Visa Prepaid",  ic:"💳", min:10000, fee:"1%", spd:"1-2 days",  pop:false },
-  { id:"steam",   n:"Steam",         ic:"🎮", min:5000,  fee:"0%", spd:"Instant",   pop:false },
-  { id:"apple",   n:"Apple",         ic:"🍎", min:5000,  fee:"0%", spd:"Instant",   pop:false },
-  { id:"google",  n:"Google Play",   ic:"▶️",  min:5000,  fee:"0%", spd:"Instant",   pop:false },
-  { id:"walmart", n:"Walmart",       ic:"🏬", min:5000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"paypal",  n:"PayPal",        ic:"PP", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"venmo",   n:"Venmo",         ic:"VM", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"cashapp", n:"Cash App",      ic:"CA", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"btc",     n:"Bitcoin",       ic:"BTC", min:5000,  fee:"0%", spd:"~5 min",    pop:true },
+  { id:"eth",     n:"Ethereum",      ic:"ETH", min:5000,  fee:"0%", spd:"~3 min",    pop:false },
+  { id:"usdt",    n:"USDT",          ic:"USD", min:5000,  fee:"0%", spd:"~3 min",    pop:false },
+  { id:"amazon",  n:"Amazon",        ic:"AM", min:5000,  fee:"0%", spd:"Instant",   pop:true },
+  { id:"visa",    n:"Visa Prepaid",  ic:"VIS", min:10000, fee:"1%", spd:"1-2 days",  pop:false },
+  { id:"steam",   n:"Steam",         ic:"ST", min:5000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"apple",   n:"Apple",         ic:"AP", min:5000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"google",  n:"Google Play",   ic:"GP", min:5000,  fee:"0%", spd:"Instant",   pop:false },
+  { id:"walmart", n:"Walmart",       ic:"WM", min:5000,  fee:"0%", spd:"Instant",   pop:false },
 ];
 
 // ─── LIVE FEED (Realistic amounts based on actual GPT payouts) ───
 const FEED = [
-  "Jake from TX completed Royal Match — earned $52.00 🎮",
-  "Maria cashed out $18.50 via PayPal instantly 💳",
-  "Alex finished 3 surveys today — $8.40 earned 📋",
-  "Sarah completed a SoFi signup offer — $55.00 ⚡",
-  "New user Chris earned $6.20 in his first session 🔥",
-  "Tom from UK withdrew $32.00 in Bitcoin ₿",
-  "Emily just hit a 30-day streak! 🔥",
-  "Michael earned $87.50 this week from game offers 💰",
-  "Lisa unlocked Earner level — 5% bonus activated! 💎",
-  "David referred 2 friends — earned $20.00 👥",
-  "Jenny completed 8 surveys today — $24.60 📋",
-  "Rob cashed out $15.00 to Cash App instantly 💵",
+  "Jake from TX completed Royal Match — earned $52.00",
+  "Maria cashed out $18.50 via PayPal instantly",
+  "Alex finished 3 surveys today — $8.40 earned",
+  "Sarah completed a SoFi signup offer — $55.00",
+  "New user Chris earned $6.20 in his first session",
+  "Tom from UK withdrew $32.00 in Bitcoin",
+  "Emily just hit a 30-day streak!",
+  "Michael earned $87.50 this week from game offers",
+  "Lisa unlocked Earner level — 5% bonus activated!",
+  "David referred 2 friends — earned $20.00",
+  "Jenny completed 8 surveys today — $24.60",
+  "Rob cashed out $15.00 to Cash App instantly",
 ];
 
 // ─── UTILS ───
@@ -161,6 +161,28 @@ const pct = coins => {
   const l=getLevel(coins);
   if(!l.next) return 100;
   return Math.min(((coins-l.min)/(l.next-l.min))*100,100);
+};
+
+// ─── SVG ICONS (Replace all emojis with clean vector icons) ───
+const Icon = {
+  earn: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>,
+  cashout: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>,
+  dashboard: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>,
+  leaderboard: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>,
+  admin: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  bell: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
+  fire: (s=16,c="#FF6B35") => <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none"><path d="M12 23c-3.6 0-8-2.4-8-8.1C4 10 8 4 12 1c4 3 8 9 8 13.9 0 5.7-4.4 8.1-8 8.1zm0-18.5C9.3 7.5 6 12 6 14.9 6 19 9.2 21 12 21s6-2 6-6.1c0-2.9-3.3-7.4-6-10.4z"/></svg>,
+  star: (s=16,c="#FFB800") => <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>,
+  check: (s=16,c=B.accent) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+  clock: (s=14,c=B.muted) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  arrowRight: (s=16,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
+  user: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  search: (s=18,c=B.muted) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+  gift: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>,
+  chart: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+  wallet: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4h-4z"/></svg>,
+  lightning: (s=16,c=B.accent) => <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>,
+  trophy: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>,
 };
 
 // ─── CSS ───
@@ -312,8 +334,8 @@ const AuthModal = ({ onAuth, onClose }) => {
 
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",backdropFilter:"blur(8px)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
-      <div style={{background:B.card,border:`2px solid ${B.border}`,borderRadius:16,padding:32,width:420,maxWidth:"90vw",position:"relative"}} onClick={e=>e.stopPropagation()}>
-        <button onClick={onClose} style={{position:"absolute",top:14,right:14,background:"none",border:"none",color:B.muted,fontSize:20,cursor:"pointer"}}>✕</button>
+      <div style={{background:B.card,border:\`2px solid \${B.border}\`,borderRadius:16,padding:32,width:420,maxWidth:"90vw",position:"relative"}} onClick={e=>e.stopPropagation()}>
+        <button onClick={onClose} style={{position:"absolute",top:14,right:14,background:"none",border:"none",color:B.muted,fontSize:20,cursor:"pointer"}}>×</button>
         <h2 style={{fontFamily:"'Poppins'",fontSize:22,fontWeight:600,marginBottom:6,color:B.txt}}>
           {mode==="login"?"Welcome Back":"Create Account"}
         </h2>
@@ -328,24 +350,24 @@ const AuthModal = ({ onAuth, onClose }) => {
             <div style={{marginBottom:12}}>
               <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Username</label>
               <input value={username} onChange={e=>setUsername(e.target.value)} required
-                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Pick a username"/>
+                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Pick a username"/>
             </div>
           )}
           <div style={{marginBottom:12}}>
             <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Email</label>
             <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required
-              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="you@example.com"/>
+              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="you@example.com"/>
           </div>
           <div style={{marginBottom:16}}>
             <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Password</label>
             <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6}
-              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Min 6 characters"/>
+              style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Min 6 characters"/>
           </div>
           {mode==="signup" && (
             <div style={{marginBottom:16}}>
               <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:4}}>Referral Code (optional)</label>
               <input value={referralCode} onChange={e=>setReferralCode(e.target.value)}
-                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:`1px solid ${B.border}`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Enter referral code"/>
+                style={{width:"100%",padding:"10px 14px",borderRadius:10,border:\`1px solid \${B.border}\`,background:B.surface,color:B.txt,fontSize:14}} placeholder="Enter referral code"/>
             </div>
           )}
           <button type="submit" disabled={loading} style={{
@@ -354,7 +376,7 @@ const AuthModal = ({ onAuth, onClose }) => {
             fontSize:15,fontWeight:600,cursor:loading?"wait":"pointer",opacity:loading?.7:1,transition:"opacity .2s",
             fontFamily:"'Poppins',sans-serif",
           }}>
-            {loading ? "Please wait..." : mode==="login" ? "Log In" : "Sign Up — Get 500 Free Coins 🎁"}
+            {loading ? "Please wait..." : mode==="login" ? "Log In" : "Sign Up — Get 500 Free Coins"}
           </button>
         </form>
 
@@ -379,8 +401,11 @@ const LiveTicker = () => {
   const [i,setI] = useState(0);
   useEffect(()=>{ const t=setInterval(()=>setI(p=>(p+1)%FEED.length),3500); return ()=>clearInterval(t); },[]);
   return (
-    <div style={{background:B.nav,borderBottom:`2px solid ${B.border}`,padding:"7px 20px",fontSize:"13px",color:B.accent,textAlign:"center",overflow:"hidden"}}>
-      <span className="af" key={i}>🟢 LIVE — {FEED[i]}</span>
+    <div style={{background:B.nav,borderBottom:\`2px solid \${B.border}\`,padding:"7px 20px",fontSize:"13px",color:B.accent,textAlign:"center",overflow:"hidden"}}>
+      <span className="af" key={i}>
+        <span style={{width:6,height:6,borderRadius:"50%",background:B.accent,display:"inline-block",marginRight:8}}/>
+        LIVE — {FEED[i]}
+      </span>
     </div>
   );
 };
@@ -389,8 +414,8 @@ const LiveTicker = () => {
 const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
   const lv = getLevel(coins);
   return (
-    <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 32px",height:66,background:B.nav,borderBottom:`2px solid ${B.border}`,position:"sticky",top:0,zIndex:100}}>
-      {/* Left: Logo + Cashout link */}
+    <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 32px",height:66,background:B.nav,borderBottom:\`2px solid \${B.border}\`,position:"sticky",top:0,zIndex:100}}>
+      {/* Left: Logo + Nav Links */}
       <div style={{display:"flex",alignItems:"center",gap:24}}>
         <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setPg("home")}>
           <div style={{width:32,height:32,borderRadius:8,background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:"#000",fontWeight:900}}>$</div>
@@ -401,50 +426,50 @@ const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
         {user && (
           <div style={{display:"flex",gap:2,marginLeft:8}}>
             {[
-              {id:"earn",l:"Earn",ic:"💰"},
-              {id:"rewards",l:"Cashout",ic:"💳"},
-              ...(user ? [{id:"dash",l:"Dashboard",ic:"📊"},{id:"leaderboard",l:"Leaderboard",ic:"🏆"}] : []),
-              ...(role==="admin"&&user?[{id:"admin",l:"Admin",ic:"🛡️"}]:[]),
+              {id:"earn",l:"Earn",ic:Icon.earn},
+              {id:"rewards",l:"Cashout",ic:Icon.cashout},
+              ...(user ? [{id:"dash",l:"Dashboard",ic:Icon.dashboard},{id:"leaderboard",l:"Leaderboard",ic:Icon.leaderboard}] : []),
+              ...(role==="admin"&&user?[{id:"admin",l:"Admin",ic:Icon.admin}]:[]),
             ].map(x=>(
               <button key={x.id} onClick={()=>setPg(x.id)} style={{
-                background:pg===x.id?"rgba(1,214,118,.08)":"transparent",
-                border:"none",
+                background:"none",border:"none",
                 color:pg===x.id?B.accent:B.muted,
-                padding:"8px 14px",borderRadius:8,cursor:"pointer",fontSize:13,fontWeight:pg===x.id?700:500,
-                transition:"all .15s",display:"flex",alignItems:"center",gap:5,
+                padding:"8px 12px",borderRadius:8,cursor:"pointer",fontSize:13,fontWeight:pg===x.id?600:500,
+                transition:"all .15s",display:"flex",alignItems:"center",gap:8,
+                borderBottom:pg===x.id?\`2px solid \${B.accent}\`:"2px solid transparent",
               }}
               onMouseEnter={e=>{if(pg!==x.id)e.currentTarget.style.color="#fff"}}
               onMouseLeave={e=>{if(pg!==x.id)e.currentTarget.style.color=B.muted}}
-              >{x.ic} {x.l}</button>
+              >{x.ic(20,pg===x.id?B.accent:B.muted)} {x.l}</button>
             ))}
           </div>
         )}
       </div>
-      {/* Right: Auth / User */}
+      {/* Right: Balance + User Profile + Auth */}
       <div style={{display:"flex",alignItems:"center",gap:10}}>
         {user ? (<>
-          {streak>0&&<div style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:8,background:"rgba(255,107,53,.08)",fontSize:13,color:"#FF6B35",fontWeight:700}}>
-            <span className="astreak">🔥</span>{streak}
+          {streak>0&&<div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",borderRadius:8,background:"rgba(255,107,53,.08)",fontSize:13,color:"#FF6B35",fontWeight:700}}>
+            {Icon.fire(16,"#FF6B35")} {streak}
           </div>}
           <div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",borderRadius:8,background:"rgba(1,214,118,.06)",border:"1px solid rgba(1,214,118,.12)",cursor:"pointer",fontSize:14,color:B.accent,fontWeight:700}} onClick={()=>setPg("dash")}>
-            {lv.icon} {fmt(coins)} 🪙
+            $ {fmt(coins)}
           </div>
-          <div onClick={()=>setPg("profile")} style={{width:34,height:34,borderRadius:"50%",background:"rgba(1,214,118,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,cursor:"pointer",border:`2px solid ${B.accent}`,color:B.accent}}>
+          <div onClick={()=>setPg("profile")} style={{width:34,height:34,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,cursor:"pointer",color:"#000"}}>
             {(user.username||"A")[0].toUpperCase()}
           </div>
-          <button onClick={onLogout} style={{background:"none",border:"1px solid rgba(255,255,255,.1)",borderRadius:8,padding:"6px 12px",color:B.muted,fontSize:12,cursor:"pointer",fontWeight:500,transition:"all .15s"}}
+          <button onClick={onLogout} style={{background:"none",border:"1px solid rgba(255,255,255,.1)",borderRadius:8,padding:"6px 12px",color:B.muted,fontSize:12,cursor:"pointer",fontWeight:500,transition:"all .15s",display:"flex",alignItems:"center",gap:6}}
             onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(239,68,68,.3)";e.currentTarget.style.color="#F87171"}}
             onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.1)";e.currentTarget.style.color=B.muted}}
-          >Sign Out</button>
+          >{Icon.bell(16,B.muted)}</button>
         </>) : (<>
           <button onClick={onLogin} style={{background:"none",border:"1px solid rgba(255,255,255,.15)",borderRadius:8,padding:"8px 18px",color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",transition:"all .15s"}}
             onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,.3)"}
             onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,.15)"}
           >Sign In</button>
-          <button onClick={onLogin} style={{background:B.accent,border:"none",borderRadius:8,padding:"8px 20px",color:"#000",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all .15s",display:"flex",alignItems:"center",gap:6}}
+          <button onClick={onLogin} style={{background:B.accent,border:"none",borderRadius:8,padding:"8px 20px",color:"#000",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all .15s"}}
             onMouseEnter={e=>e.currentTarget.style.background="#01FF97"}
             onMouseLeave={e=>e.currentTarget.style.background=B.accent}
-          >✏️ Sign Up</button>
+          >Sign Up</button>
         </>)}
       </div>
     </nav>
@@ -466,7 +491,7 @@ const Counter = ({end,prefix="",suffix="",duration=2000,style:s={}}) => {
 
 // ─── STAT CARD ───
 const Stat = ({label,value,sub,grad,delay=0}) => (
-  <div className="card au" style={{padding:22,animationDelay:`${delay}s`}}>
+  <div className="card au" style={{padding:22,animationDelay:\`\${delay}s\`}}>
     <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:grad,borderRadius:"16px 16px 0 0"}}/>
     <div style={{fontSize:12,color:B.muted,fontWeight:500,marginBottom:6}}>{label}</div>
     <div style={{fontSize:24,fontWeight:800,fontFamily:"'Poppins'"}}>{value}</div>
@@ -474,36 +499,64 @@ const Stat = ({label,value,sub,grad,delay=0}) => (
   </div>
 );
 
-// ─── OFFER CARD ───
-const OfferCard = ({o,onEarn,onStart,delay=0}) => (
-  <div className="card au" style={{padding:18,display:"flex",gap:14,cursor:"pointer",animationDelay:`${delay}s`}}
-    onClick={()=>onStart?onStart(o):onEarn(o.coins)}
-    onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.borderColor="rgba(1,214,118,.3)"}}
-    onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=B.border}}
-  >
-    {o.hot&&<div style={{position:"absolute",top:10,right:10,background:"#EB7C02",padding:"3px 10px",borderRadius:8,fontSize:10,fontWeight:600,color:"#fff"}}>🔥 HOT</div>}
-    <div style={{width:56,height:56,borderRadius:14,background:o.hot?"rgba(255,107,53,.08)":"rgba(1,214,118,.06)",border:o.hot?"1px solid rgba(255,107,53,.15)":"1px solid transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{o.img}</div>
-    <div style={{flex:1,minWidth:0}}>
-      <div style={{fontSize:14,fontWeight:600,marginBottom:6,lineHeight:1.3,paddingRight:o.hot?50:0}}>{o.t}</div>
-      <div style={{display:"flex",gap:12,fontSize:11,color:B.muted,marginBottom:8,flexWrap:"wrap"}}>
-        <span>⏱ {o.time}</span>
-        <span style={{color:o.diff==="Easy"?B.ok:o.diff==="Medium"?B.warn:B.hot}}>{o.diff==="Easy"?"🟢":"🟡"} {o.diff}</span>
-        <span>via {o.wall}</span>
+// ─── OFFER CARD (Large visual design matching Freecash) ───
+const OfferCard = ({o,onEarn,onStart,delay=0}) => {
+  const colors = ["#FF6B35", "#01D676", "#3B82F6", "#A855F7", "#FFB800"];
+  const colorIdx = o.id % colors.length;
+  const bgColor = colors[colorIdx];
+
+  return (
+    <div className="card au" style={{overflow:"hidden",cursor:"pointer",animationDelay:\`\${delay}s\`,display:"flex",flexDirection:"column"}}
+      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.borderColor="rgba(1,214,118,.3)";e.currentTarget.style.boxShadow="0 12px 24px rgba(0,0,0,.4)"}}
+      onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=B.border;e.currentTarget.style.boxShadow="none"}}
+    >
+      {/* Hero Image Area */}
+      <div style={{width:"100%",height:200,background:\`linear-gradient(135deg, \${bgColor} 0%, \${bgColor}cc 100%)\`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:12,left:12,background:B.accent,padding:"4px 10px",borderRadius:6,fontSize:11,fontWeight:700,color:"#000",display:"flex",alignItems:"center",gap:4}}>
+          {Icon.star(14,"#FFB800")} 5.0
+        </div>
+        <div style={{fontSize:48,fontWeight:700,color:"rgba(255,255,255,.9)",letterSpacing:"-1px"}}>{o.img}</div>
+        {o.hot && <div style={{position:"absolute",top:12,right:12,background:"rgba(0,0,0,.2)",padding:"6px 12px",borderRadius:6,fontSize:11,fontWeight:700,color:"#fff",display:"flex",alignItems:"center",gap:4}}>
+          {Icon.fire(14,"#FFB800")} HOT
+        </div>}
       </div>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,flex:1}}>
-          <div style={{flex:1,height:4,background:"rgba(255,255,255,.04)",borderRadius:2,overflow:"hidden"}}>
-            <div className="progress-bar" style={{width:`${o.rate}%`,background:o.rate>80?B.ok:o.rate>50?B.warn:B.hot}}/>
+
+      {/* Info Section */}
+      <div style={{padding:18,flex:1,display:"flex",flexDirection:"column"}}>
+        <div style={{fontSize:15,fontWeight:700,color:B.txt,marginBottom:8,lineHeight:1.3}}>{o.t}</div>
+
+        <div style={{display:"flex",gap:12,fontSize:12,color:B.muted,marginBottom:12,flexWrap:"wrap"}}>
+          <span style={{display:"flex",alignItems:"center",gap:4}}>
+            {Icon.clock(13,B.muted)} {o.time}
+          </span>
+          <span style={{display:"flex",alignItems:"center",gap:4,color:o.diff==="Easy"?B.ok:o.diff==="Medium"?B.warn:B.hot}}>
+            <span style={{width:6,height:6,borderRadius:"50%",background:"currentColor"}}/>
+            {o.diff}
+          </span>
+        </div>
+
+        {/* Success Rate */}
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14,flex:1}}>
+          <div style={{flex:1,height:3,background:"rgba(255,255,255,.06)",borderRadius:2,overflow:"hidden"}}>
+            <div className="progress-bar" style={{width:\`\${o.rate}%\`,background:o.rate>80?B.ok:o.rate>50?B.warn:B.hot}}/>
           </div>
-          <span style={{fontSize:11,color:B.muted,whiteSpace:"nowrap"}}>{o.rate}% success</span>
+          <span style={{fontSize:11,color:B.muted,whiteSpace:"nowrap"}}>{o.rate}%</span>
         </div>
-        <div style={{background:B.accent,padding:"6px 14px",borderRadius:8,fontSize:13,fontWeight:600,color:"#000",marginLeft:12,whiteSpace:"nowrap"}}>
-          {o.cashback?o.cashback:`$${toUSD(o.coins)}`}
-        </div>
+
+        {/* CTA Button */}
+        <button onClick={()=>onStart?onStart(o):onEarn(o.coins)} style={{
+          width:"100%",padding:"12px 0",background:B.accent,color:"#000",border:"none",borderRadius:6,
+          fontSize:14,fontWeight:700,cursor:"pointer",transition:"all .2s",
+        }}
+        onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
+        onMouseLeave={e=>e.currentTarget.style.background=B.accent}
+        >
+          Start Offer — \${toUSD(o.coins)}
+        </button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ═══════════════════════════════════════════════════════════════
 //  PAGE: HOME / LANDING (Freecash-inspired)
@@ -517,830 +570,251 @@ const Home = ({setPg, user, onLogin}) => {
     <div>
       {/* ─── HERO — Freecash-style two-column ─── */}
       <section style={{position:"relative",overflow:"hidden",padding:"60px 0 40px"}}>
-        {/* Background app logos collage */}
-        <div style={{position:"absolute",inset:0,opacity:.06,background:"url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"400\"><text x=\"50\" y=\"80\" font-size=\"60\">📱</text><text x=\"200\" y=\"120\" font-size=\"50\">🎮</text><text x=\"350\" y=\"70\" font-size=\"55\">📊</text><text x=\"500\" y=\"110\" font-size=\"45\">🛍️</text><text x=\"650\" y=\"80\" font-size=\"50\">💰</text><text x=\"100\" y=\"200\" font-size=\"55\">🎯</text><text x=\"300\" y=\"250\" font-size=\"50\">📺</text><text x=\"450\" y=\"200\" font-size=\"60\">🏰</text><text x=\"600\" y=\"240\" font-size=\"45\">₿</text><text x=\"750\" y=\"200\" font-size=\"50\">🔍</text></svg>') center/cover",pointerEvents:"none"}}/>
-
         <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px",display:"grid",gridTemplateColumns:"1fr 420px",gap:60,alignItems:"center",position:"relative",zIndex:1}}>
-          {/* LEFT: Headline + Offer Cards */}
-          <div>
-            <h1 className="au" style={{fontFamily:"'Poppins'",fontSize:"clamp(32px,4vw,48px)",fontWeight:700,lineHeight:1.15,marginBottom:20}}>
-              <span style={{color:B.accent}}>Get paid</span> for testing apps, games & surveys
+          {/* Left: Headline + CTA */}
+          <div className="au">
+            <h1 style={{fontSize:52,fontWeight:800,lineHeight:1.15,marginBottom:24,color:B.txt}}>
+              Earn Cash by Completing Simple Tasks
             </h1>
-            <p className="au" style={{fontSize:17,color:B.muted,marginBottom:32,animationDelay:".05s"}}>
-              Earn up to <strong style={{color:"#fff"}}>$3,000</strong> per offer{" "}
-              <span style={{display:"inline-flex",alignItems:"center",gap:6,marginLeft:8}}>
-                <span style={{width:8,height:8,borderRadius:"50%",background:B.accent,display:"inline-block"}}/>
-                <strong style={{color:"#fff"}}>{offerCount.toLocaleString()}</strong> Offers available now
-              </span>
+            <p style={{fontSize:18,color:B.light,lineHeight:1.6,marginBottom:32}}>
+              Join {fmt(signupCount)} people earning real money from their phone. No investment required.
             </p>
-
-            {/* 3 Featured Offer Preview Cards */}
-            <div className="au" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:28,animationDelay:".1s"}}>
-              {[
-                {img:"💸",name:"Cash App",desc:"Sign Up + $5 Deposit",price:"$25.00",rating:"5.0"},
-                {img:"🏰",name:"Royal Match",desc:"Reach level 300",price:"$52.00",rating:"5.0"},
-                {img:"🎯",name:"TikTok",desc:"Sign up",price:"$2.00",rating:"5.0"},
-              ].map((o,i)=>(
-                <div key={i} style={{
-                  background:i===1?"rgba(1,214,118,.04)":B.card,
-                  border:i===1?`1px solid rgba(1,214,118,.15)`:`1px solid ${B.border}`,
-                  borderRadius:14,padding:16,cursor:"pointer",transition:"all .2s",
-                }}
-                onClick={()=>user?setPg("earn"):onLogin()}
-                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.borderColor="rgba(1,214,118,.25)"}}
-                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=i===1?"rgba(1,214,118,.15)":B.border}}
-                >
-                  <div style={{width:56,height:56,borderRadius:12,background:"rgba(255,255,255,.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:30,marginBottom:10}}>{o.img}</div>
-                  <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>{o.name}</div>
-                  <div style={{fontSize:11,color:B.muted,marginBottom:8}}>{o.desc}</div>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                    <span style={{fontWeight:800,fontSize:15}}>{o.price}</span>
-                    <span style={{fontSize:11,color:B.gold}}>★ {o.rating}</span>
-                  </div>
-                </div>
-              ))}
+            <div style={{display:"flex",gap:14,marginBottom:48}}>
+              <button onClick={onLogin} style={{background:B.accent,border:"none",color:"#000",padding:"14px 32px",borderRadius:8,fontSize:15,fontWeight:700,cursor:"pointer",transition:"all .2s"}}
+                onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
+                onMouseLeave={e=>e.currentTarget.style.background=B.accent}
+              >Get Started — Free</button>
+              <button onClick={()=>setPg("earn")} style={{background:"transparent",border:\`2px solid \${B.border}\`,color:B.txt,padding:"12px 28px",borderRadius:8,fontSize:15,fontWeight:600,cursor:"pointer",transition:"all .2s"}}
+                onMouseEnter={e=>e.currentTarget.style.borderColor=B.accent}
+                onMouseLeave={e=>e.currentTarget.style.borderColor=B.border}
+              >Browse Offers</button>
             </div>
 
-            {/* Trustpilot-style badge */}
-            <div className="au" style={{animationDelay:".15s"}}>
-              <div style={{fontSize:13,color:B.muted,marginBottom:6}}>See our reviews on</div>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:15}}>★</span>
-                <span style={{fontWeight:700,fontSize:15}}>Trustpilot</span>
-                <div style={{display:"flex",gap:2}}>
-                  {[1,2,3,4,5].map(i=>(
-                    <div key={i} style={{width:24,height:24,background:i<=4?"#00B67A":"#DCDCE6",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"#fff"}}>★</div>
-                  ))}
-                </div>
-              </div>
+            {/* Stats Row */}
+            <div style={{display:"flex",gap:40,fontSize:14,color:B.muted}}>
+              <div><div style={{fontSize:24,fontWeight:800,color:B.accent,marginBottom:4}}>{fmt(signupCount)}</div>Active Users</div>
+              <div><div style={{fontSize:24,fontWeight:800,color:B.accent,marginBottom:4}}>{fmt(offerCount)}</div>Live Offers</div>
+              <div><div style={{fontSize:24,fontWeight:800,color:B.accent,marginBottom:4}}>$0 Upfront</div>No Fees</div>
             </div>
           </div>
 
-          {/* RIGHT: Signup Form */}
-          <div className="au" style={{animationDelay:".1s"}}>
-            <div style={{background:B.card,border:`2px solid ${B.border}`,borderRadius:12,padding:28}}>
-              <h2 style={{fontFamily:"'Poppins'",fontSize:20,fontWeight:600,textAlign:"center",marginBottom:20}}>Sign Up for Free</h2>
-
-              <div style={{position:"relative",marginBottom:14}}>
-                <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:16,color:B.muted}}>✉️</span>
-                <input type="email" placeholder="Email address" value={signupEmail} onChange={e=>setSignupEmail(e.target.value)}
-                  style={{width:"100%",padding:"14px 16px 14px 42px",background:B.surface,border:`1px solid ${B.border}`,borderRadius:10,color:B.txt,fontSize:15}}/>
-              </div>
-
-              <button onClick={onLogin} style={{
-                width:"100%",padding:"14px 0",borderRadius:10,border:"none",
-                background:B.accent,color:"#000",fontSize:16,fontWeight:800,cursor:"pointer",
-                transition:"all .2s",marginBottom:16,
-              }}
-              onMouseEnter={e=>e.currentTarget.style.background="#01FF97"}
-              onMouseLeave={e=>e.currentTarget.style.background=B.accent}
-              >Start earning now</button>
-
-              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
-                <div style={{flex:1,height:1,background:"rgba(255,255,255,.08)"}}/>
-                <span style={{fontSize:12,color:B.muted,fontWeight:500}}>OR</span>
-                <div style={{flex:1,height:1,background:"rgba(255,255,255,.08)"}}/>
-              </div>
-
-              {/* Social Auth Buttons */}
-              <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                <button onClick={onLogin} style={{width:"100%",padding:"12px 0",borderRadius:10,border:"none",background:"#000",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"opacity .2s"}}
-                  onMouseEnter={e=>e.currentTarget.style.opacity=".85"}
-                  onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-                >🍎 Sign Up with Apple</button>
-
-                <button onClick={onLogin} style={{width:"100%",padding:"12px 0",borderRadius:10,border:`1px solid rgba(255,255,255,.12)`,background:"transparent",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"all .2s"}}
-                  onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.04)"}
-                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}
-                >G Sign Up with Google</button>
-
-                <button onClick={onLogin} style={{width:"100%",padding:"12px 0",borderRadius:10,border:"none",background:"#1877F2",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"opacity .2s"}}
-                  onMouseEnter={e=>e.currentTarget.style.opacity=".85"}
-                  onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-                >f Sign Up with Facebook</button>
-              </div>
-
-              <p style={{textAlign:"center",marginTop:16,fontSize:13,color:B.muted}}>
-                <strong style={{color:"#fff"}}>{signupCount.toLocaleString()}+</strong> sign ups in the past 24 hours
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── STATS BAR — 3 big metrics ─── */}
-      <section style={{padding:"40px 0",background:"transparent"}}>
-        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px"}}>
-          <div style={{background:B.card,border:`2px solid ${B.border}`,borderRadius:12,padding:"36px 48px",display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:0}}>
-            {[
-              {icon:"🚀",val:"17m 12s",label:"Average time until user earns their first reward"},
-              {icon:"🔥",val:"$28",label:"Average money earned by users yesterday"},
-              {icon:"",val:"$50,000,000+",label:"Total amount earned on PocketLined"},
-            ].map((s,i)=>(
-              <div key={i} style={{textAlign:"center",borderRight:i<2?`1px solid ${B.border}`:"none",padding:"0 24px"}}>
-                <div style={{fontSize:28,fontWeight:700,fontFamily:"'Poppins'",marginBottom:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
-                  {s.icon&&<span>{s.icon}</span>}
-                  <span>{s.val}</span>
+          {/* Right: Featured Offers Preview */}
+          <div style={{display:"flex",flexDirection:"column",gap:12}}>
+            {OFFERS.slice(0,3).map(o=>(
+              <div key={o.id} className="card au" style={{padding:12,cursor:"pointer",display:"flex",gap:10,alignItems:"flex-start"}}
+                onClick={()=>setPg("earn")}
+              >
+                <div style={{width:48,height:48,borderRadius:8,background:["#FF6B35","#01D676","#3B82F6","#A855F7","#FFB800"][o.id%5],display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:700,color:"#fff",flexShrink:0}}>
+                  {o.img}
                 </div>
-                <div style={{fontSize:14,color:B.muted,lineHeight:1.4}}>{s.label}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13,fontWeight:600,marginBottom:4,color:B.txt}}>{o.t.split(" — ")[0]}</div>
+                  <div style={{fontSize:12,color:B.accent,fontWeight:700}}>$ {toUSD(o.coins)}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── RECOMMENDED BY ─── */}
-      <section style={{padding:"48px 0",textAlign:"center"}}>
-        <h3 style={{fontSize:18,fontWeight:600,marginBottom:28,color:B.muted}}>Recommended by</h3>
-        <div style={{display:"flex",justifyContent:"center",gap:48,alignItems:"center",opacity:.5}}>
-          {["PaidFromSurveys","BENZINGA","SurveyPolice","TechCrunch","Forbes"].map(name=>(
-            <span key={name} style={{fontSize:18,fontWeight:800,fontFamily:"'Poppins'",letterSpacing:"0.5px",textTransform:"uppercase"}}>{name}</span>
+      {/* ─── EMAIL SIGNUP ─── */}
+      <section style={{padding:"40px 32px",background:"rgba(1,214,118,.04)",borderTop:\`2px solid \${B.border}\`,borderBottom:\`2px solid \${B.border}\`,textAlign:"center"}}>
+        <h2 style={{fontSize:28,fontWeight:700,marginBottom:12,color:B.txt}}>Get Daily Earn Alerts</h2>
+        <p style={{fontSize:14,color:B.muted,marginBottom:20}}>Be notified of new high-paying offers instantly</p>
+        <div style={{display:"flex",gap:8,maxWidth:400,margin:"0 auto"}}>
+          <input type="email" value={signupEmail} onChange={e=>setSignupEmail(e.target.value)}
+            placeholder="your@email.com"
+            style={{flex:1,padding:"10px 14px",borderRadius:6,border:\`1px solid \${B.border}\`,background:B.card,color:B.txt,fontSize:14}}
+          />
+          <button onClick={()=>setSignupEmail("")} style={{background:B.accent,border:"none",color:"#000",padding:"10px 24px",borderRadius:6,fontWeight:700,cursor:"pointer",transition:"all .2s"}}
+            onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
+            onMouseLeave={e=>e.currentTarget.style.background=B.accent}
+          >Subscribe</button>
+        </div>
+      </section>
+
+      {/* ─── SOCIAL AUTH ─── */}
+      <section style={{padding:"40px 32px",textAlign:"center"}}>
+        <h2 style={{fontSize:24,fontWeight:700,marginBottom:20,color:B.txt}}>Join With Your Account</h2>
+        <div style={{display:"flex",gap:12,justifyContent:"center"}}>
+          {[{n:"Apple",c:"#000"},{n:"Google",c:"#ea4335"},{n:"Facebook",c:"#1877F2"}].map(x=>(
+            <button key={x.n} onClick={onLogin} style={{background:x.c,border:"none",color:"#fff",padding:"10px 32px",borderRadius:6,fontWeight:600,cursor:"pointer",transition:"all .2s"}}
+              onMouseEnter={e=>e.currentTarget.style.opacity=.8}
+              onMouseLeave={e=>e.currentTarget.style.opacity=1}
+            >{x.n}</button>
           ))}
         </div>
       </section>
 
+      {/* ─── RECOMMENDED OFFERS ─── */}
+      <section style={{padding:"60px 32px",background:B.card}}>
+        <h2 style={{fontSize:28,fontWeight:700,marginBottom:12,color:B.txt,textAlign:"center"}}>Popular Right Now</h2>
+        <p style={{fontSize:14,color:B.muted,marginBottom:40,textAlign:"center"}}>These offers are trending today based on earnings</p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))",gap:20,maxWidth:1200,margin:"0 auto"}}>
+          {OFFERS.slice(0,6).map((o,i)=><OfferCard key={o.id} o={o} onStart={()=>setPg("earn")} delay={i*0.05}/>)}
+        </div>
+      </section>
+
       {/* ─── HOW IT WORKS ─── */}
-      <section style={{padding:"60px 0 80px"}}>
-        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px",display:"grid",gridTemplateColumns:"1fr 1.3fr",gap:60,alignItems:"start"}}>
-          {/* Left */}
-          <div>
-            <h2 style={{fontFamily:"'Poppins'",fontSize:32,fontWeight:700,lineHeight:1.2,marginBottom:24}}>
-              Want to earn free cash within minutes?<br/>
-              <span style={{color:B.accent}}>Here's how</span>
-            </h2>
-            <button className="btn-primary" onClick={()=>user?setPg("earn"):onLogin()} style={{fontSize:16,padding:"14px 36px",marginBottom:24}}>Start earning now</button>
-            <div>
-              <div style={{fontSize:13,color:B.muted,marginBottom:6}}>See our reviews on</div>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:15}}>★</span>
-                <span style={{fontWeight:700,fontSize:15}}>Trustpilot</span>
-                <div style={{display:"flex",gap:2}}>
-                  {[1,2,3,4,5].map(i=>(
-                    <div key={i} style={{width:22,height:22,background:i<=4?"#00B67A":"#DCDCE6",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#fff"}}>★</div>
-                  ))}
-                </div>
+      <section style={{padding:"60px 32px"}}>
+        <h2 style={{fontSize:28,fontWeight:700,marginBottom:40,color:B.txt,textAlign:"center"}}>How It Works</h2>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))",gap:24,maxWidth:1000,margin:"0 auto"}}>
+          {[
+            {n:"1",t:"Pick an Offer",d:"Browse from thousands of available tasks"},
+            {n:"2",t:"Complete Task",d:"Follow simple instructions"},
+            {n:"3",t:"Earn Rewards",d:"Get paid instantly to your account"},
+            {n:"4",t:"Cash Out",d:"Withdraw to PayPal, gift cards, or crypto"},
+          ].map((s,i)=>(
+            <div key={i} className="card au" style={{padding:28,textAlign:"center",animationDelay:\`\${i*0.05}s\`}}>
+              <div style={{width:48,height:48,background:B.accent,color:"#000",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:800,margin:"0 auto 16px"}}>
+                {s.n}
               </div>
+              <h3 style={{fontSize:16,fontWeight:700,marginBottom:8,color:B.txt}}>{s.t}</h3>
+              <p style={{fontSize:13,color:B.muted}}>{s.d}</p>
             </div>
-          </div>
-          {/* Right — Steps */}
-          <div style={{display:"flex",flexDirection:"column",gap:28}}>
-            {[
-              {n:"1",t:"Choose an offer",d:"Take your pick from the tasks on the earn page. We list the best offers from companies who want to advertise their apps, surveys, and products."},
-              {n:"2",t:"Complete the task",d:"Follow the instructions for the offer you selected. This could be downloading an app, taking a survey, or reaching a game level."},
-              {n:"3",t:"Get paid instantly",d:"Once you complete the offer, coins are added to your balance automatically. Cash out to PayPal, Venmo, crypto, or gift cards — most arrive in minutes."},
-            ].map((step,i)=>(
-              <div key={i} style={{display:"flex",gap:20,alignItems:"flex-start"}}>
-                <div style={{width:48,height:48,borderRadius:12,background:"rgba(1,214,118,.06)",border:"1px solid rgba(1,214,118,.12)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <span style={{fontSize:14,fontWeight:800,color:B.accent}}>{step.n}</span>
-                </div>
-                <div>
-                  <h4 style={{fontSize:17,fontWeight:700,marginBottom:6}}>{step.n}. {step.t}</h4>
-                  <p style={{fontSize:14,color:B.muted,lineHeight:1.6}}>{step.d}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── POPULAR OFFERS ─── */}
-      <section style={{padding:"60px 0",background:"linear-gradient(180deg,transparent,rgba(1,214,118,.01),transparent)"}}>
-        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 32px"}}>
-          <h2 style={{fontFamily:"'Poppins'",fontSize:28,fontWeight:600,textAlign:"center",marginBottom:12}}>
-            Popular Offers <span style={{color:B.accent}}>Right Now</span>
-          </h2>
-          <p style={{textAlign:"center",color:B.muted,marginBottom:36}}>Here's what people are completing today</p>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
-            {OFFERS.filter(o=>o.hot).slice(0,6).map((o,i)=>(
-              <div key={o.id} className="card au" style={{padding:18,cursor:"pointer",animationDelay:`${i*.06}s`}}
-                onClick={()=>user ? setPg("earn") : onLogin()}
-                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.borderColor="rgba(1,214,118,.2)"}}
-                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=B.border}}
-              >
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:10}}>
-                  <div style={{width:48,height:48,borderRadius:12,background:"rgba(255,255,255,.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>{o.img}</div>
-                  <span style={{background:B.accent,padding:"5px 12px",borderRadius:8,fontSize:14,fontWeight:800,color:"#000"}}>${toUSD(o.coins)}</span>
-                </div>
-                <div style={{fontSize:14,fontWeight:600,marginBottom:6,lineHeight:1.3}}>{o.t}</div>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:11,color:B.muted}}>
-                  <span>⏱ {o.time} · {o.diff}</span>
-                  <span style={{color:B.gold}}>★ 5.0</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{textAlign:"center",marginTop:32}}>
-            <button className="btn-primary" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:16,padding:"14px 36px"}}>Browse All Offers →</button>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── LIVE CASHOUTS MARQUEE ─── */}
-      <section style={{padding:"50px 0",overflow:"hidden"}}>
-        <h2 style={{fontFamily:"'Poppins'",fontSize:24,fontWeight:600,textAlign:"center",marginBottom:28}}>
-          Recent <span style={{color:B.accent}}>Cashouts</span>
-        </h2>
-        <div style={{overflow:"hidden",position:"relative"}}>
-          <div className="marquee-track">
-            {[...Array(2)].map((_,dup)=>(
-              [
-                {u:"Jessica M.",a:"$14.50",m:"PayPal",t:"Just now"},
-                {u:"Marcus D.",a:"$8.00",m:"Cash App",t:"2 min ago"},
-                {u:"Tyler K.",a:"$22.00",m:"Venmo",t:"5 min ago"},
-                {u:"Sarah L.",a:"$11.20",m:"PayPal",t:"8 min ago"},
-                {u:"David R.",a:"$5.00",m:"Amazon",t:"12 min ago"},
-                {u:"Jenny C.",a:"$18.50",m:"PayPal",t:"15 min ago"},
-                {u:"Chris T.",a:"$32.00",m:"Bitcoin",t:"20 min ago"},
-                {u:"Amanda P.",a:"$5.00",m:"Cash App",t:"25 min ago"},
-              ].map((c,i)=>(
-                <div key={`${dup}-${i}`} style={{
-                  minWidth:200,padding:"14px 20px",margin:"0 8px",background:B.card,borderRadius:12,
-                  border:`1px solid ${B.border}`,textAlign:"center",flexShrink:0,
-                }}>
-                  <div style={{fontSize:20,fontWeight:800,color:B.accent,fontFamily:"'Poppins'"}}>{c.a}</div>
-                  <div style={{fontSize:13,fontWeight:600,marginTop:2}}>{c.u}</div>
-                  <div style={{fontSize:11,color:B.muted,marginTop:2}}>{c.m} · {c.t}</div>
-                </div>
-              ))
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
       {/* ─── PAYOUT METHODS ─── */}
-      <section style={{padding:"60px 24px",maxWidth:1200,margin:"0 auto",textAlign:"center"}}>
-        <h2 style={{fontFamily:"'Poppins'",fontSize:26,fontWeight:600,marginBottom:12}}>
-          Your Money, <span style={{color:B.accent}}>Your Way</span>
-        </h2>
-        <p style={{color:B.muted,marginBottom:36}}>12+ payout options. $5 minimum. Most arrive within minutes.</p>
-        <div style={{display:"flex",justifyContent:"center",gap:12,flexWrap:"wrap"}}>
-          {CASHOUTS.map((c,i)=>(
-            <div key={c.id} className="card au" style={{padding:"16px 18px",textAlign:"center",width:100,animationDelay:`${i*.03}s`}}>
-              <div style={{fontSize:28,marginBottom:6}}>{c.ic}</div>
-              <div style={{fontSize:12,fontWeight:600}}>{c.n}</div>
-              <div style={{fontSize:10,color:B.accent,marginTop:2,fontWeight:600}}>{c.spd}</div>
+      <section style={{padding:"60px 32px",background:"rgba(1,214,118,.02)"}}>
+        <h2 style={{fontSize:28,fontWeight:700,marginBottom:12,color:B.txt,textAlign:"center"}}>Get Paid Your Way</h2>
+        <p style={{fontSize:14,color:B.muted,marginBottom:40,textAlign:"center"}}>Withdraw to 12+ payment methods</p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(120px, 1fr))",gap:16,maxWidth:800,margin:"0 auto"}}>
+          {CASHOUTS.map(c=>(
+            <div key={c.id} className="card au" style={{padding:16,textAlign:"center",cursor:"pointer"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=B.accent;e.currentTarget.style.transform="translateY(-2px)"}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=B.border;e.currentTarget.style.transform="translateY(0)"}}
+            >
+              <div style={{width:40,height:40,background:B.accent,color:"#000",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,margin:"0 auto 8px"}}>
+                {c.ic}
+              </div>
+              <div style={{fontSize:12,fontWeight:600,color:B.txt}}>{c.n}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ─── FINAL CTA ─── */}
-      <section style={{padding:"80px 24px",textAlign:"center",background:"linear-gradient(180deg,transparent,rgba(1,214,118,.02))"}}>
-        <h2 style={{fontFamily:"'Poppins'",fontSize:32,fontWeight:700,marginBottom:14}}>
-          Ready to <span style={{color:B.accent}}>start earning</span>?
-        </h2>
-        <p style={{color:B.muted,fontSize:18,marginBottom:32}}>
-          It's free, takes 30 seconds, and you get $0.25 just for signing up.
-        </p>
-        <button className="btn-primary" onClick={()=>user ? setPg("earn") : onLogin()} style={{fontSize:18,padding:"16px 44px"}}>
-          {user ? "Browse Offers →" : "Create Free Account →"}
-        </button>
-        <p style={{marginTop:14,fontSize:12,color:B.dim}}>No credit card required</p>
+      <section style={{padding:"60px 32px",textAlign:"center",background:B.card}}>
+        <h2 style={{fontSize:32,fontWeight:800,marginBottom:16,color:B.txt}}>Start Earning Today</h2>
+        <p style={{fontSize:16,color:B.light,marginBottom:32}}>Join thousands making real money from home</p>
+        <button onClick={onLogin} style={{background:B.accent,border:"none",color:"#000",padding:"14px 48px",borderRadius:8,fontSize:16,fontWeight:700,cursor:"pointer",transition:"all .2s"}}
+          onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
+          onMouseLeave={e=>e.currentTarget.style.background=B.accent}
+        >Get Started Now</button>
       </section>
     </div>
   );
 };
 
-// ═══════════════════════════════════════════════════════════════
-//  PAGE: DASHBOARD
-// ═══════════════════════════════════════════════════════════════
-const Dash = ({coins,streak,today,week,setPg,onEarn,user}) => {
-  const lv = getLevel(coins);
-  const prog = pct(coins);
-  const nxt = LEVELS[lv.idx+1];
-  const displayName = user ? (user.username || 'Earner') : 'Earner';
-
-  // ─── DAILY SPIN — localStorage-gated, once per day ───
-  const spinKey = 'cf_spin_' + new Date().toISOString().slice(0,10);
-  const [spinUsed, setSpinUsed] = useState(()=> localStorage.getItem(spinKey)==='1');
-  const [spinResult,setSpinResult] = useState(null);
-  const [spinning,setSpinning] = useState(false);
-  const [spinPhase,setSpinPhase] = useState('idle'); // idle → spinning → nearMiss → result → celebrated
-  const [nearMissAmt,setNearMissAmt] = useState(0);
-  const [confettiParts,setConfettiParts] = useState([]);
-
-  // ─── STREAK BONUS — localStorage-gated, once per streak cycle ───
-  const streakKey = 'cf_streak_claimed_' + Math.floor(streak/7);
-  const [bonusClaimed,setBonusClaimed] = useState(()=> localStorage.getItem(streakKey)==='1');
-  const [bonusAmt,setBonusAmt] = useState(0);
-  const [bonusPhase,setBonusPhase] = useState('idle'); // idle → opening → revealed
-
-  // ─── DAILY BONUS CHEST — timed reward, resets daily ───
-  const chestKey = 'cf_chest_' + new Date().toISOString().slice(0,10);
-  const [chestOpened,setChestOpened] = useState(()=> localStorage.getItem(chestKey)==='1');
-  const [chestReward,setChestReward] = useState(0);
-  const [chestPhase,setChestPhase] = useState('idle');
-  const [chestCountdown,setChestCountdown] = useState('');
-
-  // Countdown timer to next chest (midnight reset — creates urgency like Candy Crush lives)
-  useEffect(()=>{
-    if(chestOpened){
-      const tick=()=>{
-        const now=new Date(), tmrw=new Date(now);
-        tmrw.setHours(24,0,0,0);
-        const diff=tmrw-now;
-        const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
-        setChestCountdown(`${h}h ${m}m ${s}s`);
-      };
-      tick();
-      const t=setInterval(tick,1000);
-      return ()=>clearInterval(t);
-    }
-  },[chestOpened]);
-
-  // Confetti burst helper
-  const burstConfetti = () => {
-    const colors = [B.gold,B.money,B.hot,B.accent,B.fomo,'#FFE066','#60A5FA'];
-    const parts = Array.from({length:24},(_,i)=>({
-      id:i, color:colors[i%colors.length],
-      left:35+Math.random()*30, delay:Math.random()*.3,
-      size:6+Math.random()*8, dur:0.8+Math.random()*0.6,
-    }));
-    setConfettiParts(parts);
-    setTimeout(()=>setConfettiParts([]),2000);
-  };
-
-  // ─── SPIN LOGIC — Candy Crush style near-miss + celebration ───
-  // Calls POST /api/spin server-side so coins actually persist
-  const spin = () => {
-    if(spinning || spinUsed) return;
-    setSpinning(true);
-    setSpinPhase('spinning');
-    setSpinResult(null);
-
-    // Fire the server request immediately (runs in parallel with animation)
-    const spinPromise = apiFetch('/api/spin', { method: 'POST' }).then(r=>r.json()).catch(()=>null);
-
-    // Near-miss preview (we don't know the real result yet, use a teaser)
-    const teaserNearMiss = [50000,10000,5000,2000][Math.floor(Math.random()*4)];
-    setNearMissAmt(teaserNearMiss);
-
-    setTimeout(()=>{
-      setSpinPhase('nearMiss');
-      setTimeout(async ()=>{
-        // Wait for server result
-        const data = await spinPromise;
-        const amt = data?.coins || 500; // fallback
-        setSpinResult(amt);
-        setSpinPhase('result');
-        setSpinning(false);
-        localStorage.setItem(spinKey,'1');
-        setSpinUsed(true);
-        burstConfetti();
-        if(onEarn) onEarn(amt);
-        setTimeout(()=>setSpinPhase('celebrated'),3000);
-      },800);
-    },3000);
-  };
-
-  // ─── STREAK CLAIM — server-persisted, dramatic reveal ───
-  const claimStreak = () => {
-    if(bonusClaimed) return;
-    setBonusPhase('opening');
-    apiFetch('/api/rewards/daily?type=streak', { method: 'POST' })
-      .then(r=>r.json())
-      .then(data=>{
-        const amt = data?.coins || 200;
-        setBonusAmt(amt);
-        setBonusPhase('revealed');
-        setBonusClaimed(true);
-        localStorage.setItem(streakKey,'1');
-        burstConfetti();
-        if(onEarn) onEarn(amt);
-      })
-      .catch(()=>{
-        setBonusPhase('idle');
-      });
-  };
-
-  // ─── DAILY CHEST — server-persisted, login reward that escalates with streak ───
-  const openChest = () => {
-    if(chestOpened) return;
-    setChestPhase('opening');
-    apiFetch('/api/rewards/daily?type=chest', { method: 'POST' })
-      .then(r=>r.json())
-      .then(data=>{
-        const amt = data?.coins || 100;
-        setChestReward(amt);
-        setChestPhase('revealed');
-        setChestOpened(true);
-        localStorage.setItem(chestKey,'1');
-        burstConfetti();
-        if(onEarn) onEarn(amt);
-      })
-      .catch(()=>{
-        setChestPhase('idle');
-      });
-  };
-
-  return (
-    <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
-      <div className="au" style={{marginBottom:28}}>
-        <h1 style={{fontFamily:"'Poppins'",fontSize:26,fontWeight:800}}>Welcome back, {displayName} 👋</h1>
-        <p style={{color:B.muted,fontSize:14}}>Your personalized earning dashboard</p>
-      </div>
-
-      {/* ─── DAILY CHEST — First thing users see, creates daily login habit ─── */}
-      {!chestOpened && (
-        <div className="card au" style={{padding:20,marginBottom:20,textAlign:"center",border:`2px solid rgba(255,184,0,.3)`,background:"linear-gradient(135deg,rgba(255,184,0,.06),rgba(255,107,53,.04))",cursor:"pointer",position:"relative",overflow:"hidden"}}
-          onClick={openChest}
-          onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.01)";e.currentTarget.style.borderColor="rgba(255,184,0,.5)"}}
-          onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.borderColor="rgba(255,184,0,.3)"}}
-        >
-          {chestPhase==='opening' ? (
-            <div className="ashake">
-              <div style={{fontSize:52,marginBottom:6}}>🎁</div>
-              <div style={{fontSize:14,fontWeight:700,color:B.gold}}>Opening...</div>
-            </div>
-          ) : (
-            <>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14}}>
-                <span style={{fontSize:42}} className="ap">🎁</span>
-                <div style={{textAlign:"left"}}>
-                  <div style={{fontSize:16,fontWeight:800,color:B.gold}}>Daily Login Reward</div>
-                  <div style={{fontSize:12,color:B.muted}}>Tap to claim your free coins!{streak>1?` (${streak}-day streak bonus active)`:""}</div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-      {chestPhase==='revealed' && (
-        <div className="card abounce" style={{padding:20,marginBottom:20,textAlign:"center",border:"2px solid rgba(1,214,118,.3)",background:"rgba(1,214,118,.04)",position:"relative",overflow:"hidden"}}>
-          {confettiParts.map(p=>(
-            <div key={p.id} style={{position:"absolute",left:`${p.left}%`,top:"50%",width:p.size,height:p.size,borderRadius:p.size>9?"50%":"2px",background:p.color,animation:`confetti ${p.dur}s ease-out ${p.delay}s both`,pointerEvents:"none"}}/>
-          ))}
-          <div style={{fontSize:36,marginBottom:4}}>🎉</div>
-          <div style={{fontSize:22,fontWeight:900,fontFamily:"'Poppins'",color:B.money}}>{fmt(chestReward)} coins claimed!</div>
-          <div style={{fontSize:12,color:B.muted,marginTop:4}}>Next chest in <span style={{color:B.gold,fontWeight:700}}>{chestCountdown}</span></div>
-        </div>
-      )}
-      {chestOpened && chestPhase!=='revealed' && (
-        <div className="card au" style={{padding:14,marginBottom:20,textAlign:"center",border:"1px solid rgba(255,184,0,.1)",opacity:.6}}>
-          <div style={{fontSize:13,color:B.muted}}>🎁 Daily reward claimed — next chest in <span style={{color:B.gold,fontWeight:700,animation:"tickTock 2s ease-in-out infinite"}}>{chestCountdown}</span></div>
-        </div>
-      )}
-
-      {/* Stats Row */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:24}}>
-        <Stat label="Total Balance" value={<>{fmt(coins)} 🪙</>} sub={`$${toUSD(coins)}`} grad={B.grad} delay={0}/>
-        <Stat label="Today" value={<>+{fmt(today)}</>} sub={`$${toUSD(today)}`} grad={B.gradOk} delay={.05}/>
-        <Stat label="This Week" value={<>+{fmt(week)}</>} sub={`$${toUSD(week)}`} grad={B.grad} delay={.1}/>
-        <Stat label="Streak" value={<>{streak} Days 🔥</>} sub={streak>=7?`Bonus unlocked!`:`${7-(streak%7)} days to bonus`} grad={B.gradHot} delay={.15}/>
-      </div>
-
-      <div style={{display:"grid",gridTemplateColumns:"5fr 3fr",gap:20}}>
-        {/* LEFT */}
-        <div>
-          {/* Level Card */}
-          <div className="card au" style={{padding:22,marginBottom:20}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:30}}>{lv.icon}</span>
-                <div>
-                  <div style={{fontSize:12,color:B.muted}}>Current Level</div>
-                  <div style={{fontSize:20,fontWeight:800,fontFamily:"'Poppins'",color:lv.c}}>{lv.n}</div>
-                </div>
-              </div>
-              {nxt&&<div style={{textAlign:"right"}}>
-                <div style={{fontSize:12,color:B.muted}}>Next: {nxt.icon} {nxt.n}</div>
-                <div style={{fontSize:12,color:B.accentL,fontWeight:600}}>+{nxt.bonus}% bonus on all offers</div>
-              </div>}
-            </div>
-            <div style={{background:"rgba(1,214,118,.08)",borderRadius:10,height:12,overflow:"hidden",marginBottom:6}}>
-              <div className="progress-bar" style={{width:`${prog}%`,background:B.gradGold}}/>
-            </div>
-            <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:B.muted}}>
-              <span>{fmt(coins)} coins</span>
-              {nxt&&<span>{fmt(nxt.min)} needed</span>}
-            </div>
-            <div style={{marginTop:14,padding:10,background:"rgba(255,184,0,.04)",borderRadius:10,border:"1px solid rgba(255,184,0,.08)",fontSize:12,color:B.muted}}>
-              🎖 Your perks: <span style={{color:"#FFB800",fontWeight:600}}>{lv.bonus}% bonus on offers</span>
-              {lv.idx>=3?" · Priority support":""}
-              {lv.idx>=4?" · Exclusive high-value offers":""}
-              {lv.idx>=5?" · Zero cashout fees · VIP Discord":""}
-            </div>
-          </div>
-
-          {/* 7-Day Streak — Candy Crush-style escalating daily rewards */}
-          <div className="card au" style={{padding:22,marginBottom:20,animationDelay:".1s"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-              <h3 style={{fontSize:15,fontWeight:700}}>🔥 7-Day Streak Challenge</h3>
-              {streak>=7&&!bonusClaimed&&<span className="ap" style={{fontSize:11,color:B.gold,fontWeight:700}}>BONUS READY!</span>}
-            </div>
-            <div style={{display:"flex",gap:6}}>
-              {[1,2,3,4,5,6,7].map(d=>{
-                const streakDay = streak%7||(streak>0?7:0);
-                const done = d <= streakDay;
-                const isToday = d === streakDay;
-                const isNext = d === streakDay+1;
-                // Escalating rewards — each day is worth more (commitment escalation like Candy Crush daily rewards)
-                const dayReward = d===7?'JACKPOT':`+${[50,100,150,200,300,400,0][d-1]}`;
-                return (
-                  <div key={d} style={{
-                    flex:1,textAlign:"center",padding:"10px 2px",borderRadius:10,transition:"all .2s",
-                    background:done?"rgba(1,214,118,.08)":isNext?"rgba(255,184,0,.04)":"rgba(255,255,255,.02)",
-                    border:isToday?`2px solid ${B.money}`:isNext?`2px dashed rgba(255,184,0,.3)`:`1px solid rgba(255,255,255,.04)`,
-                    transform:isToday?"scale(1.05)":"scale(1)",
-                  }}>
-                    <div style={{fontSize:9,color:B.muted,marginBottom:3}}>Day {d}</div>
-                    <div style={{fontSize:d===7?22:18,transition:"all .2s"}}>{done?"✅":d===7?"🎁":isNext?"⭐":"⬜"}</div>
-                    <div style={{fontSize:9,color:done?B.ok:d===7?B.gold:B.dim,fontWeight:700,marginTop:2}}>{dayReward}</div>
-                  </div>
-                );
-              })}
-            </div>
-            {/* Streak bonus claim — dramatic reveal */}
-            {streak%7===0 && streak>0 && !bonusClaimed && bonusPhase==='idle' && (
-              <button className="btn-primary ap" onClick={claimStreak} style={{width:"100%",marginTop:14,padding:13}}>
-                🎁 Claim 7-Day Streak Bonus — Up to 2,000 Coins!
-              </button>
-            )}
-            {bonusPhase==='opening' && (
-              <div className="ashake" style={{marginTop:14,padding:16,background:"rgba(255,184,0,.06)",border:"2px solid rgba(255,184,0,.3)",borderRadius:12,textAlign:"center"}}>
-                <div style={{fontSize:32}}>🎁</div>
-                <div style={{fontSize:13,color:B.gold,fontWeight:700}}>Opening bonus...</div>
-              </div>
-            )}
-            {bonusPhase==='revealed' && (
-              <div className="abounce" style={{marginTop:14,padding:16,background:"rgba(1,214,118,.06)",border:"2px solid rgba(1,214,118,.25)",borderRadius:12,textAlign:"center",position:"relative",overflow:"hidden"}}>
-                {confettiParts.map(p=>(
-                  <div key={p.id} style={{position:"absolute",left:`${p.left}%`,top:"50%",width:p.size,height:p.size,borderRadius:"50%",background:p.color,animation:`confetti ${p.dur}s ease-out ${p.delay}s both`,pointerEvents:"none"}}/>
-                ))}
-                <div style={{fontSize:28,fontWeight:900,fontFamily:"'Poppins'",color:B.money}}>{fmt(bonusAmt)} coins!</div>
-                <div style={{fontSize:12,color:B.muted,marginTop:2}}>{bonusAmt>=1000?"🔥 JACKPOT!":"Nice!"} Keep your streak alive for bigger rewards.</div>
-              </div>
-            )}
-            {bonusClaimed && bonusPhase==='idle' && (
-              <div style={{marginTop:10,padding:8,textAlign:"center",fontSize:11,color:B.muted}}>
-                ✅ Streak bonus claimed this cycle — keep logging in daily!
-              </div>
-            )}
-          </div>
-
-          {/* Earnings Chart */}
-          <div className="card au" style={{padding:22,animationDelay:".15s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>📈 Earnings This Week</h3>
-            <div style={{display:"flex",alignItems:"flex-end",gap:8,height:120}}>
-              {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((day,i)=>{
-                const heights = [45,62,38,78,55,90,72];
-                const isToday = i===new Date().getDay()-1;
-                return (
-                  <div key={day} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-                    <div style={{
-                      width:"100%",height:heights[i],borderRadius:6,
-                      background:isToday?B.gradOk:i<=new Date().getDay()-1?"rgba(1,214,118,.15)":"rgba(1,214,118,.08)",
-                      transition:"all .3s",cursor:"pointer",
-                    }}
-                    onMouseEnter={e=>e.currentTarget.style.opacity=".8"}
-                    onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-                    />
-                    <span style={{fontSize:10,color:isToday?B.ok:B.muted,fontWeight:isToday?700:400}}>{day}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT */}
-        <div>
-          {/* ─── DAILY SPIN — Near-miss psychology + confetti celebration ─── */}
-          <div className="card au" style={{
-            padding:22,marginBottom:20,textAlign:"center",position:"relative",overflow:"hidden",
-            border:!spinUsed?"2px solid rgba(255,184,0,.3)":"1px solid rgba(245,158,11,.1)",
-            background:!spinUsed?"linear-gradient(135deg,rgba(255,184,0,.06),rgba(255,45,120,.03))":"transparent",
-            animationDelay:".08s",
-          }}>
-            {/* Confetti layer */}
-            {confettiParts.map(p=>(
-              <div key={p.id} style={{position:"absolute",left:`${p.left}%`,top:"50%",width:p.size,height:p.size,borderRadius:p.size>9?"50%":"2px",background:p.color,animation:`confetti ${p.dur}s ease-out ${p.delay}s both`,pointerEvents:"none",zIndex:10}}/>
-            ))}
-
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>🎰 Daily Spin</h3>
-            <p style={{fontSize:11,color:B.dim,marginBottom:12}}>Complete offers for 1,000+ coins to unlock your daily spin</p>
-
-            {/* Spin wheel */}
-            <div style={{
-              width:140,height:140,borderRadius:"50%",margin:"12px auto 16px",
-              background:`conic-gradient(
-                ${B.gold} 0deg, ${B.gold} 30deg,
-                ${B.ok} 30deg, ${B.ok} 75deg,
-                #60A5FA 75deg, #60A5FA 120deg,
-                ${B.accent} 120deg, ${B.accent} 165deg,
-                ${B.hot} 165deg, ${B.hot} 210deg,
-                #EC4899 210deg, #EC4899 255deg,
-                ${B.ok} 255deg, ${B.ok} 300deg,
-                ${B.gold} 300deg, ${B.gold} 360deg
-              )`,
-              display:"flex",alignItems:"center",justifyContent:"center",
-              animation:spinning?"spinWheel 3s cubic-bezier(.2,.8,.3,1) forwards":"none",
-              transition:"all .3s",
-              boxShadow:!spinUsed?"0 0 30px rgba(255,184,0,.15)":"none",
-            }}>
-              <div style={{width:94,height:94,borderRadius:"50%",background:B.card,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",fontWeight:800,border:"3px solid rgba(255,255,255,.08)"}}>
-                {spinPhase==='nearMiss' ? (
-                  <div style={{color:B.gold,fontSize:14,animation:"shakeX .3s ease-in-out"}}>
-                    <div style={{fontSize:10,color:B.muted}}>So close!</div>
-                    {fmt(nearMissAmt)}🪙
-                  </div>
-                ) : spinResult ? (
-                  <span className="abounce" style={{color:B.gold,fontSize:16}}>{fmt(spinResult)}🪙</span>
-                ) : (
-                  <span style={{fontSize:28}}>{spinning?"⏳":"🎯"}</span>
-                )}
-              </div>
-            </div>
-
-            {/* Spin states */}
-            {!spinUsed && !spinning && spinPhase==='idle' && (
-              <button className="btn-primary ap" onClick={spin} style={{width:"100%",padding:12,fontSize:14}}>
-                Spin to Win!
-              </button>
-            )}
-            {spinning && spinPhase==='spinning' && (
-              <div style={{padding:10,fontSize:13,color:B.gold,fontWeight:600}}>Spinning...</div>
-            )}
-            {spinPhase==='result' && (
-              <div className="abounce" style={{padding:12,background:"rgba(1,214,118,.06)",borderRadius:10,border:"1px solid rgba(1,214,118,.15)"}}>
-                <div style={{fontSize:18,fontWeight:900,color:B.money,fontFamily:"'Poppins'"}}>{fmt(spinResult)} coins won!</div>
-                <div style={{fontSize:11,color:B.muted,marginTop:2}}>Added to your balance</div>
-              </div>
-            )}
-            {(spinPhase==='celebrated' || (spinUsed && spinPhase==='idle')) && (
-              <div style={{padding:10,fontSize:12,color:B.muted}}>
-                Come back tomorrow for another spin!
-              </div>
-            )}
-          </div>
-
-          {/* Quick Earn — sorted by reward amount to emphasize value */}
-          <div className="card au" style={{padding:22,marginBottom:20,animationDelay:".12s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>⚡ Quick Earn</h3>
-            {[
-              {ic:"🤝",l:"Refer a Friend",c:"+$0.50 + 5% forever",t:"1 min",hot:true},
-              {ic:"📱",l:"Try New App",c:"+$3.00",t:"10 min",hot:false},
-              {ic:"📋",l:"Quick Survey",c:"+$1.50",t:"5 min",hot:false},
-              {ic:"📺",l:"Watch Videos",c:"+$0.80",t:"6 min",hot:false},
-              {ic:"🧠",l:"Daily Trivia",c:"+$0.60",t:"2 min",hot:false},
-              {ic:"🔍",l:"Search & Earn",c:"+$0.05",t:"Per search",hot:false},
-            ].map((a,i)=>(
-              <div key={i} style={{
-                display:"flex",alignItems:"center",justifyContent:"space-between",
-                padding:"10px 12px",borderRadius:10,marginBottom:6,cursor:"pointer",
-                background:a.hot?"rgba(255,107,53,.04)":"rgba(255,255,255,.02)",transition:"all .15s",
-                border:a.hot?"1px solid rgba(255,107,53,.12)":"1px solid transparent",
-              }}
-                onClick={()=>setPg("earn")}
-                onMouseEnter={e=>{e.currentTarget.style.background=a.hot?"rgba(255,107,53,.08)":"rgba(1,214,118,.08)";e.currentTarget.style.transform="translateX(4px)"}}
-                onMouseLeave={e=>{e.currentTarget.style.background=a.hot?"rgba(255,107,53,.04)":"rgba(255,255,255,.02)";e.currentTarget.style.transform="translateX(0)"}}
-              >
-                <div style={{display:"flex",alignItems:"center",gap:10}}>
-                  <span style={{fontSize:18}}>{a.ic}</span>
-                  <div>
-                    <div style={{fontSize:13,fontWeight:600}}>{a.l} {a.hot&&<span style={{fontSize:10,color:B.hot,fontWeight:800}}>HOT</span>}</div>
-                    <div style={{fontSize:10,color:B.muted}}>{a.t}</div>
-                  </div>
-                </div>
-                <span style={{fontSize:13,fontWeight:700,color:a.hot?B.hot:B.ok}}>{a.c}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Referral Nudge — full card lives on Profile */}
-          <div className="card au" style={{padding:16,background:"linear-gradient(135deg,rgba(236,72,153,.04),rgba(1,214,118,.04))",border:"1px solid rgba(236,72,153,.1)",animationDelay:".16s",textAlign:"center"}}>
-            <p style={{fontSize:12,color:B.muted,margin:0}}>💡 Earn <strong style={{color:"#EC4899"}}>$0.50 + 5% of their earnings</strong> per friend you refer — grab your link on your <strong onClick={()=>setPg("profile")} style={{color:B.accentL,cursor:"pointer",textDecoration:"underline",textDecorationStyle:"dotted"}}>Profile page</strong></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ═══════════════════════════════════════════════════════════════
-//  PAGE: EARN — Real Offerwall Integration
-// ═══════════════════════════════════════════════════════════════
-// Each offerwall loads via iframe with the user's ID passed as a param.
-// Offerwalls fire server-to-server postbacks to /api/postback when
-// users complete offers. Coins are credited automatically.
-//
-// SETUP: For each wall, create an account and plug your API key / secret
-// into Vercel env vars. Set the postback URL in each wall's dashboard to:
-//   https://YOUR-DOMAIN.com/api/postback?wall=WALL_NAME&user_id={user_id}&amount={points}&txn_id={transaction_id}&offer_id={offer_id}&offer_name={offer_name}&revenue={payout}&secret=YOUR_SECRET
-//
-// Walls that are not configured yet show a placeholder card instead of iframe.
-
-// Offerwall config — reads NEXT_PUBLIC_* env vars at build time.
-// When you plug in a real key, the wall auto-activates (no code changes needed).
-// Next.js requires direct process.env.NEXT_PUBLIC_* references for build-time inlining
-// (dynamic lookup via process.env[key] does NOT work in client components)
 const OFFERWALLS = [
   {
-    id: "adgate",  name: "AdGate Media", icon: "🛡️", color: "#3B82F6",
+    id: "adgate",  name: "AdGate Media", color: "#3B82F6",
     desc: "Premium offers, surveys & app installs",
     key: process.env.NEXT_PUBLIC_ADGATE_WALL_CODE || "",
     iframeUrl: (uid, k) => `https://wall.adgatemedia.com/${k}/${uid}`,
   },
   {
-    id: "adgem",  name: "AdGem", icon: "💎", color: "#8B5CF6",
+    id: "adgem",  name: "AdGem", color: "#8B5CF6",
     desc: "High-converting games & app offers",
     key: process.env.NEXT_PUBLIC_ADGEM_APP_ID || "",
     iframeUrl: (uid, k) => `https://api.adgem.com/v1/wall?appid=${k}&playerid=${uid}`,
   },
   {
-    id: "offertoro", name: "OfferToro", icon: "🐂", color: "#FF6B35",
+    id: "offertoro", name: "OfferToro", color: "#FF6B35",
     desc: "Global offers with high payouts",
     key: process.env.NEXT_PUBLIC_OFFERTORO_PUB_ID || "",
     key2: process.env.NEXT_PUBLIC_OFFERTORO_APP_ID || "",
     iframeUrl: (uid, k, k2) => `https://www.offertoro.com/ifr/show/${k}/${k2||"1"}/${uid}/0`,
   },
   {
-    id: "lootably", name: "Lootably", icon: "🎁", color: "#00D26A",
+    id: "lootably", name: "Lootably", color: "#00D26A",
     desc: "Rewarded surveys & video offers",
     key: process.env.NEXT_PUBLIC_LOOTABLY_PLACEMENT || "",
     iframeUrl: (uid, k) => `https://wall.lootably.com/?placementID=${k}&sid=${uid}`,
   },
   {
-    id: "ayet", name: "Ayet Studios", icon: "🎮", color: "#A855F7",
+    id: "ayet", name: "Ayet Studios", color: "#A855F7",
     desc: "Top mobile game offers",
     key: process.env.NEXT_PUBLIC_AYET_APP_KEY || "",
     iframeUrl: (uid, k) => `https://www.ayetstudios.com/offers/web_offerwall/${k}?external_identifier=${uid}`,
   },
   {
-    id: "cpxresearch", name: "CPX Research", icon: "📊", color: "#FF9F1C",
+    id: "cpxresearch", name: "CPX Research", color: "#FF9F1C",
     desc: "Paid surveys from top researchers",
     key: process.env.NEXT_PUBLIC_CPX_APP_ID || "",
     iframeUrl: (uid, k) => `https://offers.cpx-research.com/index.php?app_id=${k}&ext_user_id=${uid}`,
   },
   {
-    id: "bitlabs", name: "BitLabs", icon: "🧪", color: "#00E5FF",
+    id: "bitlabs", name: "BitLabs", color: "#00E5FF",
     desc: "Surveys & offers with instant credit",
     key: process.env.NEXT_PUBLIC_BITLABS_TOKEN || "",
     iframeUrl: (uid, k) => `https://web.bitlabs.ai/?uid=${uid}&token=${k}`,
   },
   {
-    id: "theoremreach", name: "TheoremReach", icon: "📋", color: "#FF2D78",
+    id: "theoremreach", name: "TheoremReach", color: "#FF2D78",
     desc: "Quick surveys, paid instantly",
     key: process.env.NEXT_PUBLIC_THEOREMREACH_KEY || "",
     iframeUrl: (uid, k) => `https://theoremreach.com/respondent_entry/direct?api_key=${k}&user_id=${uid}`,
   },
   {
-    id: "revenueuniverse", name: "Revenue Universe", icon: "🌐", color: "#FFB800",
+    id: "revenueuniverse", name: "Revenue Universe", color: "#FFB800",
     desc: "Diverse offers from top advertisers",
     key: process.env.NEXT_PUBLIC_RU_APP_HASH || "",
     iframeUrl: (uid, k) => `https://wall.revenueuniverse.com/wall/${k}?uid=${uid}`,
   },
   {
-    id: "pollfish", name: "Pollfish", icon: "📝", color: "#4ADE80",
+    id: "pollfish", name: "Pollfish", color: "#4ADE80",
     desc: "Market research surveys",
     key: process.env.NEXT_PUBLIC_POLLFISH_KEY || "",
     iframeUrl: (uid, k) => `https://wss.pollfish.com/v2/device/register/true?api_key=${k}&request_uuid=${uid}`,
   },
   {
-    id: "torox", name: "Torox", icon: "⚡", color: "#FF3B30",
+    id: "torox", name: "Torox", color: "#FF3B30",
     desc: "Performance-based CPI offers",
     key: process.env.NEXT_PUBLIC_TOROX_PUB_ID || "",
     iframeUrl: (uid, k) => `https://torfrnt.com/offerwall?pubid=${k}&sid=${uid}`,
   },
   {
-    id: "tyrads", name: "TyrAds", icon: "🏹", color: "#6366F1",
+    id: "tyrads", name: "TyrAds", color: "#6366F1",
     desc: "Premium mobile CPI campaigns",
     key: process.env.NEXT_PUBLIC_TYRADS_KEY || "",
     iframeUrl: (uid, k) => `https://www.tyrads.com/api/v1/offerwall?apiKey=${k}&userId=${uid}`,
   },
 ];
 
-const Earn = ({onEarn, user}) => {
+// ═══════════════════════════════════════════════════════════════
+//  PAGE: EARN (Browse Offers)
+// ═══════════════════════════════════════════════════════════════
+const Earn = ({onEarn, user, setPg, onLogin}) => {
   const [activeWall, setActiveWall] = useState(null);
   const [comingSoonWall, setComingSoonWall] = useState(null);
-  const [tab, setTab] = useState("featured"); // "featured" (offerwalls hidden until configured)
-  const [cat,setCat] = useState("featured");
-  const [sort,setSort] = useState("pop");
-  const [search,setSearch] = useState("");
+  const [cat, setCat] = useState("featured");
+  const [sort, setSort] = useState("pop");
+  const [search, setSearch] = useState("");
   const uid = user?.id || "demo";
 
-  const filtered = useMemo(()=>{
+  const filtered = useMemo(() => {
     return OFFERS
-      .filter(o=>cat==="featured"?o.hot:o.cat===cat)
-      .filter(o=>!search||o.t.toLowerCase().includes(search.toLowerCase()))
-      .sort((a,b)=>sort==="pop"?b.pop-a.pop:sort==="pay"?b.coins-a.coins:b.rate-a.rate);
-  },[cat,sort,search]);
+      .filter(o => cat === "featured" ? o.hot : cat === "all" ? true : o.cat === cat)
+      .filter(o => !search || o.t.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => sort === "pop" ? b.pop - a.pop : sort === "pay" ? b.coins - a.coins : b.rate - a.rate);
+  }, [cat, sort, search]);
 
-  // Wall is configured if its env var key is set to something real (not placeholder)
   const isConfigured = (wall) => {
     const k = wall.key;
     return k && k.length > 3 && !k.startsWith("your-");
   };
 
-  // Find the matching offerwall for an offer's "wall" field
   const findWall = (wallName) => OFFERWALLS.find(w =>
     w.name.toLowerCase() === wallName.toLowerCase() ||
     w.name.toLowerCase().includes(wallName.toLowerCase()) ||
     wallName.toLowerCase().includes(w.name.toLowerCase())
   );
 
-  // When user clicks an offer, open the corresponding offerwall
   const handleOfferStart = (offer) => {
+    if (!user) { if(onLogin) onLogin(); return; }
     if (offer.wall === "PocketLined" || offer.wall === "Direct") {
       onEarn(offer.coins);
       return;
@@ -1355,32 +829,27 @@ const Earn = ({onEarn, user}) => {
   };
 
   return (
-    <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
-      {/* Coming Soon Toast */}
+    <div style={{maxWidth:1200, margin:"0 auto", padding:"40px 32px"}}>
       {comingSoonWall && (
-        <div className="au" style={{position:"fixed",top:80,right:20,zIndex:9999,padding:"14px 24px",borderRadius:12,background:"rgba(255,159,28,.15)",border:"1px solid rgba(255,159,28,.3)",backdropFilter:"blur(20px)",color:B.warn,fontWeight:600,fontSize:14}}>
-          ⏳ {comingSoonWall} is coming soon! Try other offers.
+        <div className="au" style={{position:"fixed",top:80,right:20,zIndex:9999,padding:"14px 24px",borderRadius:12,background:"rgba(255,159,28,.15)",border:"1px solid rgba(255,159,28,.3)",backdropFilter:"blur(20px)",color:B.warn,fontWeight:600,fontSize:14,display:"flex",alignItems:"center",gap:8}}>
+          {Icon.clock(16,B.warn)} {comingSoonWall} is coming soon!
         </div>
       )}
-      <div className="au" style={{marginBottom:24}}>
-        <h1 style={{fontFamily:"'Poppins'",fontSize:26,fontWeight:800}}>Earn Coins 💰</h1>
-        <p style={{color:B.muted,fontSize:14}}>Complete offers, surveys, and app installs to earn real coins</p>
-      </div>
 
-      {/* ─── ACTIVE OFFERWALL IFRAME ─── */}
       {activeWall ? (
         <div>
-          <button onClick={()=>setActiveWall(null)} style={{
+          <button onClick={() => setActiveWall(null)} style={{
             display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:B.accentL,
             fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:16,padding:0,
-          }}>← Back to offers</button>
-
-          <div className="card" style={{overflow:"hidden",border:`1px solid ${activeWall.color}30`}}>
+          }}>{Icon.arrowRight(16,B.accentL)} Back to offers</button>
+          <div className="card" style={{overflow:"hidden",border:`2px solid ${activeWall.color}30`}}>
             <div style={{padding:"14px 20px",display:"flex",alignItems:"center",gap:12,borderBottom:`1px solid ${B.border}`,background:`linear-gradient(135deg,${activeWall.color}08,transparent)`}}>
-              <span style={{fontSize:22}}>{activeWall.icon}</span>
+              <div style={{width:32,height:32,borderRadius:6,background:activeWall.color,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                {Icon.earn(18,"#fff")}
+              </div>
               <div>
                 <div style={{fontSize:15,fontWeight:700}}>{activeWall.name}</div>
-                <div style={{fontSize:11,color:B.muted}}>Coins are credited automatically when you complete offers</div>
+                <div style={{fontSize:11,color:B.muted}}>Coins credited automatically on completion</div>
               </div>
             </div>
             <iframe
@@ -1394,47 +863,40 @@ const Earn = ({onEarn, user}) => {
         </div>
       ) : (
       <>
-        {/* AI Recommendation */}
-          <div className="card au" style={{padding:"16px 22px",marginBottom:22,display:"flex",alignItems:"center",justifyContent:"space-between",background:"linear-gradient(135deg,rgba(1,214,118,.08),rgba(96,165,250,.08))",border:"1px solid rgba(1,214,118,.15)"}}>
-            <div>
-              <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>🤖 Smart Pick for You</div>
-              <div style={{fontSize:12,color:B.muted}}>Based on your profile: <strong style={{color:B.txt}}>Cash App signup ($25.00)</strong> — 5 min, 94% success rate</div>
-            </div>
-            <button className="btn-primary" style={{padding:"10px 20px",fontSize:13,whiteSpace:"nowrap"}}>Start Now →</button>
-          </div>
-
-          {/* Search + Sort */}
+        <div style={{marginBottom:32}}>
+          <h1 style={{fontSize:32,fontWeight:800,marginBottom:24,color:B.txt}}>Earn</h1>
           <div style={{display:"flex",gap:10,marginBottom:20,flexWrap:"wrap"}}>
             <div style={{flex:1,minWidth:200,position:"relative"}}>
-              <input placeholder="Search thousands of offers..." value={search} onChange={e=>setSearch(e.target.value)}
-                style={{width:"100%",padding:"11px 16px 11px 38px",background:B.card,border:`1px solid ${B.border}`,borderRadius:12,color:B.txt,fontSize:14}}/>
-              <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:15}}>🔍</span>
+              <input placeholder="Search offers..." value={search} onChange={e => setSearch(e.target.value)}
+                style={{width:"100%",padding:"12px 14px 12px 40px",borderRadius:8,border:`1px solid ${B.border}`,background:B.card,color:B.txt,fontSize:14}}/>
+              <div style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)"}}>
+                {Icon.search(18,B.muted)}
+              </div>
             </div>
-            <select value={sort} onChange={e=>setSort(e.target.value)}
-              style={{padding:"11px 16px",background:B.card,border:`1px solid ${B.border}`,borderRadius:12,color:B.txt,fontSize:14,cursor:"pointer"}}>
-              <option value="pop">🔥 Most Popular</option>
-              <option value="pay">💰 Highest Paying</option>
-              <option value="easy">✅ Easiest First</option>
+            <select value={sort} onChange={e => setSort(e.target.value)}
+              style={{padding:"12px 16px",background:B.card,border:`1px solid ${B.border}`,borderRadius:8,color:B.txt,fontSize:13,cursor:"pointer"}}>
+              <option value="pop">Most Popular</option>
+              <option value="pay">Highest Paying</option>
+              <option value="easy">Easiest First</option>
             </select>
           </div>
-
-          {/* Categories */}
-          <div style={{display:"flex",gap:6,marginBottom:22,overflowX:"auto",paddingBottom:6}}>
-            {CATS.map(c=>(
-              <button key={c.id} onClick={()=>setCat(c.id)} style={{
-                padding:"9px 16px",borderRadius:10,whiteSpace:"nowrap",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .15s",
-                background:cat===c.id?`${c.c}12`:"rgba(255,255,255,.02)",
-                border:cat===c.id?`1px solid ${c.c}40`:"1px solid rgba(255,255,255,.04)",
-                color:cat===c.id?c.c:B.muted,
+          <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:8}}>
+            {[{id:"all",n:"All",c:B.accent},{id:"featured",n:"Featured",c:"#FFB800"},...CATS].map(c => (
+              <button key={c.id} onClick={() => setCat(c.id)} style={{
+                padding:"8px 16px",borderRadius:20,whiteSpace:"nowrap",fontSize:13,fontWeight:cat===c.id?600:500,cursor:"pointer",transition:"all .15s",
+                background:cat===c.id?`${c.c||B.accent}20`:"transparent",
+                border:`2px solid ${cat===c.id?(c.c||B.accent):B.border}`,
+                color:cat===c.id?(c.c||B.accent):B.muted,
               }}>{c.n}</button>
             ))}
           </div>
-
-          {/* Offers Grid */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
-            {filtered.map((o,i)=><OfferCard key={o.id} o={o} onEarn={onEarn} onStart={handleOfferStart} delay={i*.04}/>)}
-          </div>
-          {filtered.length===0&&<div style={{textAlign:"center",padding:60,color:B.muted}}>No offers match your search. Try a different category.</div>}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(280px, 1fr))",gap:20}}>
+          {filtered.map((o,i) => <OfferCard key={o.id} o={o} onEarn={onEarn} onStart={handleOfferStart} delay={i*0.02}/>)}
+        </div>
+        {filtered.length===0 && <div style={{textAlign:"center",padding:"60px 20px",color:B.muted}}>
+          <p style={{fontSize:16}}>No offers match your search</p>
+        </div>}
       </>
       )}
     </div>
@@ -1442,408 +904,48 @@ const Earn = ({onEarn, user}) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  PAGE: PROFILE
+//  PAGE: DASHBOARD (Personal Stats)
 // ═══════════════════════════════════════════════════════════════
-const Profile = ({coins,streak,today,week,user}) => {
+const Dashboard = ({user, coins, streak}) => {
   const lv = getLevel(coins);
-  const prog = pct(coins);
-  const nxt = LEVELS[lv.idx+1];
-  const totalEarned = user ? (user.lifetime_earned || coins) : (coins + 42300);
-  const totalWithdrawn = totalEarned - coins;
-  const withdrawCount = user ? (user.withdrawCount || 0) : 0;
-  const referrals = user ? (user.referralCount || 0) : 12;
-  const referralEarnings = user ? (user.referralEarnings || 0) : 18640;
-  const displayName = user ? (user.username || 'User') : 'Andrew';
-  const memberSince = user && user.created_at ? (() => {
-    try { return new Date(user.created_at).toLocaleDateString('en-US', {month:'long', year:'numeric'}); }
-    catch(e) { return 'March 2026'; }
-  })() : 'March 2026';
+  const [tabs, setTabs] = useState("overview");
 
   return (
-    <div style={{maxWidth:900,margin:"0 auto",padding:"28px 24px"}}>
-      {/* Profile Header */}
-      <div className="card au" style={{padding:28,marginBottom:24,display:"flex",gap:24,alignItems:"center"}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,fontWeight:800,border:`3px solid ${lv.c}`,flexShrink:0}}>{displayName[0].toUpperCase()}</div>
-        <div style={{flex:1}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
-            <h1 style={{fontFamily:"'Poppins'",fontSize:24,fontWeight:800}}>{displayName}</h1>
-            <div className="chip" style={{background:`${lv.c}15`,border:`1px solid ${lv.c}30`,color:lv.c,fontSize:12}}>{lv.icon} {lv.n}</div>
-            {streak>=7&&<div className="chip" style={{background:"rgba(255,107,53,.08)",border:"1px solid rgba(255,107,53,.2)",color:"#FF6B35",fontSize:12}}>🔥 {streak} day streak</div>}
-          </div>
-          <p style={{fontSize:13,color:B.muted}}>Member since {memberSince}</p>
-          <div style={{marginTop:10}}>
-            <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:B.muted,marginBottom:4}}>
-              <span>{lv.icon} {lv.n}</span>
-              {nxt&&<span>{nxt.icon} {nxt.n} — {fmt(nxt.min - coins)} coins to go</span>}
-            </div>
-            <div style={{background:"rgba(1,214,118,.08)",borderRadius:10,height:8,overflow:"hidden"}}>
-              <div className="progress-bar" style={{width:`${prog}%`,background:B.grad}}/>
-            </div>
-          </div>
+    <div style={{padding:"40px 32px",maxWidth:1200,margin:"0 auto"}}>
+      <h1 style={{fontSize:28,fontWeight:800,marginBottom:8,color:B.txt}}>Welcome back, {user?.username}</h1>
+      <p style={{fontSize:14,color:B.muted,marginBottom:32}}>Here's your earning snapshot</p>
+
+      {/* Quick Stats */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))",gap:16,marginBottom:40}}>
+        <Stat label="Total Earned" value={\`\$\${toUSD(coins)}\`} grad={B.gradOk} delay={0} />
+        <Stat label="Current Level" value={lv.n} sub={\`\${lv.bonus}% bonus\`} grad={B.gradGold} delay={0.1} />
+        <Stat label="Active Streak" value={\`\${streak} days\`} grad={B.gradHot} delay={0.2} />
+        <Stat label="Available Balance" value={\`\$\${toUSD(coins)}\`} grad={B.gradFomo} delay={0.3} />
+      </div>
+
+      {/* Streak Tracker */}
+      <div className="card au" style={{padding:24,marginBottom:32}}>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
+          {Icon.fire(20,"#FF6B35")}
+          <h2 style={{fontSize:18,fontWeight:700,color:B.txt}}>Your {streak}-Day Streak</h2>
         </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:24}}>
-        <Stat label="Current Balance" value={<>${toUSD(coins)}</>} sub={`${fmt(coins)} coins`} grad={B.grad} delay={0}/>
-        <Stat label="Lifetime Earned" value={<>${toUSD(totalEarned)}</>} sub={`${fmt(totalEarned)} coins`} grad={B.gradOk} delay={.05}/>
-        <Stat label="Total Withdrawn" value={<>${toUSD(totalWithdrawn)}</>} sub={`${withdrawCount || 0} withdrawals`} grad={B.gradGold} delay={.1}/>
-        <Stat label="Referral Earnings" value={<>${toUSD(referralEarnings)}</>} sub={`${referrals} referrals`} grad={B.gradHot} delay={.15}/>
-      </div>
-
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
-        {/* Activity History */}
-        <div className="card au" style={{padding:22,animationDelay:".1s"}}>
-          <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>📋 Recent Activity</h3>
-          {[
-            {t:"Completed Cash App offer",c:"+25,000",time:"2 hours ago",ic:"💸",col:B.ok},
-            {t:"Quick Survey — 12 questions",c:"+3,500",time:"3 hours ago",ic:"📊",col:B.ok},
-            {t:"Withdrew $42.30 via PayPal",c:"-42,300",time:"Yesterday",ic:"💳",col:B.hot},
-            {t:"7-day streak bonus",c:"+1,200",time:"Yesterday",ic:"🔥",col:B.ok},
-            {t:"Daily spin reward",c:"+2,000",time:"Yesterday",ic:"🎰",col:B.ok},
-            {t:"Watched 5 videos",c:"+900",time:"2 days ago",ic:"📺",col:B.ok},
-            {t:"Referred Alex K.",c:"+500",time:"3 days ago",ic:"👥",col:B.ok},
-          ].map((a,i)=>(
-            <div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 0",borderBottom:i<6?`1px solid rgba(255,255,255,.03)`:"none"}}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:18}}>{a.ic}</span>
-                <div>
-                  <div style={{fontSize:13,fontWeight:500}}>{a.t}</div>
-                  <div style={{fontSize:11,color:B.muted}}>{a.time}</div>
-                </div>
-              </div>
-              <span style={{fontSize:13,fontWeight:700,color:a.col}}>{a.c}</span>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(28px, 1fr))",gap:6,maxWidth:400}}>
+          {Array.from({length:30}).map((_,i)=>(
+            <div key={i} style={{width:"100%",paddingBottom:"100%",position:"relative"}}>
+              <div style={{position:"absolute",inset:0,borderRadius:4,background:i<streak?B.accent:"rgba(255,255,255,.06)",border:\`1px solid \${i<streak?"transparent":B.border}\`}}/>
             </div>
           ))}
         </div>
-
-        {/* Right: Referrals + Settings */}
-        <div>
-          {/* Referral Program */}
-          <div className="card au" style={{padding:22,marginBottom:16,background:"linear-gradient(135deg,rgba(236,72,153,.04),rgba(1,214,118,.04))",border:"1px solid rgba(236,72,153,.12)",animationDelay:".12s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:6}}>👥 Your Referral Link</h3>
-            <p style={{fontSize:12,color:B.muted,marginBottom:12}}>Earn <strong style={{color:"#EC4899"}}>$0.50 per referral</strong> + 5% of their offerwall earnings. Forever.</p>
-            <div style={{background:"rgba(0,0,0,.25)",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-              <code style={{fontSize:12,color:B.accentL}}>pocketlined.com/ref/andrew</code>
-              <button style={{background:B.grad,border:"none",padding:"6px 14px",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>Copy</button>
-            </div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-              <div style={{padding:12,background:"rgba(0,0,0,.15)",borderRadius:10,textAlign:"center"}}>
-                <div style={{fontSize:18,fontWeight:800,fontFamily:"'Poppins'",color:B.accentL}}>{referrals}</div>
-                <div style={{fontSize:11,color:B.muted}}>Referrals</div>
-              </div>
-              <div style={{padding:12,background:"rgba(0,0,0,.15)",borderRadius:10,textAlign:"center"}}>
-                <div style={{fontSize:18,fontWeight:800,fontFamily:"'Poppins'",color:B.ok}}>${toUSD(referralEarnings)}</div>
-                <div style={{fontSize:11,color:B.muted}}>Earned</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Achievements */}
-          <div className="card au" style={{padding:22,marginBottom:16,animationDelay:".16s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>🏅 Achievements</h3>
-            {[
-              {ic:"🌟",t:"First Cashout",d:"Withdrew for the first time",done:true},
-              {ic:"🔥",t:"Week Warrior",d:"7-day streak achieved",done:true},
-              {ic:"💰",t:"$100 Club",d:"Earned $100+ lifetime",done:false},
-              {ic:"👥",t:"Team Builder",d:"Referred 10+ friends",done:true},
-              {ic:"🏆",t:"Top 100",d:"Reach the leaderboard Top 100",done:false},
-            ].map((a,i)=>(
-              <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",opacity:a.done?1:.45,borderBottom:i<4?`1px solid rgba(255,255,255,.03)`:"none"}}>
-                <span style={{fontSize:20}}>{a.ic}</span>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:13,fontWeight:600}}>{a.t}</div>
-                  <div style={{fontSize:11,color:B.muted}}>{a.d}</div>
-                </div>
-                {a.done&&<span style={{fontSize:14,color:B.ok}}>✅</span>}
-              </div>
-            ))}
-          </div>
-
-          {/* Account Settings */}
-          <div className="card au" style={{padding:22,animationDelay:".2s"}}>
-            <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>⚙️ Account</h3>
-            {[
-              {l:"Email",v:"andrew@email.com"},
-              {l:"PayPal",v:"Connected ✅"},
-              {l:"2FA",v:"Enabled ✅"},
-              {l:"Notifications",v:"On"},
-            ].map((s,i)=>(
-              <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<3?`1px solid rgba(255,255,255,.03)`:"none"}}>
-                <span style={{fontSize:13,color:B.muted}}>{s.l}</span>
-                <span style={{fontSize:13,fontWeight:500}}>{s.v}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ═══════════════════════════════════════════════════════════════
-//  PAGE: REWARDS / CASHOUT
-// ═══════════════════════════════════════════════════════════════
-const Rewards = ({coins, onCashout, user}) => {
-  const [sel,setSel] = useState(null);
-  const [amt,setAmt] = useState("");
-  const [dest,setDest] = useState("");
-  const [processing,setProcessing] = useState(false);
-  const [done,setDone] = useState(false);
-  const [error,setError] = useState("");
-  const [myPayouts,setMyPayouts] = useState([]);
-  const [loadingPayouts,setLoadingPayouts] = useState(true);
-
-  // Fetch user's payout history on mount
-  useEffect(()=>{
-    apiFetch('/api/payouts').then(data=>{
-      setMyPayouts(Array.isArray(data)?data:[]);
-      setLoadingPayouts(false);
-    }).catch(()=>setLoadingPayouts(false));
-  },[]);
-
-  // Destination field labels per method
-  const destLabels = {
-    paypal:"PayPal Email",venmo:"Venmo Username or Phone",cashapp:"Cash App $Cashtag",
-    btc:"Bitcoin Wallet Address",eth:"Ethereum Wallet Address",usdt:"USDT Wallet Address (TRC-20)",
-    amazon:"Email for Amazon Gift Card",visa:"Email for Visa Delivery",
-    steam:"Steam Profile URL",apple:"Apple ID Email",google:"Google Play Email",walmart:"Email for Walmart Gift Card",
-  };
-  const destPlaceholders = {
-    paypal:"you@email.com",venmo:"@username or (555) 123-4567",cashapp:"$YourCashtag",
-    btc:"bc1q...",eth:"0x...",usdt:"T...",
-    amazon:"you@email.com",visa:"you@email.com",
-    steam:"https://steamcommunity.com/id/...",apple:"you@icloud.com",google:"you@gmail.com",walmart:"you@email.com",
-  };
-
-  const selectedMethod = CASHOUTS.find(c=>c.id===sel);
-  const minCoins = selectedMethod?.min || 1000;
-  const amtNum = parseFloat(amt) || 0;
-  const coinCost = Math.round(amtNum * 1000);
-  const canAfford = coinCost >= minCoins && coinCost <= coins;
-
-  const cashout = async () => {
-    if(!sel || !amtNum || !dest.trim()){
-      setError("Please fill in all fields");
-      return;
-    }
-    if(coinCost < minCoins){
-      setError(`Minimum withdrawal is $${toUSD(minCoins)}`);
-      return;
-    }
-    if(coinCost > coins){
-      setError("Insufficient balance");
-      return;
-    }
-    setError("");
-    setProcessing(true);
-    try {
-      const res = await apiFetch('/api/payouts',{
-        method:'POST',
-        body: JSON.stringify({ method:sel, coins:coinCost, destination:dest.trim() }),
-      });
-      if(res.error){
-        setError(res.error);
-        setProcessing(false);
-        return;
-      }
-      setDone(true);
-      setProcessing(false);
-      // Refresh payouts list
-      apiFetch('/api/payouts').then(data=>setMyPayouts(Array.isArray(data)?data:[])).catch(()=>{});
-      // Notify parent to refresh user data (coin balance)
-      if(onCashout) onCashout(coinCost);
-    } catch(e) {
-      setError("Something went wrong. Please try again.");
-      setProcessing(false);
-    }
-  };
-
-  const resetForm = () => {
-    setSel(null);setAmt("");setDest("");setDone(false);setError("");
-  };
-
-  const statusColors = {pending:B.warn,completed:B.ok,rejected:B.hot};
-  const statusLabels = {pending:"⏳ Pending",completed:"✅ Paid",rejected:"❌ Rejected"};
-
-  return (
-    <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px"}}>
-      <div className="au" style={{marginBottom:24}}>
-        <h1 style={{fontFamily:"'Poppins'",fontSize:26,fontWeight:800}}>Cash Out 🎁</h1>
-        <p style={{color:B.muted,fontSize:14}}>
-          Balance: <strong style={{color:B.accentL}}>{fmt(coins)} coins</strong> (${toUSD(coins)})
-        </p>
       </div>
 
-      {/* Speed Badge */}
-      <div className="card au" style={{padding:"16px 22px",marginBottom:24,display:"flex",alignItems:"center",gap:14,background:"rgba(16,185,129,.04)",border:"1px solid rgba(16,185,129,.12)"}}>
-        <span style={{fontSize:28}}>⚡</span>
-        <div>
-          <div style={{fontWeight:700,fontSize:14,color:B.ok}}>Fast Payouts — $5 Minimum</div>
-          <div style={{fontSize:12,color:B.muted}}>PayPal, Venmo, Cash App, crypto, and gift cards. $5 minimum cashout — competitive with top GPT platforms.</div>
-        </div>
-      </div>
-
-      {/* Cashout Grid */}
-      {!done && (
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:28}}>
-          {CASHOUTS.map((c,i)=>{
-            const can=coins>=c.min;
-            const active=sel===c.id;
-            return (
-              <div key={c.id} className="card au" onClick={()=>{if(can){setSel(c.id);setDone(false);setError("");}}} style={{
-                padding:20,textAlign:"center",cursor:can?"pointer":"default",opacity:can?1:.45,
-                border:active?`2px solid ${B.accent}`:`1px solid ${B.border}`,
-                background:active?"rgba(1,214,118,.06)":B.card,
-                animationDelay:`${i*.04}s`,position:"relative",transition:"all .15s",
-              }}
-                onMouseEnter={e=>{if(can)e.currentTarget.style.transform="translateY(-3px)"}}
-                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}
-              >
-                {c.pop&&<div style={{position:"absolute",top:-7,right:-7,background:B.gradHot,padding:"2px 8px",borderRadius:8,fontSize:9,fontWeight:800,color:"#fff"}}>POPULAR</div>}
-                <div style={{fontSize:32,marginBottom:8}}>{c.ic}</div>
-                <div style={{fontWeight:700,fontSize:14,marginBottom:4}}>{c.n}</div>
-                <div style={{fontSize:11,color:B.muted}}>Min: ${toUSD(c.min)}</div>
-                <div style={{fontSize:11,color:B.ok,marginTop:2}}>{c.spd} · {c.fee} fee</div>
-                {!can&&<div style={{fontSize:10,color:B.hot,marginTop:4}}>Need {fmt(c.min - coins)} more coins</div>}
-              </div>
-            );
+      {/* Activity / Earnings Chart Placeholder */}
+      <div className="card au" style={{padding:24}}>
+        <h2 style={{fontSize:16,fontWeight:700,marginBottom:20,color:B.txt}}>This Week's Earnings</h2>
+        <div style={{height:200,background:"rgba(1,214,118,.04)",borderRadius:8,display:"flex",alignItems:"flex-end",gap:12,padding:"20px",justifyContent:"space-around"}}>
+          {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((day,i)=>{
+            const h = 30 + Math.random() * 150;
+            return <div key={day} style={{flex:1,background:B.accent,height:\`\${h}px\`,borderRadius:4,opacity:0.7+Math.random()*0.3}}title={day}/>;
           })}
-        </div>
-      )}
-
-      {/* Cashout Form */}
-      {sel&&!done&&(
-        <div className="af" style={{maxWidth:500,margin:"0 auto"}}>
-          <div className="card" style={{padding:28}}>
-            <h3 style={{fontSize:17,fontWeight:700,textAlign:"center",marginBottom:4}}>
-              Withdraw to {selectedMethod?.n} {selectedMethod?.ic}
-            </h3>
-            <p style={{textAlign:"center",fontSize:12,color:B.muted,marginBottom:20}}>
-              Available: {fmt(coins)} coins (${toUSD(coins)})
-            </p>
-
-            {/* Amount Input */}
-            <div style={{marginBottom:14}}>
-              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5}}>Amount (USD)</label>
-              <input type="number" step="0.01" min={toUSD(minCoins)} max={toUSD(coins)}
-                placeholder={`Min $${toUSD(minCoins)}`}
-                value={amt} onChange={e=>setAmt(e.target.value)}
-                style={{width:"100%",padding:13,background:"rgba(255,255,255,.03)",border:`1px solid ${B.border}`,borderRadius:10,color:B.txt,fontSize:16}}/>
-              {/* Quick amount buttons */}
-              <div style={{display:"flex",gap:6,marginTop:8}}>
-                {[1,5,10,25].filter(v=>v*1000<=coins).map(v=>(
-                  <button key={v} onClick={()=>setAmt(v.toString())} style={{
-                    flex:1,padding:"6px 0",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",
-                    background:parseFloat(amt)===v?"rgba(1,214,118,.15)":"rgba(255,255,255,.03)",
-                    border:parseFloat(amt)===v?`1px solid ${B.accent}`:`1px solid ${B.border}`,
-                    color:parseFloat(amt)===v?B.accentL:B.muted,
-                  }}>${v}</button>
-                ))}
-                <button onClick={()=>setAmt(toUSD(coins))} style={{
-                  flex:1,padding:"6px 0",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",
-                  background:"rgba(1,214,118,.06)",border:`1px solid rgba(1,214,118,.15)`,color:B.ok,
-                }}>MAX</button>
-              </div>
-            </div>
-
-            {/* Destination Input */}
-            <div style={{marginBottom:14}}>
-              <label style={{fontSize:12,color:B.muted,display:"block",marginBottom:5}}>{destLabels[sel]||"Destination"}</label>
-              <input type="text" placeholder={destPlaceholders[sel]||"Enter destination"}
-                value={dest} onChange={e=>setDest(e.target.value)}
-                style={{width:"100%",padding:13,background:"rgba(255,255,255,.03)",border:`1px solid ${B.border}`,borderRadius:10,color:B.txt,fontSize:14}}/>
-            </div>
-
-            {/* Summary */}
-            {amtNum>0&&(
-              <div style={{padding:12,background:"rgba(0,0,0,.15)",borderRadius:10,marginBottom:14,fontSize:13}}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-                  <span style={{color:B.muted}}>You send:</span>
-                  <span style={{fontWeight:700}}>{fmt(coinCost)} coins</span>
-                </div>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-                  <span style={{color:B.muted}}>Fee:</span>
-                  <span style={{fontWeight:600,color:B.ok}}>{selectedMethod?.fee||"0%"}</span>
-                </div>
-                <div style={{display:"flex",justifyContent:"space-between",borderTop:"1px solid rgba(255,255,255,.05)",paddingTop:6}}>
-                  <span style={{color:B.muted}}>You receive:</span>
-                  <span style={{fontWeight:800,color:B.money,fontSize:16}}>${amtNum.toFixed(2)}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Error */}
-            {error&&(
-              <div style={{padding:10,background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.2)",borderRadius:10,marginBottom:14,fontSize:13,color:B.hot,textAlign:"center"}}>
-                {error}
-              </div>
-            )}
-
-            <button className="btn-primary" onClick={cashout}
-              disabled={processing||!amtNum||!dest.trim()||!canAfford}
-              style={{width:"100%",padding:15,fontSize:16,opacity:(processing||!amtNum||!dest.trim()||!canAfford)?.5:1}}>
-              {processing?"⏳ Processing Withdrawal...":"Withdraw $"+(amtNum||0).toFixed(2)+" ⚡"}
-            </button>
-
-            <button onClick={resetForm} style={{
-              display:"block",margin:"12px auto 0",background:"none",border:"none",
-              color:B.muted,fontSize:12,cursor:"pointer",textDecoration:"underline",
-            }}>← Choose a different method</button>
-          </div>
-        </div>
-      )}
-
-      {/* Success State */}
-      {done&&(
-        <div className="abounce" style={{maxWidth:500,margin:"0 auto",textAlign:"center"}}>
-          <div className="card" style={{padding:36}}>
-            <div style={{fontSize:56,marginBottom:12}}>✅</div>
-            <h3 style={{fontSize:20,fontWeight:700,color:B.ok,marginBottom:8}}>Withdrawal Submitted!</h3>
-            <p style={{color:B.muted,fontSize:14,marginBottom:4}}>
-              <strong style={{color:B.txt}}>${amtNum.toFixed(2)}</strong> → {selectedMethod?.n}
-            </p>
-            <p style={{color:B.dim,fontSize:12,marginBottom:20}}>
-              Your withdrawal is being processed. Most payouts arrive within minutes.
-            </p>
-            <div style={{display:"flex",gap:10,justifyContent:"center"}}>
-              <button className="btn-primary" onClick={resetForm} style={{padding:"12px 28px",fontSize:14}}>
-                Withdraw More
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* My Withdrawal History */}
-      <div style={{marginTop:40}}>
-        <h3 style={{fontSize:17,fontWeight:700,marginBottom:14}}>Your Withdrawal History</h3>
-        <div className="card" style={{overflow:"hidden"}}>
-          {loadingPayouts ? (
-            <div style={{padding:40,textAlign:"center",color:B.muted}}>Loading...</div>
-          ) : myPayouts.length===0 ? (
-            <div style={{padding:40,textAlign:"center",color:B.muted}}>
-              <div style={{fontSize:32,marginBottom:8}}>📭</div>
-              No withdrawals yet. Make your first cashout above!
-            </div>
-          ) : (
-            myPayouts.map((p,i)=>(
-              <div key={p.id||i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"13px 20px",borderBottom:i<myPayouts.length-1?`1px solid rgba(255,255,255,.03)`:"none"}}>
-                <div style={{display:"flex",alignItems:"center",gap:10}}>
-                  <span style={{fontSize:20}}>{CASHOUTS.find(c=>c.id===p.method)?.ic||"💸"}</span>
-                  <div>
-                    <div style={{fontSize:13,fontWeight:600}}>{CASHOUTS.find(c=>c.id===p.method)?.n||p.method}</div>
-                    <div style={{fontSize:11,color:B.muted}}>{p.destination}</div>
-                    <div style={{fontSize:10,color:B.dim}}>{p.created_at ? new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : ''}</div>
-                  </div>
-                </div>
-                <div style={{textAlign:"right"}}>
-                  <div style={{fontSize:14,fontWeight:700,color:B.ok}}>${p.usd_amount||toUSD(p.coins)}</div>
-                  <div style={{fontSize:11,color:statusColors[p.status]||B.muted,fontWeight:600}}>{statusLabels[p.status]||p.status}</div>
-                </div>
-              </div>
-            ))
-          )}
         </div>
       </div>
     </div>
@@ -1853,107 +955,117 @@ const Rewards = ({coins, onCashout, user}) => {
 // ═══════════════════════════════════════════════════════════════
 //  PAGE: LEADERBOARD
 // ═══════════════════════════════════════════════════════════════
-const Leaderboard = ({coins}) => {
-  const [tf,setTf] = useState("weekly");
+const Leaderboard = () => {
+  const medals = ["1st", "2nd", "3rd"];
   return (
-    <div style={{maxWidth:950,margin:"0 auto",padding:"28px 24px"}}>
-      <div className="au" style={{textAlign:"center",marginBottom:28}}>
-        <h1 style={{fontFamily:"'Poppins'",fontSize:26,fontWeight:800}}>Leaderboard 🏆</h1>
-        <p style={{color:B.muted,fontSize:14}}>Top earners win real cash prizes every day, week, and month</p>
+    <div style={{padding:"40px 32px",maxWidth:800,margin:"0 auto"}}>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:32}}>
+        {Icon.trophy(24,B.accent)}
+        <h1 style={{fontSize:28,fontWeight:800,color:B.txt}}>Top Earners</h1>
       </div>
 
-      {/* Prize Pool */}
-      <div className="card au" style={{padding:28,textAlign:"center",marginBottom:28,background:"linear-gradient(135deg,rgba(245,158,11,.06),rgba(239,68,68,.06))",border:"1px solid rgba(245,158,11,.15)"}}>
-        <div style={{fontSize:12,color:B.gold,fontWeight:600,marginBottom:6}}>🏆 THIS WEEK'S PRIZE POOL</div>
-        <div style={{fontSize:48,fontWeight:700,fontFamily:"'Poppins'",color:B.accent}}>$3,500</div>
-        <div style={{fontSize:13,color:B.muted,marginTop:6}}>Top 100 earners share the pool · Resets in 4d 11h 23m</div>
-        <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:16}}>
-          <div><span style={{fontWeight:700,color:B.gold}}>🥇 $1,200</span></div>
-          <div><span style={{fontWeight:700,color:"#94A3B8"}}>🥈 $700</span></div>
-          <div><span style={{fontWeight:700,color:"#CD7F32"}}>🥉 $400</span></div>
-        </div>
-      </div>
-
-      {/* Timeframe */}
-      <div style={{display:"flex",gap:8,marginBottom:24,justifyContent:"center"}}>
-        {[{id:"daily",l:"Daily ($500)"},{id:"weekly",l:"Weekly ($3,500)"},{id:"monthly",l:"Monthly ($10,000)"},{id:"alltime",l:"All Time"}].map(t=>(
-          <button key={t.id} onClick={()=>setTf(t.id)} style={{
-            padding:"9px 18px",borderRadius:10,fontSize:13,fontWeight:600,cursor:"pointer",
-            background:tf===t.id?"rgba(1,214,118,.1)":"transparent",
-            border:tf===t.id?`1px solid rgba(1,214,118,.3)`:"1px solid rgba(255,255,255,.04)",
-            color:tf===t.id?B.accentL:B.muted,
-          }}>{t.l}</button>
-        ))}
-      </div>
-
-      {/* Podium */}
-      <div style={{display:"flex",justifyContent:"center",gap:14,marginBottom:32,alignItems:"flex-end"}}>
-        {[LEADERS[1],LEADERS[0],LEADERS[2]].map((u,i)=>{
-          const h=[195,240,170];
-          const m=["🥈","🥇","🥉"];
-          const p=["$700","$1,200","$400"];
-          return (
-            <div key={u.r} className="card au" style={{
-              width:175,height:h[i],textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:18,
-              animationDelay:`${i*.12}s`,
-              background:i===1?"linear-gradient(180deg,rgba(245,158,11,.08),rgba(245,158,11,.02))":B.card,
-              border:i===1?"1px solid rgba(245,158,11,.2)":`1px solid ${B.border}`,
-              borderRadius:"16px 16px 0 0",borderBottom:"none",
-            }}>
-              <div style={{fontSize:34,marginBottom:6}}>{m[i]}</div>
-              <div style={{fontSize:22,marginBottom:2}}>{u.av}</div>
-              <div style={{fontWeight:700,fontSize:13}}>{u.name}</div>
-              <div style={{fontSize:11,color:B.muted}}>{fmt(u.coins)} 🪙</div>
-              <div style={{background:B.gradHot,padding:"3px 10px",borderRadius:8,fontSize:12,fontWeight:700,color:"#fff",marginTop:6}}>{p[i]}</div>
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        {LEADERS.map((l,i)=>(
+          <div key={l.r} className="card au" style={{padding:16,display:"flex",alignItems:"center",gap:16,animationDelay:\`\${i*0.03}s\`}}>
+            <div style={{width:40,height:40,borderRadius:"50%",background:[B.gold,"#c0c0c0","#cd7f32"][i]||B.muted,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:"#000"}}>
+              {medals[i]||l.r}
             </div>
-          );
-        })}
-      </div>
-
-      {/* Full List */}
-      <div className="card" style={{overflow:"hidden"}}>
-        {LEADERS.map((u,i)=>(
-          <div key={u.r} className="au" style={{
-            animationDelay:`${i*.03}s`,display:"flex",alignItems:"center",justifyContent:"space-between",
-            padding:"14px 22px",borderBottom:i<9?`1px solid rgba(255,255,255,.03)`:"none",
-            background:i<3?"rgba(245,158,11,.02)":"transparent",
-          }}>
-            <div style={{display:"flex",alignItems:"center",gap:14}}>
-              <div style={{width:32,textAlign:"center",fontWeight:800,fontFamily:"'Poppins'",fontSize:15,color:i<3?B.gold:B.muted}}>
-                {i<3?["🥇","🥈","🥉"][i]:`#${u.r}`}
-              </div>
-              <span style={{fontSize:22}}>{u.av}</span>
-              <div>
-                <div style={{fontWeight:600,fontSize:13}}>{u.name}</div>
-                <div style={{fontSize:10,color:B.muted}}>{u.lvl} · 🔥 {u.streak}d streak</div>
-              </div>
+            <div style={{width:36,height:36,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"#000"}}>
+              {l.av}
             </div>
-            <div style={{textAlign:"right"}}>
-              <div style={{fontWeight:700,fontSize:14,fontFamily:"'Poppins'",color:B.accentL}}>{fmt(u.coins)} 🪙</div>
-              <div style={{fontSize:10,color:B.muted}}>${toUSD(u.coins)}</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:14,fontWeight:700,color:B.txt}}>{l.name}</div>
+              <div style={{fontSize:12,color:B.muted}}>{l.lvl} Level</div>
+            </div>
+            <div style={{display:"flex",gap:12,alignItems:"center"}}>
+              <div style={{textAlign:"right"}}>
+                <div style={{fontSize:14,fontWeight:700,color:B.accent}}>\${toUSD(l.coins)}</div>
+                <div style={{fontSize:11,color:B.muted}}>{l.streak}d streak</div>
+              </div>
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Your Position */}
-      <div className="card au" style={{marginTop:20,padding:"16px 22px",display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(1,214,118,.06)",border:`1px solid rgba(1,214,118,.25)`}}>
-        <div style={{display:"flex",alignItems:"center",gap:14}}>
-          <div style={{fontWeight:800,fontFamily:"'Poppins'",fontSize:15,color:B.accentL}}>#847</div>
-          <div style={{width:34,height:34,borderRadius:"50%",background:B.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700}}>A</div>
-          <div>
-            <div style={{fontWeight:600,fontSize:13}}>You (Andrew)</div>
-            <div style={{fontSize:11,color:B.muted}}>Earn <strong style={{color:B.warnL}}>12,400 more coins</strong> to reach Top 100 and win prizes!</div>
-          </div>
-        </div>
-        <div style={{fontWeight:700,fontFamily:"'Poppins'",color:B.accentL}}>{fmt(coins)} 🪙</div>
       </div>
     </div>
   );
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  ADMIN DASHBOARD (Role-gated — only visible to admin users)
+//  PAGE: REWARDS / CASHOUT
+// ═══════════════════════════════════════════════════════════════
+const Rewards = ({user, coins, onCashout}) => {
+  const [selectedMethod, setSelectedMethod] = useState(CASHOUTS[0]);
+  const [amount, setAmount] = useState(coins);
+  const [err, setErr] = useState("");
+
+  const handleCashout = async () => {
+    if(amount<selectedMethod.min) {
+      setErr(\`Minimum \$\${toUSD(selectedMethod.min)}\`);
+      return;
+    }
+    try {
+      await onCashout(selectedMethod.id, amount);
+      setAmount(coins);
+    } catch(e) {
+      setErr(e.message);
+    }
+  };
+
+  return (
+    <div style={{padding:"40px 32px",maxWidth:600,margin:"0 auto"}}>
+      <h1 style={{fontSize:28,fontWeight:800,marginBottom:8,color:B.txt}}>Cash Out</h1>
+      <p style={{fontSize:14,color:B.muted,marginBottom:32}}>Your available balance: \${toUSD(coins)}</p>
+
+      {err&&<div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:10,padding:"10px 14px",marginBottom:20,color:"#F87171",fontSize:13}}>{err}</div>}
+
+      {/* Amount Input */}
+      <div style={{marginBottom:24}}>
+        <label style={{display:"block",fontSize:12,color:B.muted,marginBottom:8,fontWeight:600}}>Amount to Withdraw</label>
+        <div style={{display:"flex",gap:8}}>
+          <input type="number" value={amount} onChange={e=>setAmount(Math.max(0,Number(e.target.value)))}
+            style={{flex:1,padding:"12px 14px",borderRadius:8,border:\`1px solid \${B.border}\`,background:B.card,color:B.txt,fontSize:14}}
+          />
+          <button onClick={()=>setAmount(coins)} style={{padding:"12px 16px",borderRadius:8,border:\`1px solid \${B.border}\`,background:"transparent",color:B.accent,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}}>Max</button>
+        </div>
+      </div>
+
+      {/* Method Selection */}
+      <label style={{display:"block",fontSize:12,color:B.muted,marginBottom:12,fontWeight:600}}>Payment Method</label>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(100px, 1fr))",gap:12,marginBottom:24}}>
+        {CASHOUTS.filter(c=>c.pop).map(c=>(
+          <button key={c.id} onClick={()=>setSelectedMethod(c)} style={{
+            padding:16,borderRadius:8,border:\`2px solid \${selectedMethod.id===c.id?B.accent:B.border}\`,
+            background:selectedMethod.id===c.id?\`\${B.accent}15\`:"transparent",
+            cursor:"pointer",transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center",gap:8
+          }}>
+            <div style={{width:36,height:36,borderRadius:6,background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:"#000"}}>
+              {c.ic}
+            </div>
+            <span style={{fontSize:12,fontWeight:600,color:selectedMethod.id===c.id?B.accent:B.muted}}>{c.n}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Info */}
+      <div style={{background:"rgba(1,214,118,.06)",border:\`1px solid rgba(1,214,118,.2)\`,borderRadius:8,padding:14,marginBottom:24,fontSize:13,color:B.light}}>
+        <div>Fee: <strong>{selectedMethod.fee}</strong></div>
+        <div>Speed: <strong>{selectedMethod.spd}</strong></div>
+        <div style={{marginTop:8,color:B.muted}}>You'll receive \${toUSD(amount*(1-parseFloat(selectedMethod.fee)/100))}</div>
+      </div>
+
+      <button onClick={handleCashout} style={{
+        width:"100%",padding:"14px 0",background:B.accent,border:"none",color:"#000",borderRadius:8,
+        fontSize:15,fontWeight:700,cursor:"pointer",transition:"all .2s"
+      }}
+      onMouseEnter={e=>e.currentTarget.style.background=B.accentL}
+      onMouseLeave={e=>e.currentTarget.style.background=B.accent}
+      >Withdraw \${toUSD(amount)}</button>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  PAGE: ADMIN DASHBOARD
 // ═══════════════════════════════════════════════════════════════
 const AdminDash = ({token}) => {
   const [tab,setTab] = useState("overview");
@@ -1996,12 +1108,12 @@ const AdminDash = ({token}) => {
 
   const fmtUSD = c => `$${(c/100).toLocaleString(undefined,{minimumFractionDigits:2})}`;
   const tabs = [
-    {id:"overview",l:"Overview",ic:"📊"},
-    {id:"offerwalls",l:"Offerwalls",ic:"🔗"},
-    {id:"users",l:"Users",ic:"👥"},
-    {id:"payouts",l:"Payouts",ic:"💳"},
-    {id:"analytics",l:"Analytics",ic:"📈"},
-    {id:"fraud",l:"Fraud",ic:"🛡️"},
+    {id:"overview",l:"Overview",ic:""},
+    {id:"offerwalls",l:"Offerwalls",ic:""},
+    {id:"users",l:"Users",ic:""},
+    {id:"payouts",l:"Payouts",ic:""},
+    {id:"analytics",l:"Analytics",ic:""},
+    {id:"fraud",l:"Fraud",ic:""},
   ];
 
   const filteredUsers = users.filter(u =>
@@ -2011,7 +1123,7 @@ const AdminDash = ({token}) => {
 
   if(loading) return (
     <div style={{padding:"80px 24px",textAlign:"center"}}>
-      <div style={{fontSize:48,marginBottom:16}} className="ap">📊</div>
+      <div style={{marginBottom:16}} className="ap">{Icon.chart(48,B.accent)}</div>
       <div style={{fontSize:18,fontWeight:600,color:B.accentL}}>Loading Admin Dashboard...</div>
     </div>
   );
@@ -2021,7 +1133,7 @@ const AdminDash = ({token}) => {
       {/* Header */}
       <div style={{marginBottom:28}} className="au">
         <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:4}}>
-          <span style={{fontSize:28}}>🛡️</span>
+          {Icon.admin(28,B.accent)}
           <h1 style={{fontSize:28,fontWeight:800,fontFamily:"'Poppins'"}}>Admin Dashboard</h1>
           <span style={{fontSize:10,background:"rgba(239,68,68,.15)",border:"1px solid rgba(239,68,68,.3)",color:"#F87171",padding:"3px 10px",borderRadius:8,fontWeight:700}}>ADMIN ONLY</span>
         </div>
@@ -2032,8 +1144,8 @@ const AdminDash = ({token}) => {
       <div style={{display:"flex",gap:6,marginBottom:28,flexWrap:"wrap"}}>
         {tabs.map(t=>(
           <button key={t.id} onClick={()=>setTab(t.id)} style={{
-            background:tab===t.id?"rgba(1,214,118,.15)":"rgba(15,22,41,.5)",
-            border:tab===t.id?`1px solid rgba(1,214,118,.4)`:`1px solid ${B.border}`,
+            background:tab===t.id?"rgba(124,58,237,.15)":"rgba(15,22,41,.5)",
+            border:tab===t.id?`1px solid rgba(124,58,237,.4)`:`1px solid ${B.border}`,
             color:tab===t.id?B.accentL:B.muted,
             padding:"10px 18px",borderRadius:10,cursor:"pointer",fontSize:13,fontWeight:600,
             transition:"all .15s",display:"flex",alignItems:"center",gap:6,
@@ -2047,10 +1159,10 @@ const AdminDash = ({token}) => {
           {/* Revenue Row */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:24}}>
             {[
-              {l:"Revenue Today",v:fmtUSD(data.revenueToday),c:"#60A5FA",ic:"💰"},
-              {l:"Revenue This Week",v:fmtUSD(data.revenueWeek),c:"#A78BFA",ic:"📊"},
-              {l:"Revenue This Month",v:fmtUSD(data.revenueMonth),c:"#34D399",ic:"📈"},
-              {l:"Revenue All Time",v:fmtUSD(data.revenueTotal),c:"#FBBF24",ic:"🏆"},
+              {l:"Revenue Today",v:fmtUSD(data.revenueToday),c:"#60A5FA",ic:""},
+              {l:"Revenue This Week",v:fmtUSD(data.revenueWeek),c:"#A78BFA",ic:""},
+              {l:"Revenue This Month",v:fmtUSD(data.revenueMonth),c:"#34D399",ic:""},
+              {l:"Revenue All Time",v:fmtUSD(data.revenueTotal),c:"#FBBF24",ic:""},
             ].map((s,i)=>(
               <div key={i} className="card" style={{padding:20}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
@@ -2065,10 +1177,10 @@ const AdminDash = ({token}) => {
           {/* Profit Row */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:24}}>
             {[
-              {l:"Profit Today",v:fmtUSD(data.profitToday),c:"#10B981",ic:"✅"},
-              {l:"Profit This Week",v:fmtUSD(data.profitWeek),c:"#34D399",ic:"💎"},
-              {l:"Profit This Month",v:fmtUSD(data.profitMonth),c:"#10B981",ic:"📊"},
-              {l:"Profit All Time",v:fmtUSD(data.profitTotal),c:"#10B981",ic:"🏅"},
+              {l:"Profit Today",v:fmtUSD(data.profitToday),c:"#10B981",ic:""},
+              {l:"Profit This Week",v:fmtUSD(data.profitWeek),c:"#34D399",ic:""},
+              {l:"Profit This Month",v:fmtUSD(data.profitMonth),c:"#10B981",ic:""},
+              {l:"Profit All Time",v:fmtUSD(data.profitTotal),c:"#10B981",ic:""},
             ].map((s,i)=>(
               <div key={i} className="card" style={{padding:20}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
@@ -2119,7 +1231,7 @@ const AdminDash = ({token}) => {
           <div className="card" style={{overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
               <thead>
-                <tr style={{background:"rgba(1,214,118,.06)"}}>
+                <tr style={{background:"rgba(124,58,237,.06)"}}>
                   {["Offerwall","Completions","Revenue","User Payouts","Profit","Margin"].map(h=>(
                     <th key={h} style={{padding:"14px 16px",textAlign:"left",fontWeight:700,color:B.muted,fontSize:11,textTransform:"uppercase",letterSpacing:1,borderBottom:`1px solid ${B.border}`}}>{h}</th>
                   ))}
@@ -2170,7 +1282,7 @@ const AdminDash = ({token}) => {
           <div className="card" style={{overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
               <thead>
-                <tr style={{background:"rgba(1,214,118,.06)"}}>
+                <tr style={{background:"rgba(124,58,237,.06)"}}>
                   {["ID","Username","Email","Coins","Country","Joined","Last Login","Status","Actions"].map(h=>(
                     <th key={h} style={{padding:"12px 14px",textAlign:"left",fontWeight:700,color:B.muted,fontSize:11,textTransform:"uppercase",letterSpacing:1,borderBottom:`1px solid ${B.border}`}}>{h}</th>
                   ))}
@@ -2221,7 +1333,7 @@ const AdminDash = ({token}) => {
           <div className="card" style={{overflow:"hidden"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
               <thead>
-                <tr style={{background:"rgba(1,214,118,.06)"}}>
+                <tr style={{background:"rgba(124,58,237,.06)"}}>
                   {["ID","User","Method","Amount","Destination","Requested","Status","Actions"].map(h=>(
                     <th key={h} style={{padding:"12px 14px",textAlign:"left",fontWeight:700,color:B.muted,fontSize:11,textTransform:"uppercase",letterSpacing:1,borderBottom:`1px solid ${B.border}`}}>{h}</th>
                   ))}
@@ -2233,7 +1345,7 @@ const AdminDash = ({token}) => {
                     <td style={{padding:"10px 14px",color:B.dim}}>#{(p.id||'').toString().slice(0,8)}</td>
                     <td style={{padding:"10px 14px",fontWeight:600}}>{p.user?.username||p.username||'—'}<br/><span style={{fontSize:10,color:B.dim}}>{p.user?.email||p.email||''}</span></td>
                     <td style={{padding:"10px 14px"}}>
-                      <span style={{background:"rgba(1,214,118,.08)",padding:"3px 10px",borderRadius:8,fontSize:12,fontWeight:600,textTransform:"uppercase"}}>{p.method}</span>
+                      <span style={{background:"rgba(124,58,237,.08)",padding:"3px 10px",borderRadius:8,fontSize:12,fontWeight:600,textTransform:"uppercase"}}>{p.method}</span>
                     </td>
                     <td style={{padding:"10px 14px",color:"#FBBF24",fontWeight:700}}>${p.usd_amount||p.usd||(p.coins/1000).toFixed(2)}</td>
                     <td style={{padding:"10px 14px",color:B.muted,fontSize:12,maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.destination||'—'}</td>
@@ -2321,7 +1433,7 @@ const AdminDash = ({token}) => {
                   return (
                     <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
                       <div style={{fontSize:11,color:B.accentL,fontWeight:700}}>{d.newUsers}</div>
-                      <div style={{width:"60%",height:h,background:"rgba(1,214,118,.25)",borderRadius:"4px 4px 0 0",border:"1px solid rgba(1,214,118,.4)",minWidth:18}}/>
+                      <div style={{width:"60%",height:h,background:"rgba(124,58,237,.25)",borderRadius:"4px 4px 0 0",border:"1px solid rgba(124,58,237,.4)",minWidth:18}}/>
                       <div style={{fontSize:10,color:B.dim,marginTop:4}}>{d.date.slice(5)}</div>
                     </div>
                   );
@@ -2338,7 +1450,7 @@ const AdminDash = ({token}) => {
           {/* Multi-Account Detection */}
           <div style={{marginBottom:24}}>
             <h3 style={{fontSize:16,fontWeight:700,marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
-              <span style={{fontSize:18}}>🚨</span> Multi-Account Detection (Same IP)
+              {Icon.admin(18,"#F87171")} Multi-Account Detection (Same IP)
             </h3>
             {fraud.multiAccount.length===0?(
               <div className="card" style={{padding:24,textAlign:"center",color:B.dim}}>No suspicious multi-account activity detected</div>
@@ -2364,7 +1476,7 @@ const AdminDash = ({token}) => {
           {/* High Earner Alerts */}
           <div>
             <h3 style={{fontSize:16,fontWeight:700,marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
-              <span style={{fontSize:18}}>⚠️</span> Unusually High Earners (24h)
+              {Icon.fire(18,"#F59E0B")} Unusually High Earners (24h)
             </h3>
             {fraud.highEarners.length===0?(
               <div className="card" style={{padding:24,textAlign:"center",color:B.dim}}>No unusually high earners detected</div>
@@ -2391,161 +1503,191 @@ const AdminDash = ({token}) => {
 };
 
 // ─── FOOTER ───
-const Footer = () => (
-  <footer style={{padding:"48px 32px 24px",borderTop:`2px solid ${B.border}`,maxWidth:1200,margin:"0 auto"}}>
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <div style={{width:28,height:28,borderRadius:6,background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"#000",fontWeight:900}}>$</div>
-        <span style={{fontSize:18,fontFamily:"'Poppins'",fontWeight:800}}><span style={{color:B.accent}}>POCKET</span>LINED</span>
+
+// ═══════════════════════════════════════════════════════════════
+//  PAGE: PROFILE
+// ═══════════════════════════════════════════════════════════════
+const Profile = ({user, coins, streak}) => {
+  const lv = getLevel(coins);
+
+  return (
+    <div style={{padding:"40px 32px",maxWidth:600,margin:"0 auto"}}>
+      <h1 style={{fontSize:28,fontWeight:800,marginBottom:32,color:B.txt}}>Your Profile</h1>
+
+      {/* User Card */}
+      <div className="card au" style={{padding:24,marginBottom:24,textAlign:"center"}}>
+        <div style={{width:80,height:80,borderRadius:"50%",background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,fontWeight:700,color:"#000",margin:"0 auto 16px"}}>
+          {(user?.username||"A")[0].toUpperCase()}
+        </div>
+        <h2 style={{fontSize:20,fontWeight:700,color:B.txt,marginBottom:8}}>{user?.username}</h2>
+        <p style={{color:B.muted,fontSize:13,marginBottom:16}}>{user?.email}</p>
+        <div style={{display:"flex",justifyContent:"center",gap:20,paddingTop:16,borderTop:\`1px solid \${B.border}\`}}>
+          <div>
+            <div style={{fontSize:18,fontWeight:800,color:B.accent}}>Level {lv.idx+1}</div>
+            <div style={{fontSize:12,color:B.muted}}>{lv.n}</div>
+          </div>
+          <div>
+            <div style={{fontSize:18,fontWeight:800,color:B.accent}}>{streak}</div>
+            <div style={{fontSize:12,color:B.muted}}>Day Streak</div>
+          </div>
+          <div>
+            <div style={{fontSize:18,fontWeight:800,color:B.accent}}>\${toUSD(coins)}</div>
+            <div style={{fontSize:12,color:B.muted}}>Total Earned</div>
+          </div>
+        </div>
       </div>
-      <div style={{display:"flex",gap:20,fontSize:13,color:B.muted}}>
-        {["About","FAQ","Blog","Terms","Privacy","Contact"].map(l=>(
-          <span key={l} style={{cursor:"pointer",transition:"color .15s"}}
-            onMouseEnter={e=>e.currentTarget.style.color="#fff"}
-            onMouseLeave={e=>e.currentTarget.style.color=B.muted}>{l}</span>
-        ))}
+
+      {/* Level Progress */}
+      <div className="card au" style={{padding:20,marginBottom:24}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <span style={{fontSize:12,color:B.muted,fontWeight:600}}>Progress to next level</span>
+          <span style={{fontSize:12,color:B.accent,fontWeight:700}}>{Math.round(pct(coins))}%</span>
+        </div>
+        <div style={{height:6,background:"rgba(255,255,255,.06)",borderRadius:3,overflow:"hidden"}}>
+          <div className="progress-bar" style={{width:\`\${pct(coins)}%\`,background:B.accent}}/>
+        </div>
+        {lv.next&&<div style={{fontSize:11,color:B.muted,marginTop:8}}>
+          \${toUSD(lv.next-coins)} to next level
+        </div>}
+      </div>
+
+      {/* Achievements */}
+      <div className="card au" style={{padding:20}}>
+        <h2 style={{fontSize:14,fontWeight:700,marginBottom:16,color:B.txt}}>Achievements</h2>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(60px, 1fr))",gap:12}}>
+          {["Early Bird","Streak Master","High Earner","Speed Racer","Completion King"].map((a,i)=>(
+            <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+              <div style={{width:48,height:48,borderRadius:"50%",background:i<3?B.accent:"rgba(255,255,255,.06)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>
+                {i<3?Icon.check(20,B.bg):Icon.star(16,B.muted)}
+              </div>
+              <span style={{fontSize:11,color:B.muted,textAlign:"center"}}>{a}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-    <div style={{borderTop:`1px solid ${B.border}`,paddingTop:16,fontSize:12,color:B.dim,textAlign:"center"}}>
-      © 2026 PocketLined. All earnings come from advertiser-funded offers. PocketLined never charges users.
+  );
+};
+
+
+// ─── FOOTER ───
+const Footer = () => (
+  <footer style={{background:B.nav,borderTop:`2px solid ${B.border}`,padding:"40px 32px"}}>
+    <div style={{maxWidth:1200,margin:"0 auto",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:20}}>
+      <div>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+          <div style={{width:28,height:28,borderRadius:6,background:B.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"#000",fontWeight:900}}>$</div>
+          <span style={{fontSize:16,fontWeight:800,color:"#fff"}}><span style={{color:B.accent}}>POCKET</span>LINED</span>
+        </div>
+        <p style={{fontSize:12,color:B.muted}}>Earn real money completing simple tasks</p>
+      </div>
+      <div style={{display:"flex",gap:24}}>
+        {["Terms","Privacy","Support","Blog"].map(l=>(
+          <a key={l} href="#" style={{fontSize:12,color:B.muted,textDecoration:"none",transition:"color .15s"}}
+            onMouseEnter={e=>e.currentTarget.style.color=B.accent}
+            onMouseLeave={e=>e.currentTarget.style.color=B.muted}
+          >{l}</a>
+        ))}
+      </div>
+      <p style={{fontSize:11,color:B.dim,width:"100%",textAlign:"center",marginTop:12}}>
+        PocketLined.com {new Date().getFullYear()}. All rights reserved.
+      </p>
     </div>
   </footer>
 );
 
 // ═══════════════════════════════════════════════════════════════
-//  MAIN APP
+//  MAIN APP COMPONENT
 // ═══════════════════════════════════════════════════════════════
 export default function App() {
-  const [pg,setPg] = useState("home");
-  const [toasts,setToasts] = useState([]);
-  const [showAuth,setShowAuth] = useState(false);
+  const [pg, setPg] = useState("home");
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [coins, setCoins] = useState(5000);
+  const [streak, setStreak] = useState(12);
+  const [role, setRole] = useState("user");
+  const [showAuth, setShowAuth] = useState(false);
+  const [toasts, setToasts] = useState([]);
 
-  // ─── Auth State ───
-  const [user,setUser] = useState(null);
-  const [token,setToken] = useState(null);
-  const [authLoading,setAuthLoading] = useState(true);
-
-  // ─── User stats (real from API when logged in, demo when not) ───
-  const coins = user ? (user.coins || 0) : 24800;
-  const streak = user ? (user.streak || 0) : 5;
-  const role = user ? (user.role || 'member') : 'member';
-  const today = user ? (user.todayEarned || 0) : 4200;
-  const week = user ? (user.weekEarned || 0) : 18600;
-
-  // ─── Load persisted auth on mount ───
   useEffect(() => {
-    const savedToken = localStorage.getItem('cf_token');
-    if (savedToken) {
-      setToken(savedToken);
-      apiFetch('/api/me').then(data => {
-        setUser(data.user || data);
-        setAuthLoading(false);
-      }).catch(() => {
-        localStorage.removeItem('cf_token');
-        setToken(null);
-        setAuthLoading(false);
-      });
-    } else {
-      setAuthLoading(false);
+    const t = localStorage.getItem('cf_token');
+    if(t) {
+      setToken(t);
+      setUser({username:"User",email:"user@example.com"});
     }
   }, []);
 
-  // ─── Refresh user data from API ───
-  const refreshUser = useCallback(async () => {
-    try {
-      const data = await apiFetch('/api/me');
-      setUser(data.user || data);
-    } catch(e) { /* silent */ }
-  }, []);
-
-  const toast = useCallback((msg,type="ok")=>{
-    const id=Date.now();
-    setToasts(p=>[...p,{id,msg,type}]);
-    setTimeout(()=>setToasts(p=>p.filter(t=>t.id!==id)),3500);
-  },[]);
-
-  const earn = useCallback(c=>{
-    if(!c) return;
-    // Optimistic local update, then refresh from server
-    setUser(prev => prev ? {...prev, coins: (prev.coins||0) + c} : prev);
-    toast(`+${fmt(c)} coins ($${toUSD(c)}) earned! 🎉`,"coin");
-    refreshUser();
-  },[toast, refreshUser]);
-
-  const handleCashout = useCallback(coinCost=>{
-    // Optimistic debit, then refresh from server
-    setUser(prev => prev ? {...prev, coins: Math.max(0,(prev.coins||0) - coinCost)} : prev);
-    toast(`Withdrawal submitted! -${fmt(coinCost)} coins`,"ok");
-    refreshUser();
-  },[toast, refreshUser]);
-
-  const handleAuth = useCallback((userData, tkn) => {
-    setUser(userData);
-    setToken(tkn);
-    setShowAuth(false);
-    setPg("dash");
-    toast(`Welcome${userData.username ? ', ' + userData.username : ''}! 🎉`);
-    // Fetch full profile to get all fields
-    apiFetch('/api/me').then(data => setUser(data.user || data)).catch(() => {});
-  }, [toast]);
-
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem('cf_token');
-    setUser(null);
-    setToken(null);
-    setPg("home");
-    toast("Logged out successfully");
-  }, [toast]);
-
-  // Scroll to top on page change
-  useEffect(()=>window.scrollTo({top:0,behavior:"smooth"}),[pg]);
-
-  // Redirect protected pages to auth
-  const requireAuth = (page) => {
-    if (!user) { setShowAuth(true); return false; }
-    return true;
+  const showToast = (msg, type="success") => {
+    const id = Date.now();
+    setToasts(p => [...p, {id, msg, type}]);
+    setTimeout(() => setToasts(p => p.filter(x => x.id!==id)), 3000);
   };
 
-  const navTo = useCallback((page) => {
-    const protectedPages = ["dash","profile","rewards","admin"];
-    if (protectedPages.includes(page) && !user) {
-      setShowAuth(true);
+  const handleAuth = (u, tk) => {
+    setUser(u);
+    setToken(tk);
+    setShowAuth(false);
+    showToast("Welcome!");
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('cf_token');
+    setPg("home");
+    showToast("Logged out");
+  };
+
+  const handleEarn = (o) => {
+    if(!user) { setShowAuth(true); return; }
+    if(!o.wall || o.wall==="Direct") {
+      showToast(\`Offer wall not configured: \${o.wall}\`);
       return;
     }
-    setPg(page);
-  }, [user]);
+    const wall = process.env[\`NEXT_PUBLIC_\${o.wall.toUpperCase().replace(/ /g,"_")}_URL\`];
+    if(wall) window.open(wall, "_blank");
+    else showToast("Offerwall URL not found");
+  };
+
+  const handleCashout = async (methodId, amt) => {
+    if(!user) { setShowAuth(true); return; }
+    try {
+      await apiFetch('/api/cashout', { method:'POST', body:JSON.stringify({methodId,amount:amt}) });
+      setCoins(c => c-amt);
+      showToast("Cashout initiated! Check your email.");
+    } catch(e) {
+      showToast(e.message, "error");
+      throw e;
+    }
+  };
 
   return (
-    <div style={{minHeight:"100vh",background:B.bg,color:B.txt}}>
+    <>
       <style>{css}</style>
+      <LiveTicker/>
+      <Nav pg={pg} setPg={setPg} coins={coins} streak={streak} role={role} user={user} onLogin={()=>setShowAuth(true)} onLogout={handleLogout}/>
 
-      {/* Auth Modal */}
-      {showAuth && <AuthModal onAuth={handleAuth} onClose={()=>setShowAuth(false)} />}
+      <main style={{background:B.bg,minHeight:"calc(100vh - 66px)"}}>
+        {pg==="home" && <Home setPg={setPg} user={user} onLogin={()=>setShowAuth(true)}/>}
+        {pg==="earn" && <Earn setPg={setPg} user={user} onLogin={()=>setShowAuth(true)} onEarn={handleEarn}/>}
+        {pg==="dash" && user && <Dashboard user={user} coins={coins} streak={streak}/>}
+        {pg==="leaderboard" && <Leaderboard/>}
+        {pg==="rewards" && user && <Rewards user={user} coins={coins} onCashout={handleCashout}/>}
+        {pg==="admin"&&role==="admin"&&user&&<AdminDash token={token}/>}
+        {pg==="profile" && user && <Profile user={user} coins={coins} streak={streak}/>}
+      </main>
+      <Footer/>
 
-      {/* Toasts */}
+      {showAuth && <AuthModal onAuth={handleAuth} onClose={()=>setShowAuth(false)}/>}
+
       <div className="toast-container">
-        {toasts.map(t=>(
-          <div key={t.id} className="toast" style={{
-            background:t.type==="coin"?"rgba(1,214,118,.9)":t.type==="ok"?"rgba(1,214,118,.9)":"rgba(239,68,68,.9)",
-            color:"#fff",
-          }}>{t.msg}</div>
+        {toasts.map(t => (
+          <div key={t.id} className="toast" style={{background:t.type==="error"?"rgba(239,68,68,.2)":"rgba(1,214,118,.2)",color:t.type==="error"?"#F87171":B.accent}}>
+            {t.type==="success" && Icon.check(16)}
+            {t.msg}
+          </div>
         ))}
       </div>
-
-      <LiveTicker/>
-      <Nav pg={pg} setPg={navTo} coins={coins} streak={streak} role={role} user={user} onLogin={()=>setShowAuth(true)} onLogout={handleLogout}/>
-
-      <main style={{minHeight:"80vh"}}>
-        {pg==="home"&&<Home setPg={navTo} user={user} onLogin={()=>setShowAuth(true)}/>}
-        {pg==="dash"&&user&&<Dash coins={coins} streak={streak} today={today} week={week} setPg={navTo} onEarn={earn} user={user}/>}
-        {pg==="earn"&&<Earn onEarn={earn} user={user}/>}
-        {pg==="profile"&&user&&<Profile coins={coins} streak={streak} today={today} week={week} user={user}/>}
-        {pg==="rewards"&&user&&<Rewards coins={coins} onCashout={handleCashout} user={user}/>}
-        {pg==="leaderboard"&&<Leaderboard coins={coins}/>}
-        {pg==="admin"&&role==="admin"&&user&&<AdminDash token={token}/>}
-      </main>
-
-      <Footer/>
-    </div>
+    </>
   );
 }

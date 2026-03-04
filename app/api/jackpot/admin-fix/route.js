@@ -24,11 +24,14 @@ export async function GET(request) {
       .order('created_at', { ascending: false })
       .limit(20);
 
-    // Check user coins
-    const { data: userCheck } = await db.from('users').select('id, coins').eq('id', user.id).single();
+    // Check user coins - compare select methods
+    const { data: userSelectStar } = await db.from('users').select('*').eq('id', user.id).single();
+    const { data: userSelectCols } = await db.from('users').select('id, coins').eq('id', user.id).single();
 
     return NextResponse.json({
-      user_coins: userCheck?.coins,
+      user_coins_star: userSelectStar?.coins,
+      user_coins_cols: userSelectCols?.coins,
+      auth_user_coins: user.coins,
       active_rounds: activeRounds,
       rounds_error: roundsErr?.message,
       all_bets: allBets,

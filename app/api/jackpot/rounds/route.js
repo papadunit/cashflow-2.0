@@ -20,26 +20,39 @@ export async function GET(request) {
     const { data: tier } = await db.from('jackpot_tiers').select('*').eq('id', tierId).single();
     if (!tier) return NextResponse.json({ error: 'Tier not found' }, { status: 404 });
 
-    // Find active round for this tier
+    // Find active round for this tier (use ascending to always get the FIRST/oldest active round)
     let { data: rounds } = await db
       .from('jackpot_rounds')
       .select('*')
       .eq('tier_id', tierId)
       .eq('status', 'active')
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: true })
       .limit(1);
 
     let activeRound = rounds?.[0] || null;
 
-    // Auto-create new round if none exists
+    // Auto-create new round if none exists (use upsert-like logic to prevent race conditions)
     if (!activeRound) {
+      // Try to insert, but if another request already created one, just fetch it
       const { data: newRound, error: createErr } = await db
         .from('jackpot_rounds')
         .insert({ tier_id: tierId, status: 'active', total_pool: 0 })
         .select()
         .single();
-      if (createErr) return NextResponse.json({ error: createErr.message }, { status: 500 });
-      activeRound = newRound;
+      if (createErr) {
+        // Race condition: another request created it first. Re-fetch.
+        const { data: retry } = await db
+          .from('jackpot_rounds')
+          .select('*')
+          .eq('tier_id', tierId)
+          .eq('status', 'active')
+          .order('created_at', { ascending: true })
+          .limit(1);
+        activeRound = retry?.[0];
+        if (!activeRound) return NextResponse.json({ error: createErr.message }, { status: 500 });
+      } else {
+        activeRound = newRound;
+      }
     }
 
     // Get bets for this round

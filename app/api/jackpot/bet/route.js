@@ -31,23 +31,18 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Get or create active round
+    // Get active round (do NOT create here — the rounds endpoint handles creation)
     let { data: rounds } = await db
       .from('jackpot_rounds')
       .select('*')
       .eq('tier_id', tier_id)
       .eq('status', 'active')
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: true })
       .limit(1);
 
     let activeRound = rounds?.[0];
     if (!activeRound) {
-      const { data: newRound } = await db
-        .from('jackpot_rounds')
-        .insert({ tier_id: tier_id, status: 'active', total_pool: 0 })
-        .select()
-        .single();
-      activeRound = newRound;
+      return NextResponse.json({ error: 'No active round. Please wait for a new round to start.' }, { status: 400 });
     }
 
     // Get existing bets for this round

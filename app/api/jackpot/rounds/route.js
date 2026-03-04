@@ -8,9 +8,10 @@ const SLOT_COLORS = [
   '#007AFF', '#5856D6', '#AF52DE', '#FF2D55', '#A2845E'
 ];
 
-// Bot fill config: after this many seconds of an active round, start filling with bots
-const BOT_FILL_DELAY_SEC = 5;   // Wait 5s before first bot joins
-const BOT_FILL_RATE = 2;        // Add 1-2 bots per poll cycle
+// Bot fill config
+const BOT_FILL_DELAY_SEC = 8;   // Wait 8s before first bot joins
+const BOT_FILL_RATE = 1;        // Add 1 bot per poll cycle (sometimes 0 for natural feel)
+const BOT_SKIP_CHANCE = 0.3;    // 30% chance to skip filling on a poll (looks more natural)
 
 /**
  * Auto-fill empty slots with bot players to keep the wheel engaging.
@@ -32,9 +33,12 @@ async function autoFillBots(db, activeRound, tier) {
     const emptyCount = tier.slots_total - filledCount;
     if (emptyCount <= 0) return; // Round is full
 
-    // Add 1-2 bots (random to look natural)
+    // Randomly skip some polls for natural feel
+    if (Math.random() < BOT_SKIP_CHANCE) return;
+
+    // Add 1 bot per poll (occasionally 2 when almost full to speed up)
     const botsToAdd = Math.min(
-      Math.floor(Math.random() * BOT_FILL_RATE) + 1,
+      emptyCount <= 2 ? emptyCount : BOT_FILL_RATE,
       emptyCount
     );
 

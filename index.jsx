@@ -881,7 +881,7 @@ const Earn = ({onEarn, user, setPg, onLogin}) => {
             </select>
           </div>
           <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:8}}>
-            {[{id:"all",n:"All",c:B.accent},{id:"featured",n:"Featured",c:"#FFB800"},...CATS].map(c => (
+            {[{id:"all",n:"All",c:B.accent},...CATS].map(c => (
               <button key={c.id} onClick={() => setCat(c.id)} style={{
                 padding:"8px 16px",borderRadius:20,whiteSpace:"nowrap",fontSize:13,fontWeight:cat===c.id?600:500,cursor:"pointer",transition:"all .15s",
                 background:cat===c.id?`${c.c||B.accent}20`:"transparent",

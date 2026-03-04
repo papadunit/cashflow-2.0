@@ -1600,6 +1600,8 @@ const Jackpot = ({ user, coins, showToast }) => {
   const canvasRef = useRef(null);
   const spinAngle = useRef(0);
   const animRef = useRef(null);
+  const avatarImgs = useRef({});  // Cache loaded avatar images
+  const [avatarCount, setAvatarCount] = useState(0);  // Triggers re-draw on avatar load
 
   // Load tiers on mount
   useEffect(() => {
@@ -1630,6 +1632,22 @@ const Jackpot = ({ user, coins, showToast }) => {
     return () => { active = false; clearInterval(iv); };
   }, [selTier, spinning, winner]);
 
+  // Preload avatar images when bets change
+  useEffect(() => {
+    if (!round?.bets) return;
+    for (const bet of round.bets) {
+      if (bet.avatar_url && !avatarImgs.current[bet.username]) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          avatarImgs.current[bet.username] = img;
+          setAvatarCount(c => c + 1);  // Trigger wheel re-draw
+        };
+        img.src = bet.avatar_url;
+      }
+    }
+  }, [round?.bets?.length]);
+
   // Draw wheel
   useEffect(() => {
     if (!canvasRef.current || !round) return;
@@ -1659,19 +1677,37 @@ const Jackpot = ({ user, coins, showToast }) => {
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw label
+      // Draw avatar or label
       const midAngle = startAngle + sliceAngle / 2;
       const labelR = r * 0.65;
       const lx = cx + Math.cos(midAngle) * labelR;
       const ly = cy + Math.sin(midAngle) * labelR;
-      ctx.save();
-      ctx.translate(lx, ly);
-      ctx.rotate(midAngle + Math.PI / 2);
-      ctx.fillStyle = bet ? '#fff' : '#555';
-      ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(bet ? (bet.username || '?').slice(0, 6) : '?', 0, 0);
-      ctx.restore();
+
+      if (bet && avatarImgs.current[bet.username]) {
+        // Draw circular avatar
+        const imgSize = 22;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(lx, ly, imgSize / 2, 0, 2 * Math.PI);
+        ctx.clip();
+        ctx.drawImage(avatarImgs.current[bet.username], lx - imgSize / 2, ly - imgSize / 2, imgSize, imgSize);
+        ctx.restore();
+        // White border
+        ctx.beginPath();
+        ctx.arc(lx, ly, imgSize / 2 + 1, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      } else {
+        ctx.save();
+        ctx.translate(lx, ly);
+        ctx.rotate(midAngle + Math.PI / 2);
+        ctx.fillStyle = bet ? '#fff' : '#555';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(bet ? (bet.username || '?').slice(0, 6) : '?', 0, 0);
+        ctx.restore();
+      }
     }
 
     // Center circle
@@ -1696,7 +1732,7 @@ const Jackpot = ({ user, coins, showToast }) => {
     ctx.closePath();
     ctx.fillStyle = B.accent;
     ctx.fill();
-  }, [round, spinning]);
+  }, [round, spinning, avatarCount]);
 
   const handleSpin = async (roundData) => {
     const rd = roundData || round;
@@ -1746,13 +1782,30 @@ const Jackpot = ({ user, coins, showToast }) => {
             ctx.fill(); ctx.strokeStyle = '#1a1b2e'; ctx.lineWidth = 2; ctx.stroke();
             const ma = sa + sliceAngle/2;
             const lr = r2 * 0.65;
-            ctx.save();
-            ctx.translate(cx2 + Math.cos(ma)*lr, cy2 + Math.sin(ma)*lr);
-            ctx.rotate(ma + Math.PI/2);
-            ctx.fillStyle = bet ? '#fff' : '#555';
-            ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
-            ctx.fillText(bet ? (bet.username||'?').slice(0,6) : '?', 0, 0);
-            ctx.restore();
+            const alx = cx2 + Math.cos(ma)*lr;
+            const aly = cy2 + Math.sin(ma)*lr;
+            if (bet && avatarImgs.current[bet.username]) {
+              const imgSz = 22;
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(alx, aly, imgSz/2, 0, 2*Math.PI);
+              ctx.clip();
+              ctx.drawImage(avatarImgs.current[bet.username], alx-imgSz/2, aly-imgSz/2, imgSz, imgSz);
+              ctx.restore();
+              ctx.beginPath();
+              ctx.arc(alx, aly, imgSz/2+1, 0, 2*Math.PI);
+              ctx.strokeStyle = '#fff';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+            } else {
+              ctx.save();
+              ctx.translate(alx, aly);
+              ctx.rotate(ma + Math.PI/2);
+              ctx.fillStyle = bet ? '#fff' : '#555';
+              ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+              ctx.fillText(bet ? (bet.username||'?').slice(0,6) : '?', 0, 0);
+              ctx.restore();
+            }
           }
           ctx.beginPath(); ctx.arc(cx2, cy2, 28, 0, 2*Math.PI);
           ctx.fillStyle = B.card; ctx.fill();
@@ -1887,8 +1940,12 @@ const Jackpot = ({ user, coins, showToast }) => {
                   const bet = (round.bets || []).find(b => b.slot_number === i);
                   return (
                     <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,background:bet?"rgba(255,255,255,.04)":"rgba(255,255,255,.02)",border:`1px solid ${bet?B.border:"rgba(255,255,255,.04)"}`}}>
-                      <div style={{width:28,height:28,borderRadius:"50%",background:bet?bet.user_color:"#333",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:"#fff"}}>
-                        {bet ? (bet.user_avatar || '?') : '?'}
+                      <div style={{width:28,height:28,borderRadius:"50%",background:bet?bet.user_color:"#333",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:"#fff",overflow:"hidden",flexShrink:0}}>
+                        {bet?.avatar_url ? (
+                          <img src={bet.avatar_url} alt="" style={{width:28,height:28,borderRadius:"50%"}} />
+                        ) : (
+                          bet ? (bet.user_avatar || '?') : '?'
+                        )}
                       </div>
                       <div style={{flex:1}}>
                         <div style={{fontSize:13,fontWeight:600,color:bet?"#fff":B.dim}}>

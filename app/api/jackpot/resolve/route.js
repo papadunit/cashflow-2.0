@@ -69,14 +69,20 @@ export async function POST(request) {
       resolved_at: new Date().toISOString(),
     }).eq('id', round_id);
 
-    // Credit winner (using creditCoins for level bonus + referral commission)
-    await creditCoins(
-      db,
-      winnerBet.user_id,
-      prizeAmount,
-      'jackpot_win',
-      `Jackpot winner! $${(prizeAmount / 1000).toFixed(2)} from ${tier.name}`
-    );
+    // Check if winner is a bot (role='bot' in users table)
+    const { data: winnerUser } = await db.from('users').select('role').eq('id', winnerBet.user_id).single();
+    const isBot = winnerUser?.role === 'bot';
+
+    // Only credit real users — bot wins go to the house
+    if (!isBot) {
+      await creditCoins(
+        db,
+        winnerBet.user_id,
+        prizeAmount,
+        'jackpot_win',
+        `Jackpot winner! $${(prizeAmount / 1000).toFixed(2)} from ${tier.name}`
+      );
+    }
 
     // Create new active round for this tier
     await db.from('jackpot_rounds').insert({

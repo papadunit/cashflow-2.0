@@ -8,6 +8,83 @@ const SLOT_COLORS = [
   '#007AFF', '#5856D6', '#AF52DE', '#FF2D55', '#A2845E'
 ];
 
+// Bot fill config: after this many seconds of an active round, start filling with bots
+const BOT_FILL_DELAY_SEC = 5;   // Wait 5s before first bot joins
+const BOT_FILL_RATE = 2;        // Add 1-2 bots per poll cycle
+
+/**
+ * Auto-fill empty slots with bot players to keep the wheel engaging.
+ * Adds bots gradually (1-2 per call) to simulate real players joining.
+ */
+async function autoFillBots(db, activeRound, tier) {
+  try {
+    // Check how long the round has been active
+    const roundAge = (Date.now() - new Date(activeRound.created_at).getTime()) / 1000;
+    if (roundAge < BOT_FILL_DELAY_SEC) return; // Too early, let real players join first
+
+    // Get current bets
+    const { data: currentBets } = await db
+      .from('jackpot_bets')
+      .select('*')
+      .eq('round_id', activeRound.id);
+
+    const filledCount = (currentBets || []).length;
+    const emptyCount = tier.slots_total - filledCount;
+    if (emptyCount <= 0) return; // Round is full
+
+    // Add 1-2 bots (random to look natural)
+    const botsToAdd = Math.min(
+      Math.floor(Math.random() * BOT_FILL_RATE) + 1,
+      emptyCount
+    );
+
+    // Get available bot users not already in this round
+    const existingUserIds = new Set((currentBets || []).map(b => b.user_id));
+    const { data: availableBots } = await db.from('users')
+      .select('id, username')
+      .eq('role', 'bot');
+
+    const bots = (availableBots || [])
+      .filter(b => !existingUserIds.has(b.id))
+      .sort(() => Math.random() - 0.5);
+
+    if (bots.length === 0) return;
+
+    // Find available slot numbers
+    const takenSlots = new Set((currentBets || []).map(b => b.slot_number));
+    const availableSlots = [];
+    for (let i = 0; i < tier.slots_total; i++) {
+      if (!takenSlots.has(i)) availableSlots.push(i);
+    }
+
+    let addedCount = 0;
+    for (let i = 0; i < botsToAdd && i < availableSlots.length && i < bots.length; i++) {
+      const slotNum = availableSlots[i];
+      const bot = bots[i];
+
+      const { error } = await db.from('jackpot_bets').insert({
+        round_id: activeRound.id,
+        user_id: bot.id,
+        slot_number: slotNum,
+        bet_amount: tier.entry_cost,
+        user_color: SLOT_COLORS[slotNum % SLOT_COLORS.length],
+        user_avatar: bot.username[0].toUpperCase(),
+        username: bot.username,
+      });
+
+      if (!error) addedCount++;
+    }
+
+    // Update pool
+    if (addedCount > 0) {
+      const newPool = (activeRound.total_pool || 0) + (addedCount * tier.entry_cost);
+      await db.from('jackpot_rounds').update({ total_pool: newPool }).eq('id', activeRound.id);
+    }
+  } catch {
+    // Silently fail — bots are optional enhancement
+  }
+}
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -20,7 +97,7 @@ export async function GET(request) {
     const { data: tier } = await db.from('jackpot_tiers').select('*').eq('id', tierId).single();
     if (!tier) return NextResponse.json({ error: 'Tier not found' }, { status: 404 });
 
-    // Find active round for this tier (use ascending to always get the FIRST/oldest active round)
+    // Find active round for this tier
     let { data: rounds } = await db
       .from('jackpot_rounds')
       .select('*')
@@ -31,16 +108,14 @@ export async function GET(request) {
 
     let activeRound = rounds?.[0] || null;
 
-    // Auto-create new round if none exists (use upsert-like logic to prevent race conditions)
+    // Auto-create new round if none exists
     if (!activeRound) {
-      // Try to insert, but if another request already created one, just fetch it
       const { data: newRound, error: createErr } = await db
         .from('jackpot_rounds')
         .insert({ tier_id: tierId, status: 'active', total_pool: 0 })
         .select()
         .single();
       if (createErr) {
-        // Race condition: another request created it first. Re-fetch.
         const { data: retry } = await db
           .from('jackpot_rounds')
           .select('*')
@@ -55,14 +130,17 @@ export async function GET(request) {
       }
     }
 
-    // Get bets for this round (use select('*') to avoid RLS column-filtering issues)
-    const { data: rawBets, error: betsErr } = await db
+    // Auto-fill bots (non-blocking, runs in background of this request)
+    await autoFillBots(db, activeRound, tier);
+
+    // Get bets for this round (re-fetch after potential bot fill)
+    const { data: rawBets } = await db
       .from('jackpot_bets')
       .select('*')
       .eq('round_id', activeRound.id)
       .order('slot_number', { ascending: true });
 
-    // Map to only the fields we need
+    // Map to needed fields + add avatar_url for profile images
     const bets = (rawBets || []).map(b => ({
       slot_number: b.slot_number,
       bet_amount: b.bet_amount,
@@ -70,13 +148,14 @@ export async function GET(request) {
       user_avatar: b.user_avatar,
       user_id: b.user_id,
       username: b.username,
+      avatar_url: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(b.username || 'anon')}&size=64`,
     }));
 
-    const totalPool = (bets || []).reduce((sum, b) => sum + Number(b.bet_amount), 0);
-    const slotsFilled = (bets || []).length;
+    const totalPool = bets.reduce((sum, b) => sum + Number(b.bet_amount), 0);
+    const slotsFilled = bets.length;
 
     // Calculate win chances
-    const formattedBets = (bets || []).map(b => ({
+    const formattedBets = bets.map(b => ({
       ...b,
       chance_pct: totalPool > 0 ? ((Number(b.bet_amount) / totalPool) * 100).toFixed(1) : '0',
     }));

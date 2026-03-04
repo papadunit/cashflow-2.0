@@ -859,13 +859,15 @@ const Earn = ({onEarn, user, setPg, onLogin}) => {
                 <div style={{fontSize:11,color:B.muted}}>Coins credited automatically on completion</div>
               </div>
             </div>
-            <iframe
-              src={activeWall.iframeUrl(uid, activeWall.key, activeWall.key2)}
-              style={{width:"100%",height:"70vh",border:"none",background:B.bg}}
-              title={`${activeWall.name} Offerwall`}
-              sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
-              allow="clipboard-write"
-            />
+            <div style={{position:"relative",width:"100%",height:"70vh",overflow:"hidden",borderRadius:"0 0 12px 12px"}}>
+              <iframe
+                src={activeWall.iframeUrl(uid, activeWall.key, activeWall.key2)}
+                style={{width:"100%",height:"100%",border:"none",background:"#1a1a2e",filter:"invert(.88) hue-rotate(180deg)",colorScheme:"dark"}}
+                title={`${activeWall.name} Offerwall`}
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
+                allow="clipboard-write"
+              />
+            </div>
           </div>
         </div>
       ) : (

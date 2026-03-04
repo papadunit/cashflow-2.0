@@ -170,6 +170,7 @@ const Icon = {
   dashboard: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>,
   leaderboard: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>,
   admin: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  jackpot: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></svg>,
   bell: (s=20,c="currentColor") => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
   fire: (s=16,c="#FF6B35") => <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none"><path d="M12 23c-3.6 0-8-2.4-8-8.1C4 10 8 4 12 1c4 3 8 9 8 13.9 0 5.7-4.4 8.1-8 8.1zm0-18.5C9.3 7.5 6 12 6 14.9 6 19 9.2 21 12 21s6-2 6-6.1c0-2.9-3.3-7.4-6-10.4z"/></svg>,
   star: (s=16,c="#FFB800") => <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>,
@@ -503,7 +504,7 @@ const Nav = ({pg,setPg,coins,streak,role,user,onLogin,onLogout}) => {
             {[
               {id:"earn",l:"Earn",ic:Icon.earn},
               {id:"rewards",l:"Cashout",ic:Icon.cashout},
-              ...(user ? [{id:"dash",l:"Dashboard",ic:Icon.dashboard},{id:"leaderboard",l:"Leaderboard",ic:Icon.leaderboard}] : []),
+              ...(user ? [{id:"dash",l:"Dashboard",ic:Icon.dashboard},{id:"leaderboard",l:"Leaderboard",ic:Icon.leaderboard},{id:"jackpot",l:"Jackpot",ic:Icon.jackpot}] : []),
               ...(role==="admin"&&user?[{id:"admin",l:"Admin",ic:Icon.admin}]:[]),
             ].map(x=>(
               <button key={x.id} onClick={()=>setPg(x.id)} style={{
@@ -1584,6 +1585,355 @@ const AdminDash = ({token}) => {
   );
 };
 
+// ─── JACKPOT (Spin the Wheel) ───
+const WHEEL_COLORS = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#5856D6','#AF52DE','#FF2D55','#A2845E'];
+const fmt$ = (coins) => '$' + (coins/1000).toFixed(2);
+
+const Jackpot = ({ user, coins, showToast }) => {
+  const [tiers, setTiers] = useState([]);
+  const [selTier, setSelTier] = useState(null);
+  const [round, setRound] = useState(null);
+  const [recentWins, setRecentWins] = useState([]);
+  const [spinning, setSpinning] = useState(false);
+  const [winner, setWinner] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const canvasRef = useRef(null);
+  const spinAngle = useRef(0);
+  const animRef = useRef(null);
+
+  // Load tiers on mount
+  useEffect(() => {
+    apiFetch('/api/jackpot/tiers').then(t => {
+      setTiers(t);
+      if (t.length > 0) setSelTier(t[0]);
+    }).catch(() => {});
+  }, []);
+
+  // Poll round state every 2s
+  useEffect(() => {
+    if (!selTier) return;
+    let active = true;
+    const poll = async () => {
+      try {
+        const data = await apiFetch(`/api/jackpot/rounds?tier_id=${selTier.id}`);
+        if (!active) return;
+        setRound(data.active_round);
+        setRecentWins(data.recent_wins || []);
+        // Check if round just became full and we should spin
+        if (data.active_round.slots_filled >= data.active_round.slots_total && !spinning && !winner) {
+          handleSpin(data.active_round);
+        }
+      } catch {}
+    };
+    poll();
+    const iv = setInterval(poll, 2000);
+    return () => { active = false; clearInterval(iv); };
+  }, [selTier, spinning, winner]);
+
+  // Draw wheel
+  useEffect(() => {
+    if (!canvasRef.current || !round) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const size = canvas.width;
+    const cx = size / 2, cy = size / 2, r = size / 2 - 8;
+
+    ctx.clearRect(0, 0, size, size);
+
+    const total = round.slots_total;
+    const bets = round.bets || [];
+    const sliceAngle = (2 * Math.PI) / total;
+
+    for (let i = 0; i < total; i++) {
+      const bet = bets.find(b => b.slot_number === i);
+      const startAngle = spinAngle.current + i * sliceAngle;
+      const endAngle = startAngle + sliceAngle;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, startAngle, endAngle);
+      ctx.closePath();
+      ctx.fillStyle = bet ? (bet.user_color || WHEEL_COLORS[i % WHEEL_COLORS.length]) : '#2a2b40';
+      ctx.fill();
+      ctx.strokeStyle = '#1a1b2e';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw label
+      const midAngle = startAngle + sliceAngle / 2;
+      const labelR = r * 0.65;
+      const lx = cx + Math.cos(midAngle) * labelR;
+      const ly = cy + Math.sin(midAngle) * labelR;
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.rotate(midAngle + Math.PI / 2);
+      ctx.fillStyle = bet ? '#fff' : '#555';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(bet ? (bet.username || '?').slice(0, 6) : '?', 0, 0);
+      ctx.restore();
+    }
+
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, 28, 0, 2 * Math.PI);
+    ctx.fillStyle = B.card;
+    ctx.fill();
+    ctx.strokeStyle = B.accent;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(fmt$(round.total_pool || 0), cx, cy);
+
+    // Pointer (top)
+    ctx.beginPath();
+    ctx.moveTo(cx - 10, 4);
+    ctx.lineTo(cx + 10, 4);
+    ctx.lineTo(cx, 22);
+    ctx.closePath();
+    ctx.fillStyle = B.accent;
+    ctx.fill();
+  }, [round, spinning]);
+
+  const handleSpin = async (roundData) => {
+    const rd = roundData || round;
+    if (!rd || spinning) return;
+    setSpinning(true);
+    try {
+      const res = await apiFetch('/api/jackpot/resolve', {
+        method: 'POST',
+        body: JSON.stringify({ round_id: rd.id }),
+      });
+
+      // Animate spin
+      const winSlot = res.winner_slot;
+      const total = rd.slots_total;
+      const sliceAngle = (2 * Math.PI) / total;
+      const targetAngle = -(winSlot * sliceAngle) - sliceAngle / 2 - Math.PI / 2;
+      const fullSpins = 5 * 2 * Math.PI;
+      const finalAngle = fullSpins + targetAngle;
+
+      let start = null;
+      const duration = 4000;
+      const startAngle = spinAngle.current;
+
+      const animate = (ts) => {
+        if (!start) start = ts;
+        const elapsed = ts - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        spinAngle.current = startAngle + eased * (finalAngle - startAngle);
+
+        // Redraw
+        if (canvasRef.current && round) {
+          const canvas = canvasRef.current;
+          const ctx = canvas.getContext('2d');
+          const size = canvas.width;
+          const cx2 = size/2, cy2 = size/2, r2 = size/2 - 8;
+          ctx.clearRect(0, 0, size, size);
+          const bets2 = rd.bets || [];
+          for (let i = 0; i < total; i++) {
+            const bet = bets2.find(b => b.slot_number === i);
+            const sa = spinAngle.current + i * sliceAngle;
+            const ea = sa + sliceAngle;
+            ctx.beginPath(); ctx.moveTo(cx2, cy2);
+            ctx.arc(cx2, cy2, r2, sa, ea); ctx.closePath();
+            ctx.fillStyle = bet ? (bet.user_color || WHEEL_COLORS[i % WHEEL_COLORS.length]) : '#2a2b40';
+            ctx.fill(); ctx.strokeStyle = '#1a1b2e'; ctx.lineWidth = 2; ctx.stroke();
+            const ma = sa + sliceAngle/2;
+            const lr = r2 * 0.65;
+            ctx.save();
+            ctx.translate(cx2 + Math.cos(ma)*lr, cy2 + Math.sin(ma)*lr);
+            ctx.rotate(ma + Math.PI/2);
+            ctx.fillStyle = bet ? '#fff' : '#555';
+            ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText(bet ? (bet.username||'?').slice(0,6) : '?', 0, 0);
+            ctx.restore();
+          }
+          ctx.beginPath(); ctx.arc(cx2, cy2, 28, 0, 2*Math.PI);
+          ctx.fillStyle = B.card; ctx.fill();
+          ctx.strokeStyle = B.accent; ctx.lineWidth = 3; ctx.stroke();
+          ctx.fillStyle = '#fff'; ctx.font = 'bold 13px sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(fmt$(rd.total_pool || 0), cx2, cy2);
+          ctx.beginPath(); ctx.moveTo(cx2-10,4); ctx.lineTo(cx2+10,4); ctx.lineTo(cx2,22);
+          ctx.closePath(); ctx.fillStyle = B.accent; ctx.fill();
+        }
+
+        if (progress < 1) {
+          animRef.current = requestAnimationFrame(animate);
+        } else {
+          // Done spinning
+          setWinner(res);
+          setSpinning(false);
+          if (res.winner_id === user?.id) {
+            showToast?.(`You won ${fmt$(res.prize_amount)}!`);
+          }
+          // After 5s, clear winner and let polling pick up new round
+          setTimeout(() => {
+            setWinner(null);
+            spinAngle.current = 0;
+          }, 5000);
+        }
+      };
+      animRef.current = requestAnimationFrame(animate);
+    } catch (e) {
+      setSpinning(false);
+      showToast?.(e.message, 'error');
+    }
+  };
+
+  const handleBet = async () => {
+    if (!selTier || loading) return;
+    setLoading(true);
+    try {
+      const res = await apiFetch('/api/jackpot/bet', {
+        method: 'POST',
+        body: JSON.stringify({ tier_id: selTier.id }),
+      });
+      showToast?.(`Slot purchased! ${res.slots_filled}/${res.slots_total} filled`);
+      // Immediately refresh
+      const data = await apiFetch(`/api/jackpot/rounds?tier_id=${selTier.id}`);
+      setRound(data.active_round);
+      if (res.round_full && !spinning) {
+        handleSpin(data.active_round);
+      }
+    } catch (e) {
+      showToast?.(e.message, 'error');
+    }
+    setLoading(false);
+  };
+
+  const mySlots = round?.bets?.filter(b => b.user_id === user?.id)?.length || 0;
+  const poolAmount = round?.total_pool || 0;
+  const prizeAmount = poolAmount - Math.floor(poolAmount * (round?.house_cut_pct || 10) / 100);
+
+  return (
+    <div style={{maxWidth:900,margin:"0 auto",padding:"32px 20px"}}>
+      <h1 style={{fontSize:28,fontWeight:800,color:"#fff",marginBottom:4,textAlign:"center"}}>
+        {Icon.jackpot(28,B.accent)} Spin the Wheel
+      </h1>
+      <p style={{color:B.muted,textAlign:"center",marginBottom:24,fontSize:14}}>
+        Buy slots, fill the wheel, and win the jackpot!
+      </p>
+
+      {/* Tier Selector */}
+      <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:28}}>
+        {tiers.map(t => (
+          <button key={t.id} onClick={() => { setSelTier(t); setWinner(null); spinAngle.current = 0; }}
+            style={{
+              padding:"10px 20px",borderRadius:10,border:`2px solid ${selTier?.id===t.id ? B.accent : B.border}`,
+              background:selTier?.id===t.id ? "rgba(1,214,118,.1)" : B.card,
+              color:selTier?.id===t.id ? B.accent : B.muted,
+              fontWeight:700,fontSize:14,cursor:"pointer",transition:"all .2s",
+            }}>
+            {t.name} — {fmt$(t.entry_cost)}
+          </button>
+        ))}
+      </div>
+
+      {round && (
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24,alignItems:"start"}}>
+          {/* Left: Wheel */}
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
+            <div style={{position:"relative",marginBottom:16}}>
+              <canvas ref={canvasRef} width={300} height={300} style={{borderRadius:"50%",boxShadow:`0 0 30px rgba(1,214,118,.15)`}}/>
+            </div>
+
+            {/* Prize Info */}
+            <div style={{background:B.card,borderRadius:12,padding:16,width:"100%",border:`1px solid ${B.border}`}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+                <span style={{color:B.muted,fontSize:13}}>Total Pool</span>
+                <span style={{color:"#fff",fontWeight:700,fontSize:15}}>{fmt$(poolAmount)}</span>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+                <span style={{color:B.muted,fontSize:13}}>Winner Gets (90%)</span>
+                <span style={{color:B.accent,fontWeight:700,fontSize:15}}>{fmt$(prizeAmount)}</span>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+                <span style={{color:B.muted,fontSize:13}}>Your Slots</span>
+                <span style={{color:"#fff",fontWeight:600}}>{mySlots}/3</span>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between"}}>
+                <span style={{color:B.muted,fontSize:13}}>Slots Filled</span>
+                <span style={{color:"#fff",fontWeight:600}}>{round.slots_filled}/{round.slots_total}</span>
+              </div>
+            </div>
+
+            {/* Winner Banner */}
+            {winner && (
+              <div style={{marginTop:12,padding:14,borderRadius:10,background:"rgba(1,214,118,.12)",border:`1px solid ${B.accent}`,width:"100%",textAlign:"center"}}>
+                <div style={{fontSize:20,marginBottom:4}}>🎉</div>
+                <div style={{color:B.accent,fontWeight:700,fontSize:16}}>
+                  {winner.winner_id === user?.id ? "YOU WON!" : `${winner.winner_username} wins!`}
+                </div>
+                <div style={{color:"#fff",fontWeight:600,fontSize:14,marginTop:4}}>
+                  Prize: {fmt$(winner.prize_amount)}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right: Player List + Enter Button */}
+          <div>
+            <div style={{background:B.card,borderRadius:12,padding:16,border:`1px solid ${B.border}`,marginBottom:16}}>
+              <h3 style={{color:"#fff",fontSize:15,fontWeight:700,marginBottom:12}}>Players ({round.slots_filled}/{round.slots_total})</h3>
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                {Array.from({length: round.slots_total}).map((_, i) => {
+                  const bet = (round.bets || []).find(b => b.slot_number === i);
+                  return (
+                    <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,background:bet?"rgba(255,255,255,.04)":"rgba(255,255,255,.02)",border:`1px solid ${bet?B.border:"rgba(255,255,255,.04)"}`}}>
+                      <div style={{width:28,height:28,borderRadius:"50%",background:bet?bet.user_color:"#333",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:"#fff"}}>
+                        {bet ? (bet.user_avatar || '?') : '?'}
+                      </div>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:13,fontWeight:600,color:bet?"#fff":B.dim}}>
+                          {bet ? bet.username : "Waiting for player..."}
+                        </div>
+                        {bet && <div style={{fontSize:11,color:B.muted}}>{bet.chance_pct}% chance</div>}
+                      </div>
+                      <div style={{fontSize:13,fontWeight:600,color:bet?B.accent:B.dim}}>
+                        {bet ? fmt$(bet.bet_amount) : fmt$(selTier?.entry_cost || 0)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Enter Button */}
+            {!spinning && !winner && mySlots < 3 && round.slots_filled < round.slots_total && (
+              <button onClick={handleBet} disabled={loading}
+                style={{
+                  width:"100%",padding:"14px 0",borderRadius:10,border:"none",
+                  background:B.gradCTA,color:"#000",fontWeight:800,fontSize:16,
+                  cursor:loading?"not-allowed":"pointer",opacity:loading?.7:1,
+                  transition:"all .2s",
+                }}>
+                {loading ? "Placing bet..." : `Enter for ${fmt$(selTier?.entry_cost || 0)}`}
+              </button>
+            )}
+            {spinning && (
+              <div style={{textAlign:"center",padding:14,color:B.accent,fontWeight:700,fontSize:15}}>
+                🎡 Spinning...
+              </div>
+            )}
+            {mySlots >= 3 && !spinning && !winner && (
+              <div style={{textAlign:"center",padding:14,color:B.warn,fontWeight:600,fontSize:13}}>
+                Max 3 slots reached for this round
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ─── FOOTER ───
 
 // ═══════════════════════════════════════════════════════════════
@@ -1773,6 +2123,7 @@ export default function App() {
         {pg==="leaderboard" && <Leaderboard/>}
         {pg==="rewards" && user && <Rewards user={user} coins={coins} onCashout={handleCashout}/>}
         {pg==="admin"&&role==="admin"&&user&&<AdminDash token={token}/>}
+        {pg==="jackpot" && user && <Jackpot user={user} coins={coins} showToast={showToast}/>}
         {pg==="profile" && user && <Profile user={user} coins={coins} streak={streak}/>}
       </main>
       <Footer/>

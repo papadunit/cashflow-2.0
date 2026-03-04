@@ -56,11 +56,17 @@ export async function GET(request) {
     }
 
     // Get bets for this round
-    const { data: bets } = await db
+    const { data: bets, error: betsErr } = await db
       .from('jackpot_bets')
       .select('slot_number, bet_amount, user_color, user_avatar, user_id, username')
       .eq('round_id', activeRound.id)
       .order('slot_number', { ascending: true });
+
+    // DEBUG: Also try a raw count query
+    const { count: betCount, error: countErr } = await db
+      .from('jackpot_bets')
+      .select('*', { count: 'exact', head: true })
+      .eq('round_id', activeRound.id);
 
     const totalPool = (bets || []).reduce((sum, b) => sum + Number(b.bet_amount), 0);
     const slotsFilled = (bets || []).length;
@@ -95,6 +101,13 @@ export async function GET(request) {
         winner_slot: activeRound.winner_slot,
       },
       recent_wins: recentWins || [],
+      _debug: {
+        round_id: activeRound.id,
+        bets_returned: bets?.length || 0,
+        bets_error: betsErr?.message || null,
+        bet_count_exact: betCount,
+        count_error: countErr?.message || null,
+      },
     });
   } catch (err) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
